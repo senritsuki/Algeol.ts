@@ -63,7 +63,7 @@ export namespace fn {
 		const orderR = m1.length;
 		const v: number[] = new Array(orderR);
 		for (let i = 0; i < orderR; i++) {
-			v[i] = vc.fn.ip(m1[i], v);
+			v[i] = vc.fn.ip(m1[i], v1);
 		}
 		return v;
 	}
@@ -153,21 +153,6 @@ export interface M4 {
 	map(v: vc.V4): vc.V4;
 }
 
-/** ([列番号][行番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
-export function cols_m2(cols: number[][]): M2 { return M2Impl.FromCols(cols); }
-/** ([行番号][列番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
-export function rows_m2(rows: number[][]): M2 { return M2Impl.FromRows(rows); }
-
-/** ([列番号][行番号]と表される2次元配列) -> 3次元正方行列オブジェクト */
-export function cols_m3(cols: number[][]): M3 { return M3Impl.FromCols(cols); }
-/** ([行番号][列番号]と表される2次元配列) -> 3次元正方行列オブジェクト */
-export function rows_m3(rows: number[][]): M3 { return M3Impl.FromRows(rows); }
-
-/** ([列番号][行番号]と表される2次元配列) -> 4次元正方行列オブジェクト */
-export function cols_m4(cols: number[][]): M4 { return M4Impl.FromCols(cols); }
-/** ([行番号][列番号]と表される2次元配列) -> 4次元正方行列オブジェクト */
-export function rows_m4(rows: number[][]): M4 { return M4Impl.FromRows(rows); }
-
 
 
 class M2Impl implements M2 {
@@ -222,6 +207,119 @@ class M4Impl implements M4 {
 	array_cols(): number[][] { return fn.transpose(this._rows); }
 	mul(dist: M4): M4 { return M4Impl.FromRows(fn.mul(this._ref(), dist._ref())); }
 	map(v: vc.V4): vc.V4 { return vc.ar_v4(fn.map(this._ref(), v._ref())); }
+}
+
+
+
+/** ([列番号][行番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
+export function cols_m2(cols: number[][]): M2 { return M2Impl.FromCols(cols); }
+/** ([行番号][列番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
+export function rows_m2(rows: number[][]): M2 { return M2Impl.FromRows(rows); }
+
+/** ([列番号][行番号]と表される2次元配列) -> 3次元正方行列オブジェクト */
+export function cols_m3(cols: number[][]): M3 { return M3Impl.FromCols(cols); }
+/** ([行番号][列番号]と表される2次元配列) -> 3次元正方行列オブジェクト */
+export function rows_m3(rows: number[][]): M3 { return M3Impl.FromRows(rows); }
+
+/** ([列番号][行番号]と表される2次元配列) -> 4次元正方行列オブジェクト */
+export function cols_m4(cols: number[][]): M4 { return M4Impl.FromCols(cols); }
+/** ([行番号][列番号]と表される2次元配列) -> 4次元正方行列オブジェクト */
+export function rows_m4(rows: number[][]): M4 { return M4Impl.FromRows(rows); }
+
+export function v2cols_m2(vl: vc.V2[]): M2 { return M2Impl.FromCols(vl.map(v => v._ref())); }
+export function v3cols_m3(vl: vc.V3[]): M3 { return M3Impl.FromCols(vl.map(v => v._ref())); }
+export function v4cols_m4(vl: vc.V4[]): M4 { return M4Impl.FromCols(vl.map(v => v._ref())); }
+
+export const unit_m2: M2 = M2Impl.FromRows([
+	[1, 0],
+	[0, 1],
+]);
+export const unit_m3: M3 = M3Impl.FromRows([
+	[1, 0, 0],
+	[0, 1, 0],
+	[0, 0, 1],
+]);
+export const unit_m4: M4 = M4Impl.FromRows([
+	[1, 0, 0, 0],
+	[0, 1, 0, 0],
+	[0, 0, 1, 0],
+	[0, 0, 0, 1],
+]);
+
+export function m2_m3(m2: M2): M3 {
+	const m3rows = m2._ref().map(row => row.concat(0));
+	m3rows.push([0, 0, 1]);
+	return M3Impl.FromRows(m3rows);
+}
+export function m3_m2(m3: M3): M2 {
+	return M2Impl.FromRows(m3._ref());
+}
+export function m3_m4(m3: M3): M4 {
+	const m4rows = m3._ref().map(row => row.concat(0));
+	m4rows.push([0, 0, 0, 1]);
+	return M4Impl.FromRows(m4rows);
+}
+export function m4_m3(m4: M4): M3 {
+	return M3Impl.FromRows(m4._ref());
+}
+
+export function map_m4_v3(vl: vc.V3[], m4: M4, w: number = 1): vc.V3[] {
+	return vl.map(v => vc.v4_v3(m4.map(vc.v3_v4(v, w))));
+}
+
+export function trans_m4(x: number, y: number, z: number): M4 {
+	return M4Impl.FromRows([
+		[1, 0, 0, x],
+		[0, 1, 0, y],
+		[0, 0, 1, z],
+		[0, 0, 0, 1],
+	]);
+}
+export function trans_v3_m4(v3: vc.V3): M4 {
+	return trans_m4(v3.x(), v3.y(), v3.z());
+}
+
+export function scale_m4(x: number, y: number, z: number): M4 {
+	return M4Impl.FromRows([
+		[x, 0, 0, 0],
+		[0, y, 0, 0],
+		[0, 0, z, 0],
+		[0, 0, 0, 1],
+	]);
+}
+export function scale_v3_m4(v3: vc.V3): M4 {
+	return scale_m4(v3.x(), v3.y(), v3.z());
+}
+
+export function rotX_m4(rad: number): M4 {
+	const c = Math.cos(rad);
+	const s = Math.sin(rad);
+	return M4Impl.FromRows([
+		[1, 0, 0, 0],
+		[0, c, -s, 0],
+		[0, s, c, 0],
+		[0, 0, 0, 1],
+	]);
+}
+export function rotY_m4(rad: number): M4 {
+	const c = Math.cos(rad);
+	const s = Math.sin(rad);
+	return M4Impl.FromRows([
+		[c, 0, s, 0],
+		[0, 1, 0, 0],
+		[-s, 0, c, 0],
+		[0, 0, 0, 1],
+	]);
+}
+export function rotZ_m4(rad: number): M4 {
+	const c = Math.cos(rad);
+	const s = Math.sin(rad);
+	return M4Impl.FromRows([
+		[c, -s, 0, 0],
+		[s, c, 0, 0],
+		[0, 0, 1, 0],
+		[0, 0, 0, 1],
+	]);
 }
 
 
@@ -287,10 +385,6 @@ export class _Matrix {
 	}
 }
 
-export interface M4 {
-	mul(dist: M4): M4;
-}
-
 export class _Matrix2 extends _Matrix {
 	static FromRows(rows: number[][]): _Matrix2 {
 		return new _Matrix2(rows);
@@ -311,42 +405,42 @@ export class _Matrix2 extends _Matrix {
 	}
 }
 
-export class Matrix3 extends _Matrix {
-	static FromRows(rows: number[][]): Matrix3 {
-		return new Matrix3(rows);
+export class _Matrix3 extends _Matrix {
+	static FromRows(rows: number[][]): _Matrix3 {
+		return new _Matrix3(rows);
 	}
-	static FromCols(cols: number[][]): Matrix3 {
-		return new Matrix3(_Matrix.Transpose(cols));
+	static FromCols(cols: number[][]): _Matrix3 {
+		return new _Matrix3(_Matrix.Transpose(cols));
 	}
 
 	dim(): number {
 		return 3;
 	}
 
-	mul(dist: Matrix3): Matrix3 {
-		return Matrix3.FromRows(fn._mul(this, dist));
+	mul(dist: _Matrix3): _Matrix3 {
+		return _Matrix3.FromRows(fn._mul(this, dist));
 	}
-	scalar(n: number): Matrix3 {
-		return Matrix3.FromRows(fn._scalar(this, n));
+	scalar(n: number): _Matrix3 {
+		return _Matrix3.FromRows(fn._scalar(this, n));
 	}
 }
 
-export class Matrix4 extends _Matrix {
-	static FromRows(rows: number[][]): Matrix4 {
-		return new Matrix4(rows);
+export class _Matrix4 extends _Matrix {
+	static FromRows(rows: number[][]): _Matrix4 {
+		return new _Matrix4(rows);
 	}
-	static FromCols(cols: number[][]): Matrix4 {
-		return new Matrix4(_Matrix.Transpose(cols));
+	static FromCols(cols: number[][]): _Matrix4 {
+		return new _Matrix4(_Matrix.Transpose(cols));
 	}
 
 	dim(): number {
 		return 4;
 	}
 
-	mul(dist: Matrix4): Matrix4 {
-		return Matrix4.FromRows(fn._mul(this, dist));
+	mul(dist: _Matrix4): _Matrix4 {
+		return _Matrix4.FromRows(fn._mul(this, dist));
 	}
-	scalar(n: number): Matrix4 {
-		return Matrix4.FromRows(fn._scalar(this, n));
+	scalar(n: number): _Matrix4 {
+		return _Matrix4.FromRows(fn._scalar(this, n));
 	}
 }

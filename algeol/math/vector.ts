@@ -151,33 +151,6 @@ export interface V4 {
 	length(): number;
 }
 
-/** (x成分, y成分) -> 2次元ベクトルオブジェクト */
-export function v2(x: number, y: number): V2 { return new V2Impl(x, y); }
-/** (xyz成分を含む配列) -> 2次元ベクトルオブジェクト */
-export function ar_v2(v: number[]): V2 { return V2Impl.FromArray(v); }
-
-/** (x成分, y成分, z成分) -> 3次元ベクトルオブジェクト */
-export function v3(x: number, y: number, z: number): V3 { return new V3Impl(x, y, z); }
-/** (xyz成分を含む配列) -> 3次元ベクトルオブジェクト */
-export function ar_v3(v: number[]): V3 { return V3Impl.FromArray(v); }
-
-/** (x成分, y成分, z成分, w成分) -> 4次元ベクトルオブジェクト */
-export function v4(x: number, y: number, z: number, w: number): V4 { return new V4Impl(x, y, z, w); }
-/** (xyzw成分を含む配列) -> 4次元ベクトルオブジェクト */
-export function ar_v4(v: number[]): V4 { return V4Impl.FromArray(v); }
-
-
-/** (2次元ベクトルオブジェクト, z成分) -> 3次元ベクトルオブジェクト */
-export function v2_v3(v2: V2, z: number): V3 { return V3Impl.FromArray(v2._ref().concat(z)); }
-/** (3次元ベクトルオブジェクト) -> 2次元ベクトルオブジェクト */
-export function v3_v2(v3: V3): V2 { return V2Impl.FromArray(v3._ref()); }
-
-/** (3次元ベクトルオブジェクト, w成分) -> 4次元ベクトルオブジェクト */
-export function v3_v4(v3: V3, w: number): V4 { return V4Impl.FromArray(v3._ref().concat(w)); }
-/** (4次元ベクトルオブジェクト) -> 3次元ベクトルオブジェクト */
-export function v4_v3(v4: V4): V3 { return V3Impl.FromArray(v4._ref()); }
-
-
 
 class V2Impl implements V2 {
 	_v: number[];
@@ -270,6 +243,38 @@ class V4Impl implements V4 {
 	lenght2(): number { return this.ip(this); }
 	length(): number { return Math.sqrt(this.lenght2()); }
 }
+
+
+/** (x成分, y成分) -> 2次元ベクトルオブジェクト */
+export function v2(x: number, y: number): V2 { return new V2Impl(x, y); }
+/** (xyz成分を含む配列) -> 2次元ベクトルオブジェクト */
+export function ar_v2(v: number[]): V2 { return V2Impl.FromArray(v); }
+
+/** (x成分, y成分, z成分) -> 3次元ベクトルオブジェクト */
+export function v3(x: number, y: number, z: number): V3 { return new V3Impl(x, y, z); }
+/** (xyz成分を含む配列) -> 3次元ベクトルオブジェクト */
+export function ar_v3(v: number[]): V3 { return V3Impl.FromArray(v); }
+
+/** (x成分, y成分, z成分, w成分) -> 4次元ベクトルオブジェクト */
+export function v4(x: number, y: number, z: number, w: number): V4 { return new V4Impl(x, y, z, w); }
+/** (xyzw成分を含む配列) -> 4次元ベクトルオブジェクト */
+export function ar_v4(v: number[]): V4 { return V4Impl.FromArray(v); }
+
+
+/** (2次元ベクトルオブジェクト, z成分) -> 3次元ベクトルオブジェクト */
+export function v2_v3(v2: V2, z: number): V3 { return V3Impl.FromArray(v2._ref().concat(z)); }
+/** (3次元ベクトルオブジェクト) -> 2次元ベクトルオブジェクト */
+export function v3_v2(v3: V3): V2 { return V2Impl.FromArray(v3._ref()); }
+
+/** (3次元ベクトルオブジェクト, w成分) -> 4次元ベクトルオブジェクト */
+export function v3_v4(v3: V3, w: number): V4 { return V4Impl.FromArray(v3._ref().concat(w)); }
+/** (4次元ベクトルオブジェクト) -> 3次元ベクトルオブジェクト */
+export function v4_v3(v4: V4): V3 { return V3Impl.FromArray(v4._ref()); }
+
+export const zero_v3 = v3(0, 0, 0);
+export const unitX_v3 = v3(1, 0, 0);
+export const unitY_v3 = v3(0, 1, 0);
+export const unitZ_v3 = v3(0, 0, 1);
 
 
 /** Vector ベクトル */
