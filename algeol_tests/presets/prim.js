@@ -26,12 +26,17 @@ function test() {
         console.log(obj);
         exportGeo(obj, 'polygon');
     }
-    {
-        console.log('tetrahedron');
-        var obj = prim.tetrahedron();
+    var testObj = function (name, fn) {
+        console.log(name);
+        var obj = fn();
         console.log(obj);
-        exportGeo(obj, 'tetrahedron');
-    }
+        exportGeo(obj, name);
+    };
+    testObj('tetrahedron', prim.tetrahedron);
+    testObj('octahedron', prim.octahedron);
+    testObj('cube', prim.cube);
+    testObj('dodecahedron', prim.dodecahedron);
+    testObj('icosahedron', prim.icosahedron);
 }
 test();
 //# sourceMappingURL=prim.js.map

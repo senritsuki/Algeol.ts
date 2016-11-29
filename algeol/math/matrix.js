@@ -4,6 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var ut = require("../util/util");
 var vc = require("./vector");
 var fn;
 (function (fn) {
@@ -171,46 +172,56 @@ function v3cols_m3(vl) { return M3Impl.FromCols(vl.map(function (v) { return v._
 exports.v3cols_m3 = v3cols_m3;
 function v4cols_m4(vl) { return M4Impl.FromCols(vl.map(function (v) { return v._ref(); })); }
 exports.v4cols_m4 = v4cols_m4;
+/** 2次元単位正方行列 */
 exports.unit_m2 = M2Impl.FromRows([
     [1, 0],
     [0, 1],
 ]);
+/** 2次元単位正方行列 */
 exports.unit_m3 = M3Impl.FromRows([
     [1, 0, 0],
     [0, 1, 0],
     [0, 0, 1],
 ]);
+/** 4次元単位正方行列 */
 exports.unit_m4 = M4Impl.FromRows([
     [1, 0, 0, 0],
     [0, 1, 0, 0],
     [0, 0, 1, 0],
     [0, 0, 0, 1],
 ]);
+/** (2次元正方行列) -> 3次元正方行列 */
 function m2_m3(m2) {
     var m3rows = m2._ref().map(function (row) { return row.concat(0); });
     m3rows.push([0, 0, 1]);
     return M3Impl.FromRows(m3rows);
 }
 exports.m2_m3 = m2_m3;
+/** (3次元正方行列) -> 2次元正方行列 */
 function m3_m2(m3) {
     return M2Impl.FromRows(m3._ref());
 }
 exports.m3_m2 = m3_m2;
+/** (3次元正方行列) -> 4次元正方行列 */
 function m3_m4(m3) {
     var m4rows = m3._ref().map(function (row) { return row.concat(0); });
     m4rows.push([0, 0, 0, 1]);
     return M4Impl.FromRows(m4rows);
 }
 exports.m3_m4 = m3_m4;
+/** (4次元正方行列) -> 3次元正方行列 */
 function m4_m3(m4) {
     return M3Impl.FromRows(m4._ref());
 }
 exports.m4_m3 = m4_m3;
+/** 3次元ベクトル配列に対するアフィン写像
+    (3次元ベクトル配列, 4次元正方行列, 4次元ベクトルのw成分) -> 変換後の3次元正方行列 */
 function map_m4_v3(vl, m4, w) {
     if (w === void 0) { w = 1; }
     return vl.map(function (v) { return vc.v4_v3(m4.map(vc.v3_v4(v, w))); });
 }
 exports.map_m4_v3 = map_m4_v3;
+/** 平行移動写像 */
 function trans_m4(x, y, z) {
     return M4Impl.FromRows([
         [1, 0, 0, x],
@@ -220,10 +231,12 @@ function trans_m4(x, y, z) {
     ]);
 }
 exports.trans_m4 = trans_m4;
+/** 平行移動写像 */
 function trans_v3_m4(v3) {
     return trans_m4(v3.x(), v3.y(), v3.z());
 }
 exports.trans_v3_m4 = trans_v3_m4;
+/** 拡大縮小写像 */
 function scale_m4(x, y, z) {
     return M4Impl.FromRows([
         [x, 0, 0, 0],
@@ -233,13 +246,15 @@ function scale_m4(x, y, z) {
     ]);
 }
 exports.scale_m4 = scale_m4;
+/** 拡大縮小写像 */
 function scale_v3_m4(v3) {
     return scale_m4(v3.x(), v3.y(), v3.z());
 }
 exports.scale_v3_m4 = scale_v3_m4;
+/** x軸回転写像 */
 function rotX_m4(rad) {
-    var c = Math.cos(rad);
-    var s = Math.sin(rad);
+    var c = ut.cos(rad);
+    var s = ut.sin(rad);
     return M4Impl.FromRows([
         [1, 0, 0, 0],
         [0, c, -s, 0],
@@ -248,9 +263,10 @@ function rotX_m4(rad) {
     ]);
 }
 exports.rotX_m4 = rotX_m4;
+/** y軸回転写像 */
 function rotY_m4(rad) {
-    var c = Math.cos(rad);
-    var s = Math.sin(rad);
+    var c = ut.cos(rad);
+    var s = ut.sin(rad);
     return M4Impl.FromRows([
         [c, 0, s, 0],
         [0, 1, 0, 0],
@@ -259,9 +275,10 @@ function rotY_m4(rad) {
     ]);
 }
 exports.rotY_m4 = rotY_m4;
+/** z軸回転写像 */
 function rotZ_m4(rad) {
-    var c = Math.cos(rad);
-    var s = Math.sin(rad);
+    var c = ut.cos(rad);
+    var s = ut.sin(rad);
     return M4Impl.FromRows([
         [c, -s, 0, 0],
         [s, c, 0, 0],
@@ -270,6 +287,30 @@ function rotZ_m4(rad) {
     ]);
 }
 exports.rotZ_m4 = rotZ_m4;
+/** x軸ベクトルをv3ベクトルと平行にする回転写像 */
+function rotYZ_x_m4(v3) {
+    var x = v3.x();
+    var y = v3.y();
+    var z = v3.z();
+    var radY = ut.atan2(z, ut.sqrt(x * x + y * y));
+    var radZ = ut.atan2(y, x);
+    var mxRotY = rotY_m4(radY);
+    var mxRotZ = rotZ_m4(radZ);
+    return mxRotZ.mul(mxRotY);
+}
+exports.rotYZ_x_m4 = rotYZ_x_m4;
+/** z軸ベクトルをv3ベクトルと平行にする回転写像 */
+function rotYZ_z_m4(v3) {
+    var x = v3.x();
+    var y = v3.y();
+    var z = v3.z();
+    var radY = ut.atan2(z, ut.sqrt(x * x + y * y)) - ut.deg90;
+    var radZ = ut.atan2(y, x);
+    var mxRotY = rotY_m4(radY);
+    var mxRotZ = rotZ_m4(radZ);
+    return mxRotZ.mul(mxRotY);
+}
+exports.rotYZ_z_m4 = rotYZ_z_m4;
 var _Matrix = (function () {
     function _Matrix(mx) {
         this.mx = mx;

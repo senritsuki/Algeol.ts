@@ -1,15 +1,27 @@
 ﻿
+// MathのProxy
+export const sqrt = Math.sqrt;
+export const cos = Math.cos;
+export const sin = Math.sin;
+export const acos = Math.acos;
+export const atan2 = Math.atan2;
+
 /** Square Root of 2 - 2の平方根 */
-export const r2 = Math.sqrt(2);
+export const r2 = sqrt(2);
 /** Square Root of 3 - 3の平方根 */
-export const r3 = Math.sqrt(3);
+export const r3 = sqrt(3);
 /** Square Root of 5 - 5の平方根 */
-export const r5 = Math.sqrt(5);
+export const r5 = sqrt(5);
 
 /** 円周率 */
 export const pi = Math.PI;
 /** 円周率の2倍 */
 export const pi2 = pi * 2;
+
+export const deg360 = pi2;
+export const deg180 = pi;
+export const deg90 = pi / 2;
+
 /** Golden Ratio - 黄金比 */
 export const phi = (1 + r5) / 2;
 
