@@ -1,5 +1,7 @@
 ﻿// Vector ベクトル
 
+import * as ut from "../util/util";
+
 export namespace fn {
 	export function op(a: number[], dim: number, fn: (n1: number) => number): number[] {
 		const v: number[] = [];
@@ -178,7 +180,7 @@ class V2Impl implements V2 {
 	cp(dist: V2): number { return fn.cp2(this._ref(), dist._ref()); }
 	unit(): V2 { return this.scalar(1 / this.length()); }
 	lenght2(): number { return this.ip(this); }
-	length(): number { return Math.sqrt(this.lenght2()); }
+	length(): number { return ut.sqrt(this.lenght2()); }
 }
 
 class V3Impl implements V3 {
@@ -209,7 +211,7 @@ class V3Impl implements V3 {
 	cp(dist: V3): V3 { return V3Impl.FromArray(fn.cp3(this._ref(), dist._ref())); }
 	unit(): V3 { return this.scalar(1 / this.length()); }
 	lenght2(): number { return this.ip(this); }
-	length(): number { return Math.sqrt(this.lenght2()); }
+	length(): number { return ut.sqrt(this.lenght2()); }
 }
 
 class V4Impl implements V4 {
@@ -241,7 +243,7 @@ class V4Impl implements V4 {
 	ip(dist: V4): number { return fn.ip(this.array(), dist._ref()); }
 	unit(): V4 { return this.scalar(1 / this.length()); }
 	lenght2(): number { return this.ip(this); }
-	length(): number { return Math.sqrt(this.lenght2()); }
+	length(): number { return ut.sqrt(this.lenght2()); }
 }
 
 
@@ -321,7 +323,7 @@ export class _Vector {
 	}
 	/** 長さ */
 	length(): number {
-		return Math.sqrt(this.length2());
+		return ut.sqrt(this.length2());
 	}
 }
 

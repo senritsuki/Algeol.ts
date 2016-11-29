@@ -30,11 +30,16 @@ function test() {
 		console.log(obj);
 		exportGeo(obj, 'polygon');
 	}
-	{
-		console.log('tetrahedron');
-		const obj = prim.tetrahedron();
+	const testObj = (name: string, fn: () => al.Obj) => {
+		console.log(name);
+		const obj = fn();
 		console.log(obj);
-		exportGeo(obj, 'tetrahedron');
-	}
+		exportGeo(obj, name);
+	};
+	testObj('tetrahedron', prim.tetrahedron);
+	testObj('octahedron', prim.octahedron);
+	testObj('cube', prim.cube);
+	testObj('dodecahedron', prim.dodecahedron);
+	testObj('icosahedron', prim.icosahedron);
 }
 test();

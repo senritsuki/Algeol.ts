@@ -4,6 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var ut = require("../util/util");
 var fn;
 (function (fn_1) {
     function op(a, dim, fn) {
@@ -82,7 +83,7 @@ var V2Impl = (function () {
     V2Impl.prototype.cp = function (dist) { return fn.cp2(this._ref(), dist._ref()); };
     V2Impl.prototype.unit = function () { return this.scalar(1 / this.length()); };
     V2Impl.prototype.lenght2 = function () { return this.ip(this); };
-    V2Impl.prototype.length = function () { return Math.sqrt(this.lenght2()); };
+    V2Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
     return V2Impl;
 })();
 var V3Impl = (function () {
@@ -106,7 +107,7 @@ var V3Impl = (function () {
     V3Impl.prototype.cp = function (dist) { return V3Impl.FromArray(fn.cp3(this._ref(), dist._ref())); };
     V3Impl.prototype.unit = function () { return this.scalar(1 / this.length()); };
     V3Impl.prototype.lenght2 = function () { return this.ip(this); };
-    V3Impl.prototype.length = function () { return Math.sqrt(this.lenght2()); };
+    V3Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
     return V3Impl;
 })();
 var V4Impl = (function () {
@@ -130,7 +131,7 @@ var V4Impl = (function () {
     V4Impl.prototype.ip = function (dist) { return fn.ip(this.array(), dist._ref()); };
     V4Impl.prototype.unit = function () { return this.scalar(1 / this.length()); };
     V4Impl.prototype.lenght2 = function () { return this.ip(this); };
-    V4Impl.prototype.length = function () { return Math.sqrt(this.lenght2()); };
+    V4Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
     return V4Impl;
 })();
 /** (x成分, y成分) -> 2次元ベクトルオブジェクト */
@@ -207,7 +208,7 @@ var _Vector = (function () {
     };
     /** 長さ */
     _Vector.prototype.length = function () {
-        return Math.sqrt(this.length2());
+        return ut.sqrt(this.length2());
     };
     return _Vector;
 })();
