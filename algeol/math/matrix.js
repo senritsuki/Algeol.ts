@@ -1,23 +1,48 @@
 // Square Matrix 正方行列
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+"use strict";
 var ut = require("../util/util");
 var vc = require("./vector");
 var fn;
 (function (fn) {
-    /** Multiplication - 乗算
-        (左辺行列, 右辺行列) -> 左辺行列*右辺行列の乗算結果を表す2次元配列 */
-    function mul(m1rows, m2cols) {
-        var orderR = m1rows.length;
-        var orderC = m2cols.length;
+    /** Clone - 複製
+        (行列, 行数, 列数) -> 行列の複製結果を表す2次元配列 */
+    function clone(m1, orderR, orderC) {
         var m = new Array(orderR);
         for (var r = 0; r < orderR; r++) {
             m[r] = new Array(orderC);
             for (var c = 0; c < orderC; c++) {
-                m[r][c] = vc.fn.ip(m1rows[r], m2cols[c]);
+                m[r][c] = m1[r][c];
+            }
+        }
+        return m;
+    }
+    fn.clone = clone;
+    /** Transpose - 転置
+        (行列) -> 行列の転置結果を表す2次元配列 */
+    function transpose(m1) {
+        var orderRC = m1.length;
+        var orderCR = m1[0].length;
+        var m = new Array(orderCR);
+        for (var cr = 0; cr < orderCR; cr++) {
+            m[cr] = new Array(orderRC);
+            for (var rc = 0; rc < orderRC; rc++) {
+                m[cr][rc] = m1[rc][cr];
+            }
+        }
+        return m;
+    }
+    fn.transpose = transpose;
+    /** Multiplication - 乗算
+        (左辺行列, 右辺行列) -> 左辺行列*右辺行列の乗算結果を表す2次元配列 */
+    function mul(m1, m2) {
+        var m2t = transpose(m2);
+        var orderR = m1.length;
+        var orderC = m2t.length;
+        var m = new Array(orderR);
+        for (var r = 0; r < orderR; r++) {
+            m[r] = new Array(orderC);
+            for (var c = 0; c < orderC; c++) {
+                m[r][c] = vc.fn.ip(m1[r], m2t[c]);
             }
         }
         return m;
@@ -38,34 +63,6 @@ var fn;
         return m;
     }
     fn.scalar = scalar;
-    /** Transpose - 転置
-        (行列) -> 行列の転置結果を表す2次元配列 */
-    function transpose(m1) {
-        var orderRC = m1.length;
-        var orderCR = m1[0].length;
-        var m = new Array(orderCR);
-        for (var cr = 0; cr < orderCR; cr++) {
-            m[cr] = new Array(orderRC);
-            for (var rc = 0; rc < orderRC; rc++) {
-                m[cr][rc] = m1[rc][cr];
-            }
-        }
-        return m;
-    }
-    fn.transpose = transpose;
-    /** Clone - 複製
-        (行列, 行数, 列数) -> 行列の複製結果を表す2次元配列 */
-    function clone(m1, orderR, orderC) {
-        var m = new Array(orderR);
-        for (var r = 0; r < orderR; r++) {
-            m[r] = new Array(orderC);
-            for (var c = 0; c < orderC; c++) {
-                m[r][c] = m1[r][c];
-            }
-        }
-        return m;
-    }
-    fn.clone = clone;
     /** Linear Mapping - 線形写像
         (左辺行列, 右辺ベクトル) -> 左辺行列*右辺ベクトルの演算結果を表す配列 */
     function map(m1, v1) {
@@ -77,34 +74,6 @@ var fn;
         return v;
     }
     fn.map = map;
-    function _mul(m1, m2) {
-        var dim = m1.dim();
-        var m1rows = m1.rows();
-        var m2cols = m2.cols();
-        var m = [];
-        for (var r = 0; r < dim; r++) {
-            var v = [];
-            for (var c = 0; c < dim; c++) {
-                v.push(vc.fn.ip(m1rows[r], m2cols[c]));
-            }
-            m.push(v);
-        }
-        return m;
-    }
-    fn._mul = _mul;
-    function _scalar(m1, n) {
-        var dim = m1.dim();
-        var m = [];
-        for (var r = 0; r < dim; r++) {
-            var v = [];
-            for (var c = 0; c < dim; c++) {
-                v.push(m1[r][c] * n);
-            }
-            m.push(v);
-        }
-        return m;
-    }
-    fn._scalar = _scalar;
 })(fn = exports.fn || (exports.fn = {}));
 var M2Impl = (function () {
     function M2Impl(rows) {
@@ -119,7 +88,7 @@ var M2Impl = (function () {
     M2Impl.prototype.map = function (v) { return vc.ar_v2(fn.map(this._ref(), v._ref())); };
     M2Impl.Dim = 2;
     return M2Impl;
-})();
+}());
 var M3Impl = (function () {
     function M3Impl(rows) {
         this._rows = fn.clone(rows, M3Impl.Dim, M3Impl.Dim);
@@ -133,7 +102,7 @@ var M3Impl = (function () {
     M3Impl.prototype.map = function (v) { return vc.ar_v3(fn.map(this._ref(), v._ref())); };
     M3Impl.Dim = 3;
     return M3Impl;
-})();
+}());
 var M4Impl = (function () {
     function M4Impl(rows) {
         this._rows = fn.clone(rows, M4Impl.Dim, M4Impl.Dim);
@@ -147,7 +116,7 @@ var M4Impl = (function () {
     M4Impl.prototype.map = function (v) { return vc.ar_v4(fn.map(this._ref(), v._ref())); };
     M4Impl.Dim = 4;
     return M4Impl;
-})();
+}());
 /** ([列番号][行番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
 function cols_m2(cols) { return M2Impl.FromCols(cols); }
 exports.cols_m2 = cols_m2;
@@ -292,7 +261,7 @@ function rotYZ_x_m4(v3) {
     var x = v3.x();
     var y = v3.y();
     var z = v3.z();
-    var radY = ut.atan2(z, ut.sqrt(x * x + y * y));
+    var radY = -ut.atan2(z, ut.sqrt(x * x + y * y));
     var radZ = ut.atan2(y, x);
     var mxRotY = rotY_m4(radY);
     var mxRotZ = rotZ_m4(radZ);
@@ -304,139 +273,11 @@ function rotYZ_z_m4(v3) {
     var x = v3.x();
     var y = v3.y();
     var z = v3.z();
-    var radY = ut.atan2(z, ut.sqrt(x * x + y * y)) - ut.deg90;
+    var radY = ut.deg90 - ut.atan2(z, ut.sqrt(x * x + y * y));
     var radZ = ut.atan2(y, x);
     var mxRotY = rotY_m4(radY);
     var mxRotZ = rotZ_m4(radZ);
     return mxRotZ.mul(mxRotY);
 }
 exports.rotYZ_z_m4 = rotYZ_z_m4;
-var _Matrix = (function () {
-    function _Matrix(mx) {
-        this.mx = mx;
-    }
-    _Matrix.FromRows = function (rows) {
-        return new _Matrix(rows);
-    };
-    _Matrix.FromCols = function (cols) {
-        return new _Matrix(_Matrix.Transpose(cols));
-    };
-    _Matrix.Transpose = function (cols) {
-        var collen = cols.length;
-        var rowlen = cols[0].length;
-        var rows = [];
-        for (var r = 0; r < rowlen; r++) {
-            var v = [];
-            for (var c = 0; c < collen; c++) {
-                v.push(cols[c][r]);
-            }
-            rows.push(v);
-        }
-        return rows;
-    };
-    _Matrix.prototype.dim = function () {
-        return this.mx.length;
-    };
-    _Matrix.prototype.row = function (r) {
-        return this.mx[r];
-    };
-    _Matrix.prototype.rows = function () {
-        return this.mx;
-    };
-    _Matrix.prototype.cols = function () {
-        var m = [];
-        for (var c = 0; c < this.dim(); c++) {
-            m.push(this.col[c]);
-        }
-        return m;
-    };
-    _Matrix.prototype.col = function (c) {
-        var v = [];
-        for (var r = 0; r < this.dim(); r++) {
-            v.push(this.mx[r][c]);
-        }
-        return v;
-    };
-    _Matrix.prototype.toString = function () {
-        var d = this.dim();
-        return this.mx.slice(0, d).map(function (v) { return ("(" + v.slice(0, d).join(', ') + ")"); }).join(', ');
-    };
-    _Matrix.prototype.mul = function (dist) {
-        return _Matrix.FromRows(fn._mul(this, dist));
-    };
-    _Matrix.prototype.scalar = function (n) {
-        return _Matrix.FromRows(fn._scalar(this, n));
-    };
-    return _Matrix;
-})();
-exports._Matrix = _Matrix;
-var _Matrix2 = (function (_super) {
-    __extends(_Matrix2, _super);
-    function _Matrix2() {
-        _super.apply(this, arguments);
-    }
-    _Matrix2.FromRows = function (rows) {
-        return new _Matrix2(rows);
-    };
-    _Matrix2.FromCols = function (cols) {
-        return new _Matrix2(_Matrix.Transpose(cols));
-    };
-    _Matrix2.prototype.dim = function () {
-        return 2;
-    };
-    _Matrix2.prototype.mul = function (dist) {
-        return _Matrix2.FromRows(fn._mul(this, dist));
-    };
-    _Matrix2.prototype.scalar = function (n) {
-        return _Matrix2.FromRows(fn._scalar(this, n));
-    };
-    return _Matrix2;
-})(_Matrix);
-exports._Matrix2 = _Matrix2;
-var _Matrix3 = (function (_super) {
-    __extends(_Matrix3, _super);
-    function _Matrix3() {
-        _super.apply(this, arguments);
-    }
-    _Matrix3.FromRows = function (rows) {
-        return new _Matrix3(rows);
-    };
-    _Matrix3.FromCols = function (cols) {
-        return new _Matrix3(_Matrix.Transpose(cols));
-    };
-    _Matrix3.prototype.dim = function () {
-        return 3;
-    };
-    _Matrix3.prototype.mul = function (dist) {
-        return _Matrix3.FromRows(fn._mul(this, dist));
-    };
-    _Matrix3.prototype.scalar = function (n) {
-        return _Matrix3.FromRows(fn._scalar(this, n));
-    };
-    return _Matrix3;
-})(_Matrix);
-exports._Matrix3 = _Matrix3;
-var _Matrix4 = (function (_super) {
-    __extends(_Matrix4, _super);
-    function _Matrix4() {
-        _super.apply(this, arguments);
-    }
-    _Matrix4.FromRows = function (rows) {
-        return new _Matrix4(rows);
-    };
-    _Matrix4.FromCols = function (cols) {
-        return new _Matrix4(_Matrix.Transpose(cols));
-    };
-    _Matrix4.prototype.dim = function () {
-        return 4;
-    };
-    _Matrix4.prototype.mul = function (dist) {
-        return _Matrix4.FromRows(fn._mul(this, dist));
-    };
-    _Matrix4.prototype.scalar = function (n) {
-        return _Matrix4.FromRows(fn._scalar(this, n));
-    };
-    return _Matrix4;
-})(_Matrix);
-exports._Matrix4 = _Matrix4;
 //# sourceMappingURL=matrix.js.map

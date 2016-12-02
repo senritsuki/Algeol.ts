@@ -1,3 +1,4 @@
+"use strict";
 var vc = require("./math/vector");
 var mx = require("./math/matrix");
 var Basis3Impl = (function () {
@@ -12,7 +13,7 @@ var Basis3Impl = (function () {
     Basis3Impl.prototype.z = function () { return this._z; };
     Basis3Impl.prototype.m4 = function () { return mx.m3_m4(mx.v3cols_m3(this.array())); };
     return Basis3Impl;
-})();
+}());
 var Basis3Default = (function () {
     function Basis3Default() {
     }
@@ -22,7 +23,7 @@ var Basis3Default = (function () {
     Basis3Default.prototype.z = function () { return vc.unitZ_v3; };
     Basis3Default.prototype.m4 = function () { return mx.unit_m4; };
     return Basis3Default;
-})();
+}());
 function basis3(x, y, z) {
     return new Basis3Impl(x, y, z);
 }
@@ -42,7 +43,7 @@ var SpaceImpl = (function () {
     SpaceImpl.prototype.d = function () { return this._d; };
     SpaceImpl.prototype.m4 = function () { return mx.trans_v3_m4(this._c).mul(this._d.m4()); };
     return SpaceImpl;
-})();
+}());
 var SpaceDefault = (function () {
     function SpaceDefault() {
     }
@@ -54,7 +55,7 @@ var SpaceDefault = (function () {
     SpaceDefault._d = exports.default_basis3;
     SpaceDefault._array = [vc.zero_v3].concat(exports.default_basis3.array());
     return SpaceDefault;
-})();
+}());
 function space(c, d) {
     return new SpaceImpl(c, d);
 }
@@ -79,7 +80,7 @@ var ObjImpl = (function () {
     ObjImpl.prototype.clone = function () { return new ObjImpl(this._name, this._verts, this._geo); };
     ObjImpl.prototype.geo = function () { return this._geo(this._name, this._verts); };
     return ObjImpl;
-})();
+}());
 function obj(name, verts, geo) {
     return new ObjImpl(name, verts, geo);
 }
@@ -94,7 +95,7 @@ var GeoImpl = (function () {
     GeoImpl.prototype.verts = function () { return this._verts; };
     GeoImpl.prototype.faces = function () { return this._faces; };
     return GeoImpl;
-})();
+}());
 function geo(name, verts, faces) {
     return new GeoImpl(name, verts, faces);
 }
@@ -112,15 +113,17 @@ function geo_wavefrontObj(geo, offset) {
     return strs;
 }
 exports.geo_wavefrontObj = geo_wavefrontObj;
-var Spiral = (function () {
-    function Spiral(_o, _dirStart, _dirEnd) {
-    }
-    Spiral.prototype.coord = function (t) { return null; };
-    Spiral.prototype.space = function (t, d) { return null; };
-    Spiral.prototype.seqCoord = function (start, step, count) { return null; };
-    Spiral.prototype.seqSpace = function (start, step, count) { return null; };
-    return Spiral;
-})();
-function hoge() { }
-exports.hoge = hoge;
+/*
+class Spiral implements Curve {
+    constructor(
+        _o: vc._Vector3,
+        _dirStart: vc._Vector3,
+        _dirEnd: vc._Vector3) { }
+
+    coord(t: number): vc._Vector3 { return null; }
+    space(t: number, d: number): Space { return null; }
+    seqCoord(start: number, step: number, count: number): vc._Vector3[] { return null; }
+    seqSpace(start: number, step: number, count: number): Space[] { return null; }
+}
+*/
 //# sourceMappingURL=al.js.map
