@@ -1,4 +1,4 @@
-﻿declare const require;
+﻿declare const require: any;
 const fs = require('fs');
 
 import * as al from "../algeol/al";

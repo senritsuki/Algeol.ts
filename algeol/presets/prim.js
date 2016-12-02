@@ -1,3 +1,4 @@
+"use strict";
 var al = require("../al");
 var ut = require("../util/util");
 var vc = require("../math/vector");

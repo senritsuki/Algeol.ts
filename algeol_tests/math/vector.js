@@ -1,3 +1,4 @@
+"use strict";
 var vc = require("../../algeol/math/vector");
 var dummy = vc.fn;
 // 簡易目視テスト

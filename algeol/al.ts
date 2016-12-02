@@ -69,10 +69,10 @@ class SpaceDefault implements Space {
 	m4(): mx.M4 { return mx.unit_m4; }
 }
 
-export function space(c: vc.V3, d: Basis3) {
+export function space(c: vc.V3, d: Basis3): Space {
 	return new SpaceImpl(c, d);
 }
-export function ar_space(vl: vc.V3[]) {
+export function ar_space(vl: vc.V3[]): Space {
 	return new SpaceImpl(vl[0], ar_basis3(vl.slice(1)));
 }
 export const default_space: Space = new SpaceDefault();
@@ -161,6 +161,7 @@ export interface Curve {
 	seqSpace(start: number, step: number, count: number): Space[];
 }
 
+/*
 class Spiral implements Curve {
 	constructor(
 		_o: vc._Vector3,
@@ -172,7 +173,4 @@ class Spiral implements Curve {
 	seqCoord(start: number, step: number, count: number): vc._Vector3[] { return null; }
 	seqSpace(start: number, step: number, count: number): Space[] { return null; }
 }
-
-
-
-export function hoge() { }
+*/

@@ -1,3 +1,4 @@
+"use strict";
 var ut = require("../../algeol/util/util");
 var dummy = ut.r2;
 // 簡易目視テスト

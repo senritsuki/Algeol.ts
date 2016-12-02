@@ -1,3 +1,4 @@
+"use strict";
 // MathのProxy
 exports.sqrt = Math.sqrt;
 exports.cos = Math.cos;

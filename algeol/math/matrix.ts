@@ -4,30 +4,14 @@ import * as ut from "../util/util";
 import * as vc from "./vector";
 
 export namespace fn {
-	/** Multiplication - 乗算
-		(左辺行列, 右辺行列) -> 左辺行列*右辺行列の乗算結果を表す2次元配列 */
-	export function mul(m1rows: number[][], m2cols: number[][]): number[][] {
-		const orderR = m1rows.length;
-		const orderC = m2cols.length;
+	/** Clone - 複製
+		(行列, 行数, 列数) -> 行列の複製結果を表す2次元配列 */
+	export function clone(m1: number[][], orderR: number, orderC: number): number[][] {
 		const m: number[][] = new Array(orderR);
 		for (let r = 0; r < orderR; r++) {
 			m[r] = new Array(orderC);
 			for (let c = 0; c < orderC; c++) {
-				m[r][c] = vc.fn.ip(m1rows[r], m2cols[c]);
-			}
-		}
-		return m;
-	}
-	/** Scalar Product - スカラー倍
-		(行列, スカラー値) -> 行列*スカラー値の乗算結果を表す2次元配列 */
-	export function scalar(m1: number[][], n: number): number[][] {
-		const orderR = m1.length;
-		const orderC = m1[0].length;
-		const m: number[][] = new Array(orderR);
-		for (let r = 0; r < orderR; r++) {
-			m[r] = new Array(orderC);
-			for (let c = 0; c < orderC; c++) {
-				m[r][c] = m1[r][c] * n;
+				m[r][c] = m1[r][c];
 			}
 		}
 		return m;
@@ -46,14 +30,31 @@ export namespace fn {
 		}
 		return m;
 	}
-	/** Clone - 複製
-		(行列, 行数, 列数) -> 行列の複製結果を表す2次元配列 */
-	export function clone(m1: number[][], orderR: number, orderC: number): number[][] {
+	/** Multiplication - 乗算
+		(左辺行列, 右辺行列) -> 左辺行列*右辺行列の乗算結果を表す2次元配列 */
+	export function mul(m1: number[][], m2: number[][]): number[][] {
+		const m2t = transpose(m2);
+		const orderR = m1.length;
+		const orderC = m2t.length;
 		const m: number[][] = new Array(orderR);
 		for (let r = 0; r < orderR; r++) {
 			m[r] = new Array(orderC);
 			for (let c = 0; c < orderC; c++) {
-				m[r][c] = m1[r][c];
+				m[r][c] = vc.fn.ip(m1[r], m2t[c]);
+			}
+		}
+		return m;
+	}
+	/** Scalar Product - スカラー倍
+		(行列, スカラー値) -> 行列*スカラー値の乗算結果を表す2次元配列 */
+	export function scalar(m1: number[][], n: number): number[][] {
+		const orderR = m1.length;
+		const orderC = m1[0].length;
+		const m: number[][] = new Array(orderR);
+		for (let r = 0; r < orderR; r++) {
+			m[r] = new Array(orderC);
+			for (let c = 0; c < orderC; c++) {
+				m[r][c] = m1[r][c] * n;
 			}
 		}
 		return m;
@@ -67,33 +68,6 @@ export namespace fn {
 			v[i] = vc.fn.ip(m1[i], v1);
 		}
 		return v;
-	}
-
-	export function _mul(m1: _Matrix, m2: _Matrix): number[][] {
-		const dim = m1.dim();
-		const m1rows = m1.rows();
-		const m2cols = m2.cols();
-		const m: number[][] = [];
-		for (let r = 0; r < dim; r++) {
-			const v: number[] = [];
-			for (let c = 0; c < dim; c++) {
-				v.push(vc.fn.ip(m1rows[r], m2cols[c]));
-			}
-			m.push(v);
-		}
-		return m;
-	}
-	export function _scalar(m1: _Matrix, n: number): number[][] {
-		const dim = m1.dim();
-		const m: number[][] = [];
-		for (let r = 0; r < dim; r++) {
-			const v: number[] = [];
-			for (let c = 0; c < dim; c++) {
-				v.push(m1[r][c] * n);
-			}
-			m.push(v);
-		}
-		return m;
 	}
 }
 
@@ -344,7 +318,7 @@ export function rotYZ_x_m4(v3: vc.V3): M4 {
 	const x = v3.x();
 	const y = v3.y();
 	const z = v3.z();
-	const radY = ut.atan2(z, ut.sqrt(x * x + y * y));
+	const radY = -ut.atan2(z, ut.sqrt(x * x + y * y));
 	const radZ = ut.atan2(y, x);
 	const mxRotY = rotY_m4(radY);
 	const mxRotZ = rotZ_m4(radZ);
@@ -355,132 +329,10 @@ export function rotYZ_z_m4(v3: vc.V3): M4 {
 	const x = v3.x();
 	const y = v3.y();
 	const z = v3.z();
-	const radY = ut.atan2(z, ut.sqrt(x * x + y * y)) - ut.deg90;
+	const radY = ut.deg90 - ut.atan2(z, ut.sqrt(x * x + y * y));
 	const radZ = ut.atan2(y, x);
 	const mxRotY = rotY_m4(radY);
 	const mxRotZ = rotZ_m4(radZ);
 	return mxRotZ.mul(mxRotY);
 }
 
-
-export class _Matrix {
-	constructor(
-		public mx: number[][]) { }
-
-	static FromRows(rows: number[][]): _Matrix {
-		return new _Matrix(rows);
-	}
-	static FromCols(cols: number[][]): _Matrix {
-		return new _Matrix(_Matrix.Transpose(cols));
-	}
-	static Transpose(cols: number[][]): number[][] {
-		const collen = cols.length;
-		const rowlen = cols[0].length;
-		const rows: number[][] = [];
-		for (let r = 0; r < rowlen; r++) {
-			const v: number[] = [];
-			for (let c = 0; c < collen; c++) {
-				v.push(cols[c][r]);
-			}
-			rows.push(v);
-		}
-		return rows;
-	}
-
-	dim(): number {
-		return this.mx.length;
-	}
-
-	row(r: number): number[] {
-		return this.mx[r];
-	}
-	rows(): number[][] {
-		return this.mx;
-	}
-	cols(): number[][] {
-		const m: number[][] = [];
-		for (let c = 0; c < this.dim(); c++) {
-			m.push(this.col[c]);
-		}
-		return m;
-	}
-	col(c: number): number[] {
-		const v: number[] = [];
-		for (let r = 0; r < this.dim(); r++) {
-			v.push(this.mx[r][c]);
-		}
-		return v;
-	}
-
-	toString(): string {
-		const d = this.dim();
-		return this.mx.slice(0, d).map(v => `(${v.slice(0, d).join(', ')})`).join(', ');
-	}
-	
-	mul(dist: _Matrix): _Matrix {
-		return _Matrix.FromRows(fn._mul(this, dist));
-	}
-	scalar(n: number): _Matrix {
-		return _Matrix.FromRows(fn._scalar(this, n));
-	}
-}
-
-export class _Matrix2 extends _Matrix {
-	static FromRows(rows: number[][]): _Matrix2 {
-		return new _Matrix2(rows);
-	}
-	static FromCols(cols: number[][]): _Matrix2 {
-		return new _Matrix2(_Matrix.Transpose(cols));
-	}
-
-	dim(): number {
-		return 2;
-	}
-
-	mul(dist: _Matrix2): _Matrix2 {
-		return _Matrix2.FromRows(fn._mul(this, dist));
-	}
-	scalar(n: number): _Matrix2 {
-		return _Matrix2.FromRows(fn._scalar(this, n));
-	}
-}
-
-export class _Matrix3 extends _Matrix {
-	static FromRows(rows: number[][]): _Matrix3 {
-		return new _Matrix3(rows);
-	}
-	static FromCols(cols: number[][]): _Matrix3 {
-		return new _Matrix3(_Matrix.Transpose(cols));
-	}
-
-	dim(): number {
-		return 3;
-	}
-
-	mul(dist: _Matrix3): _Matrix3 {
-		return _Matrix3.FromRows(fn._mul(this, dist));
-	}
-	scalar(n: number): _Matrix3 {
-		return _Matrix3.FromRows(fn._scalar(this, n));
-	}
-}
-
-export class _Matrix4 extends _Matrix {
-	static FromRows(rows: number[][]): _Matrix4 {
-		return new _Matrix4(rows);
-	}
-	static FromCols(cols: number[][]): _Matrix4 {
-		return new _Matrix4(_Matrix.Transpose(cols));
-	}
-
-	dim(): number {
-		return 4;
-	}
-
-	mul(dist: _Matrix4): _Matrix4 {
-		return _Matrix4.FromRows(fn._mul(this, dist));
-	}
-	scalar(n: number): _Matrix4 {
-		return _Matrix4.FromRows(fn._scalar(this, n));
-	}
-}
