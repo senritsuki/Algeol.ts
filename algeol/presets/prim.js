@@ -1,4 +1,3 @@
-"use strict";
 var al = require("../al");
 var ut = require("../util/util");
 var vc = require("../math/vector");
@@ -117,11 +116,11 @@ var fn;
         }
         dodecahedron.verts = verts;
         function faces() {
-            var xy = ut.seq(4, 0);
-            var yz = ut.seq(4, 4);
-            var zx = ut.seq(4, 8);
-            var ct = ut.seq(4, 12);
-            var cb = ut.seq(4, 16);
+            var xy = ut.arith(4, 0);
+            var yz = ut.arith(4, 4);
+            var zx = ut.arith(4, 8);
+            var ct = ut.arith(4, 12);
+            var cb = ut.arith(4, 16);
             return [
                 [xy[0], ct[0], zx[0], ct[3], xy[3]],
                 [xy[3], cb[3], zx[1], cb[0], xy[0]],
@@ -148,9 +147,9 @@ var fn;
         }
         icosahedron.verts = verts;
         function faces() {
-            var xy = ut.seq(4, 0);
-            var yz = ut.seq(4, 4);
-            var zx = ut.seq(4, 8);
+            var xy = ut.arith(4, 0);
+            var yz = ut.arith(4, 4);
+            var zx = ut.arith(4, 8);
             return [
                 [xy[0], zx[0], xy[3]],
                 [xy[3], zx[1], xy[0]],
@@ -179,7 +178,7 @@ var fn;
     var crystal;
     (function (crystal) {
         function verts(v, x, y, zt, zb) {
-            var verts_h = ut.seq(v, 0, ut.pi2 / v).map(function (rad) {
+            var verts_h = ut.arith(v, 0, ut.pi2 / v).map(function (rad) {
                 return vc.v3(x * ut.cos(rad), y * ut.sin(rad), 0);
             });
             var verts_v = [
@@ -192,8 +191,8 @@ var fn;
         function faces(v) {
             var t = v;
             var b = v + 1;
-            var faces_t = ut.seq(v).map(function (i) { return [i, (i + 1) % v, t]; });
-            var faces_b = ut.seq(v).map(function (i) { return [(i + 1) % v, i, b]; });
+            var faces_t = ut.arith(v).map(function (i) { return [i, (i + 1) % v, t]; });
+            var faces_b = ut.arith(v).map(function (i) { return [(i + 1) % v, i, b]; });
             return faces_t.concat(faces_b);
         }
         crystal.faces = faces;
@@ -212,10 +211,10 @@ var fn;
     var prism;
     (function (prism) {
         function verts(v, x, y, zt, zb) {
-            var verts_t = ut.seq(v, 0, ut.pi2 / v).map(function (rad) {
+            var verts_t = ut.arith(v, 0, ut.pi2 / v).map(function (rad) {
                 return vc.v3(x * ut.cos(rad), y * ut.sin(rad), zt);
             });
-            var verts_b = ut.seq(v, 0, ut.pi2 / v).map(function (rad) {
+            var verts_b = ut.arith(v, 0, ut.pi2 / v).map(function (rad) {
                 return vc.v3(x * ut.cos(rad), y * ut.sin(rad), zb);
             });
             var verts_v = [
@@ -228,9 +227,9 @@ var fn;
         function faces(v) {
             var t = 2 * v;
             var b = 2 * v + 1;
-            var faces_t = ut.seq(v).map(function (i) { return [i, (i + 1) % v, t]; });
-            var faces_b = ut.seq(v).map(function (i) { return [v + (i + 1) % v, v + i, b]; });
-            var faces_side = ut.seq(v).map(function (i) { return [i, (i + 1) % v, v + (i + 1) % v, v + i]; });
+            var faces_t = ut.arith(v).map(function (i) { return [i, (i + 1) % v, t]; });
+            var faces_b = ut.arith(v).map(function (i) { return [v + (i + 1) % v, v + i, b]; });
+            var faces_side = ut.arith(v).map(function (i) { return [i, (i + 1) % v, v + (i + 1) % v, v + i]; });
             return faces_t.concat(faces_b).concat(faces_side);
         }
         prism.faces = faces;

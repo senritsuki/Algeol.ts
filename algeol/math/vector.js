@@ -1,5 +1,4 @@
 // Vector ベクトル
-"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -86,7 +85,7 @@ var V2Impl = (function () {
     V2Impl.prototype.lenght2 = function () { return this.ip(this); };
     V2Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
     return V2Impl;
-}());
+})();
 var V3Impl = (function () {
     function V3Impl(x, y, z) {
         this._v = [x, y, z];
@@ -110,7 +109,7 @@ var V3Impl = (function () {
     V3Impl.prototype.lenght2 = function () { return this.ip(this); };
     V3Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
     return V3Impl;
-}());
+})();
 var V4Impl = (function () {
     function V4Impl(x, y, z, w) {
         this._v = [x, y, z, w];
@@ -134,7 +133,7 @@ var V4Impl = (function () {
     V4Impl.prototype.lenght2 = function () { return this.ip(this); };
     V4Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
     return V4Impl;
-}());
+})();
 /** (x成分, y成分) -> 2次元ベクトルオブジェクト */
 function v2(x, y) { return new V2Impl(x, y); }
 exports.v2 = v2;
@@ -212,7 +211,7 @@ var _Vector = (function () {
         return ut.sqrt(this.length2());
     };
     return _Vector;
-}());
+})();
 exports._Vector = _Vector;
 var _Vector2 = (function (_super) {
     __extends(_Vector2, _super);
@@ -256,7 +255,7 @@ var _Vector2 = (function (_super) {
         return fn.cp2(this.v, dist.v);
     };
     return _Vector2;
-}(_Vector));
+})(_Vector);
 exports._Vector2 = _Vector2;
 var _Vector3 = (function (_super) {
     __extends(_Vector3, _super);
@@ -303,7 +302,7 @@ var _Vector3 = (function (_super) {
         return _Vector3.FromArray(fn.cp3(this.v, dist.v));
     };
     return _Vector3;
-}(_Vector));
+})(_Vector);
 exports._Vector3 = _Vector3;
 var _Vector4 = (function (_super) {
     __extends(_Vector4, _super);
@@ -349,6 +348,6 @@ var _Vector4 = (function (_super) {
         return this.scalar(1 / this.length());
     };
     return _Vector4;
-}(_Vector));
+})(_Vector);
 exports._Vector4 = _Vector4;
 //# sourceMappingURL=vector.js.map

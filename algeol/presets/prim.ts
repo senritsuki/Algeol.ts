@@ -106,11 +106,11 @@ export namespace fn {
 			return fn.trirect.verts(s, l).concat(fn.cube.verts(c, c, c));
 		}
 		export function faces(): number[][] {
-			const xy = ut.seq(4, 0);
-			const yz = ut.seq(4, 4);
-			const zx = ut.seq(4, 8);
-			const ct = ut.seq(4, 12);
-			const cb = ut.seq(4, 16);
+			const xy = ut.arith(4, 0);
+			const yz = ut.arith(4, 4);
+			const zx = ut.arith(4, 8);
+			const ct = ut.arith(4, 12);
+			const cb = ut.arith(4, 16);
 			return [
 				[xy[0], ct[0], zx[0], ct[3], xy[3]], // 上 右
 				[xy[3], cb[3], zx[1], cb[0], xy[0]], // 下 右
@@ -134,9 +134,9 @@ export namespace fn {
 			return fn.trirect.verts(s, l);
 		}
 		export function faces(): number[][] {
-			const xy = ut.seq(4, 0);
-			const yz = ut.seq(4, 4);
-			const zx = ut.seq(4, 8);
+			const xy = ut.arith(4, 0);
+			const yz = ut.arith(4, 4);
+			const zx = ut.arith(4, 8);
 			return [
 				[xy[0], zx[0], xy[3]], // 上 右
 				[xy[3], zx[1], xy[0]], // 下 右
@@ -163,7 +163,7 @@ export namespace fn {
 	}
 	export namespace crystal {
 		export function verts(v: number, x: number, y: number, zt: number, zb: number): vc.V3[] {
-			const verts_h = ut.seq(v, 0, ut.pi2 / v).map(rad =>
+			const verts_h = ut.arith(v, 0, ut.pi2 / v).map(rad =>
 				vc.v3(x * ut.cos(rad), y * ut.sin(rad), 0));
 			const verts_v = [
 				vc.v3(0, 0, zt), // 上
@@ -174,8 +174,8 @@ export namespace fn {
 		export function faces(v: number): number[][] {
 			const t = v;
 			const b = v + 1;
-			const faces_t = ut.seq(v).map(i => [i, (i + 1) % v, t]);
-			const faces_b = ut.seq(v).map(i => [(i + 1) % v, i, b]);
+			const faces_t = ut.arith(v).map(i => [i, (i + 1) % v, t]);
+			const faces_b = ut.arith(v).map(i => [(i + 1) % v, i, b]);
 			return faces_t.concat(faces_b);
 		}
 	}
@@ -189,9 +189,9 @@ export namespace fn {
 	}
 	export namespace prism {
 		export function verts(v: number, x: number, y: number, zt: number, zb: number): vc.V3[] {
-			const verts_t = ut.seq(v, 0, ut.pi2 / v).map(rad =>
+			const verts_t = ut.arith(v, 0, ut.pi2 / v).map(rad =>
 				vc.v3(x * ut.cos(rad), y * ut.sin(rad), zt));
-			const verts_b = ut.seq(v, 0, ut.pi2 / v).map(rad =>
+			const verts_b = ut.arith(v, 0, ut.pi2 / v).map(rad =>
 				vc.v3(x * ut.cos(rad), y * ut.sin(rad), zb));
 			const verts_v = [
 				vc.v3(0, 0, zt), // 上
@@ -202,9 +202,9 @@ export namespace fn {
 		export function faces(v: number): number[][] {
 			const t = 2 * v;
 			const b = 2 * v + 1;
-			const faces_t = ut.seq(v).map(i => [i, (i + 1) % v, t]);
-			const faces_b = ut.seq(v).map(i => [v + (i + 1) % v, v + i, b]);
-			const faces_side = ut.seq(v).map(i => [i, (i + 1) % v, v + (i + 1) % v, v + i]);
+			const faces_t = ut.arith(v).map(i => [i, (i + 1) % v, t]);
+			const faces_b = ut.arith(v).map(i => [v + (i + 1) % v, v + i, b]);
+			const faces_side = ut.arith(v).map(i => [i, (i + 1) % v, v + (i + 1) % v, v + i]);
 			return faces_t.concat(faces_b).concat(faces_side);
 		}
 	}

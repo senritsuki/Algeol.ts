@@ -1,6 +1,7 @@
 ﻿
 import * as vc from "./math/vector";
 import * as mx from "./math/matrix";
+import * as li from "./seqlim";
 
 
 export interface Basis3 {
@@ -104,17 +105,33 @@ class ObjImpl implements Obj {
 		public _verts: vc.V3[],
 		public _geo: (name: string, verts: vc.V3[]) => Geo) { }
 
-	_apply(m: mx.M4): void { this._verts = this._verts.map(v => vc.v4_v3(m.map(vc.v3_v4(v, 1)))); }
-	duplicateOne(m: mx.M4): Obj { const o = this.clone(); o._apply(m); return o; }
-	duplicateList(ms: mx.M4[]): Obj[] { return ms.map(m => this.duplicateOne(m)); }
-	clone(): Obj { return new ObjImpl(this._name, this._verts, this._geo); }
-	geo(): Geo { return this._geo(this._name, this._verts); }
+	_apply(m: mx.M4): void {
+		this._verts = this._verts.map(v => vc.v4_v3(m.map(vc.v3_v4(v, 1))));
+	}
+	duplicateOne(m: mx.M4): Obj {
+		const o = this.clone(); o._apply(m); return o;
+	}
+	duplicateList(ms: mx.M4[]): Obj[] {
+		return ms.map(m => this.duplicateOne(m));
+	}
+	clone(): Obj {
+		return new ObjImpl(this._name, this._verts, this._geo);
+	}
+	geo(): Geo {
+		return this._geo(this._name, this._verts);
+	}
 }
 
 export function obj(name: string, verts: vc.V3[], geo: (name: string, verts: vc.V3[]) => Geo): Obj {
 	return new ObjImpl(name, verts, geo);
 }
 
+
+export interface LimObj {
+	obj(): Obj;
+	lims(): li.SeqLim[];
+	geo(): Geo[];
+}
 
 /** Geometry - ジオメトリ */
 export interface Geo {

@@ -1,4 +1,3 @@
-"use strict";
 var vc = require("./math/vector");
 var mx = require("./math/matrix");
 var Basis3Impl = (function () {
@@ -13,7 +12,7 @@ var Basis3Impl = (function () {
     Basis3Impl.prototype.z = function () { return this._z; };
     Basis3Impl.prototype.m4 = function () { return mx.m3_m4(mx.v3cols_m3(this.array())); };
     return Basis3Impl;
-}());
+})();
 var Basis3Default = (function () {
     function Basis3Default() {
     }
@@ -23,7 +22,7 @@ var Basis3Default = (function () {
     Basis3Default.prototype.z = function () { return vc.unitZ_v3; };
     Basis3Default.prototype.m4 = function () { return mx.unit_m4; };
     return Basis3Default;
-}());
+})();
 function basis3(x, y, z) {
     return new Basis3Impl(x, y, z);
 }
@@ -43,7 +42,7 @@ var SpaceImpl = (function () {
     SpaceImpl.prototype.d = function () { return this._d; };
     SpaceImpl.prototype.m4 = function () { return mx.trans_v3_m4(this._c).mul(this._d.m4()); };
     return SpaceImpl;
-}());
+})();
 var SpaceDefault = (function () {
     function SpaceDefault() {
     }
@@ -55,7 +54,7 @@ var SpaceDefault = (function () {
     SpaceDefault._d = exports.default_basis3;
     SpaceDefault._array = [vc.zero_v3].concat(exports.default_basis3.array());
     return SpaceDefault;
-}());
+})();
 function space(c, d) {
     return new SpaceImpl(c, d);
 }
@@ -71,16 +70,26 @@ var ObjImpl = (function () {
         this._verts = _verts;
         this._geo = _geo;
     }
-    ObjImpl.prototype._apply = function (m) { this._verts = this._verts.map(function (v) { return vc.v4_v3(m.map(vc.v3_v4(v, 1))); }); };
-    ObjImpl.prototype.duplicateOne = function (m) { var o = this.clone(); o._apply(m); return o; };
+    ObjImpl.prototype._apply = function (m) {
+        this._verts = this._verts.map(function (v) { return vc.v4_v3(m.map(vc.v3_v4(v, 1))); });
+    };
+    ObjImpl.prototype.duplicateOne = function (m) {
+        var o = this.clone();
+        o._apply(m);
+        return o;
+    };
     ObjImpl.prototype.duplicateList = function (ms) {
         var _this = this;
         return ms.map(function (m) { return _this.duplicateOne(m); });
     };
-    ObjImpl.prototype.clone = function () { return new ObjImpl(this._name, this._verts, this._geo); };
-    ObjImpl.prototype.geo = function () { return this._geo(this._name, this._verts); };
+    ObjImpl.prototype.clone = function () {
+        return new ObjImpl(this._name, this._verts, this._geo);
+    };
+    ObjImpl.prototype.geo = function () {
+        return this._geo(this._name, this._verts);
+    };
     return ObjImpl;
-}());
+})();
 function obj(name, verts, geo) {
     return new ObjImpl(name, verts, geo);
 }
@@ -95,7 +104,7 @@ var GeoImpl = (function () {
     GeoImpl.prototype.verts = function () { return this._verts; };
     GeoImpl.prototype.faces = function () { return this._faces; };
     return GeoImpl;
-}());
+})();
 function geo(name, verts, faces) {
     return new GeoImpl(name, verts, faces);
 }

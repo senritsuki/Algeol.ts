@@ -30,11 +30,44 @@ export function deg_rad(deg: number): number { return pi2 * deg / 360; }
 /** (角度:弧度法) -> 角度:度数法 */
 export function rad_deg(rad: number): number { return 360 * rad / pi2; }
 
+
 /** Arithmetic Sequence - 等差数列 */
-export function seq(count: number, start: number = 0, step: number = 1): number[] {
+export function arith(count: number, start: number = 0, step: number = 1): number[] {
 	const seq: number[] = new Array(count);
-	for (let i = 0, n = start; i < count; i++, n += step) {
+	for (let i = 0, n = start; i < count; i++ , n += step) {
 		seq[i] = n;
 	}
 	return seq;
 }
+
+export interface Seq {
+	seq(): number[];
+	toJSON(): {};
+	toString(): string;
+}
+class ArithmeticSequence implements Seq {
+	constructor(
+		public _count: number,
+		public _start: number,
+		public _step: number) { }
+
+	seq(): number[] {
+		return arith(this._count, this._start, this._step);
+	}
+	toJSON(): {} {
+		return {
+			"object": "ArithmeticSequence",
+			"count": this._count,
+			"start": this._start,
+			"step": this._step,
+		};
+	}
+	toString(): string {
+		return JSON.stringify(this.toJSON());
+	}
+}
+
+export function arithObj(count: number, start: number = 0, step: number = 1): Seq {
+	return new ArithmeticSequence(count, start, step);
+}
+

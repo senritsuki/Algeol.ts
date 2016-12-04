@@ -1,5 +1,4 @@
 // Square Matrix 正方行列
-"use strict";
 var ut = require("../util/util");
 var vc = require("./vector");
 var fn;
@@ -88,7 +87,7 @@ var M2Impl = (function () {
     M2Impl.prototype.map = function (v) { return vc.ar_v2(fn.map(this._ref(), v._ref())); };
     M2Impl.Dim = 2;
     return M2Impl;
-}());
+})();
 var M3Impl = (function () {
     function M3Impl(rows) {
         this._rows = fn.clone(rows, M3Impl.Dim, M3Impl.Dim);
@@ -102,7 +101,7 @@ var M3Impl = (function () {
     M3Impl.prototype.map = function (v) { return vc.ar_v3(fn.map(this._ref(), v._ref())); };
     M3Impl.Dim = 3;
     return M3Impl;
-}());
+})();
 var M4Impl = (function () {
     function M4Impl(rows) {
         this._rows = fn.clone(rows, M4Impl.Dim, M4Impl.Dim);
@@ -116,7 +115,7 @@ var M4Impl = (function () {
     M4Impl.prototype.map = function (v) { return vc.ar_v4(fn.map(this._ref(), v._ref())); };
     M4Impl.Dim = 4;
     return M4Impl;
-}());
+})();
 /** ([列番号][行番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
 function cols_m2(cols) { return M2Impl.FromCols(cols); }
 exports.cols_m2 = cols_m2;
