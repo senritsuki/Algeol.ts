@@ -1,4 +1,3 @@
-"use strict";
 var fs = require('fs');
 var al = require("../../algeol/al");
 var vc = require("../../algeol/math/vector");

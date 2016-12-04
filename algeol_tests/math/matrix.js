@@ -1,4 +1,3 @@
-"use strict";
 var vc = require("../../algeol/math/vector");
 var mx = require("../../algeol/math/matrix");
 var dummy_vc = vc.fn;
