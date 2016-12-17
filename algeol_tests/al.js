@@ -1,13 +1,42 @@
 var fs = require('fs');
 var al = require("../algeol/al");
+var li = require("../algeol/seqlim");
+var ut = require("../algeol/math/util");
 var vc = require("../algeol/math/vector");
+var mx = require("../algeol/math/matrix");
+var wo = require("../algeol/presets/format_wavefrontobj");
+var prim = require("../algeol/presets/prim_old");
 var deg1 = Math.PI / 180;
 var deg90 = Math.PI / 2;
-function test() {
+var exportGeo = function (geo, name) {
+    fs.writeFile("al_out/" + name + ".obj", wo.geo_str(geo));
+};
+var exportGeos = function (geos, name) {
+    //fs.writeFile(`al_out/${name}.obj`, wo.geogroup_str(al.geoGroup(name, geos)));
+};
+function testLimObj() {
     {
-        var geo = al.geo('empty', [], []);
-        var geoText = al.geo_wavefrontObj(geo).join('\n');
-        fs.writeFile("out/" + geo.name() + ".obj", geoText);
+        var limobj = al.limobj(prim.octahedron(), []);
+        exportGeos(limobj.geo(), 'empty');
+    }
+    {
+        var limobj1 = al.limobj(prim.octahedron(), [
+            li.lim(mx.scale_m4(0.5, 0.5, 1)),
+            li.lim(mx.trans_m4(5, 0, 1)),
+            li.seqlim(ut._arithobj(8, 0, ut.pi2 / 8), function (i) { return mx.rotZ_m4(i); }),
+        ]);
+        var limobj2 = al.limobj(prim.cube(), [
+            li.lim(mx.scale_m4(0.5, 0.5, 0.5)),
+            li.lim(mx.trans_m4(5, 0, 0.5)),
+            li.seqlim(ut._arithobj(8, ut.pi2 / 16, ut.pi2 / 8), function (i) { return mx.rotZ_m4(i); }),
+        ]);
+        exportGeos(limobj1.geo().concat(limobj2.geo()), 'seqlim');
+    }
+}
+function testGeo() {
+    {
+        var geo = al.geo([], []);
+        exportGeo(geo, 'empty');
     }
     {
         var verts = [
@@ -18,9 +47,8 @@ function test() {
         var faces = [
             [0, 1, 2],
         ];
-        var geo = al.geo('triangle', verts, faces);
-        var geoText = al.geo_wavefrontObj(geo).join('\n');
-        fs.writeFile("out/" + geo.name() + ".obj", geoText);
+        var geo = al.geo(verts, faces);
+        exportGeo(geo, 'triangle');
     }
     {
         var verts = [
@@ -35,9 +63,8 @@ function test() {
             [2, 0, 3],
             [2, 1, 0],
         ];
-        var geo = al.geo('triangle4', verts, faces);
-        var geoText = al.geo_wavefrontObj(geo).join('\n');
-        fs.writeFile("out/" + geo.name() + ".obj", geoText);
+        var geo = al.geo(verts, faces);
+        exportGeo(geo, 'triangle4');
     }
     // 螺旋階段
     /**
@@ -46,5 +73,6 @@ function test() {
         (i, d) => );
      */
 }
-test();
+//testGeo();
+testLimObj();
 //# sourceMappingURL=al.js.map

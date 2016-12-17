@@ -1,7 +1,8 @@
-﻿// Vector ベクトル
+﻿/** Vector - ベクトル */
 
-import * as ut from "../util/util";
+import * as ut from "../math/util";
 
+/** ベクトル演算 */
 export namespace fn {
 	export function op(a: number[], dim: number, fn: (n1: number) => number): number[] {
 		const v: number[] = [];
@@ -55,102 +56,108 @@ export namespace fn {
 
 /** 2D Vector - 2次元ベクトル */
 export interface V2 {
-	/** ベクトルを表す配列. 生の参照を返すため破壊的変更が可能 */
+	/** 取得: x,yからなる長さ2の配列. 生の参照を返すため破壊的変更が可能 */
 	_ref(): number[];
-	/** ベクトルを表す配列. 複製を返す */
+	/** 取得: x,yからなる長さ2の配列. 複製を返す */
 	array(): number[];
-	/** x値. array()[0]と同値 */
+	/** 取得: x値. array()[0]と同値 */
 	x(): number;
-	/** y値. array()[1]と同値 */
+	/** 取得: y値. array()[1]と同値 */
 	y(): number;
-	/** 複製 */
+	/** 取得: 複製 */
 	clone(): V2;
-	/** 加算 */
-	add(dist: V2): V2;
-	/** 減算 */
-	sub(dist: V2): V2;
-	/** 要素同士の積 */
-	hadamart(dist: V2): V2;
-	/** スカラー倍 */
-	scalar(n: number): V2;
-	/** 内積 */
-	ip(dist: V2): number;
-	/** 外積 */
-	cp(dist: V2): number;
-	/** 単位ベクトル化 - clone() / length() と同値 */
+
+	/** 単項演算: 単位ベクトル化. clone() / length() と同値 */
 	unit(): V2;
-	/** ベクトルの長さの2乗 */
+	/** 単項演算: ベクトルの長さの2乗 */
 	lenght2(): number;
-	/** ベクトルの長さ */
+	/** 単項演算: ベクトルの長さ */
 	length(): number;
+
+	/** 二項演算: 加算 */
+	add(dist: V2): V2;
+	/** 二項演算: 減算 */
+	sub(dist: V2): V2;
+	/** 二項演算: 要素同士の積 */
+	hadamart(dist: V2): V2;
+	/** 二項演算: スカラー倍 */
+	scalar(n: number): V2;
+	/** 二項演算: 内積 */
+	ip(dist: V2): number;
+	/** 二項演算: 外積 */
+	cp(dist: V2): number;
 }
 
 /** 3D Vector - 3次元ベクトル */
 export interface V3 {
-	/** ベクトルを表す配列. 生の参照を返すため破壊的変更が可能 */
+	/** 取得: x,y,zからなる長さ3の配列. 生の参照を返すため破壊的変更が可能 */
 	_ref(): number[];
-	/** ベクトルを表す配列. 複製を返す */
+	/** 取得: x,y,zからなる長さ3の配列. 複製を返す */
 	array(): number[];
-	/** x値. array()[0]と同値 */
+	/** 取得: x値. array()[0]と同値 */
 	x(): number;
-	/** y値. array()[1]と同値 */
+	/** 取得: y値. array()[1]と同値 */
 	y(): number;
-	/** z値. array()[2]と同値 */
+	/** 取得: z値. array()[2]と同値 */
 	z(): number;
-	/** 複製 */
+	/** 取得: 複製 */
 	clone(): V3;
-	/** 加算 */
-	add(dist: V3): V3;
-	/** 減算 */
-	sub(dist: V3): V3;
-	/** 要素同士の積 */
-	hadamart(dist: V3): V3;
-	/** スカラー倍 */
-	scalar(n: number): V3;
-	/** 内積 */
-	ip(dist: V3): number;
-	/** 外積 */
-	cp(dist: V3): V3;
-	/** 単位ベクトル化 - clone() / length() と同値 */
+
+	/** 単項演算: 単位ベクトル化. clone() / length() と同値 */
 	unit(): V3;
-	/** ベクトルの長さの2乗 */
+	/** 単項演算: ベクトルの長さの2乗 */
 	lenght2(): number;
-	/** ベクトルの長さ */
+	/** 単項演算: ベクトルの長さ */
 	length(): number;
+
+	/** 二項演算: 加算 */
+	add(dist: V3): V3;
+	/** 二項演算: 減算 */
+	sub(dist: V3): V3;
+	/** 二項演算: 要素同士の積 */
+	hadamart(dist: V3): V3;
+	/** 二項演算: スカラー倍 */
+	scalar(n: number): V3;
+	/** 二項演算: 内積 */
+	ip(dist: V3): number;
+	/** 二項演算: 外積 */
+	cp(dist: V3): V3;
 }
 
 /** 4D Vector - 4次元ベクトル */
 export interface V4 {
-	/** ベクトルを表す配列. 生の参照を返すため破壊的変更が可能 */
+	/** 取得: x,y,z,wからなる長さ4の配列. 生の参照を返すため破壊的変更が可能 */
 	_ref(): number[];
-	/** ベクトルを表す配列. 複製を返す */
+	/** 取得: x,y,z,wからなる長さ4の配列. 複製を返す */
 	array(): number[];
-	/** x値. array()[0]と同値 */
+	/** 取得: x値. array()[0]と同値 */
 	x(): number;
-	/** y値. array()[1]と同値 */
+	/** 取得: y値. array()[1]と同値 */
 	y(): number;
-	/** z値. array()[2]と同値 */
+	/** 取得: z値. array()[2]と同値 */
 	z(): number;
-	/** w値. array()[3]と同値 */
+	/** 取得: w値. array()[3]と同値 */
 	w(): number;
-	/** 複製 */
+	/** 取得: 複製 */
 	clone(): V4;
-	/** 加算 */
-	add(dist: V4): V4;
-	/** 減算 */
-	sub(dist: V4): V4;
-	/** 要素同士の積 */
-	hadamart(dist: V4): V4;
-	/** スカラー倍 */
-	scalar(n: number): V4;
-	/** 内積 */
-	ip(dist: V4): number;
-	/** 単位ベクトル化 - clone() / length() と同値 */
-	unit(): V4;
-	/** ベクトルの長さの2乗 */
+
+	/** 単項演算: ベクトルの長さの2乗 */
 	lenght2(): number;
-	/** ベクトルの長さ */
+	/** 単項演算: ベクトルの長さ */
 	length(): number;
+	/** 単項演算: 単位ベクトル化. clone() / length() と同値 */
+	unit(): V4;
+
+	/** 二項演算: 加算 */
+	add(dist: V4): V4;
+	/** 二項演算: 減算 */
+	sub(dist: V4): V4;
+	/** 二項演算: 要素同士の積 */
+	hadamart(dist: V4): V4;
+	/** 二項演算: スカラー倍 */
+	scalar(n: number): V4;
+	/** 二項演算: 内積 */
+	ip(dist: V4): number;
 }
 
 
@@ -167,20 +174,28 @@ class V2Impl implements V2 {
 		return new V2Impl(v[0], v[1]);
 	}
 
+	// 取得
+
 	_ref(): number[] { return this._v; }
 	array(): number[] { return this._v.slice(0); }
 	x(): number { return this._v[0]; }
 	y(): number { return this._v[1]; }
 	clone(): V2 { return new V2Impl(this.x(), this.y()); }
+
+	// 単項演算
+
+	unit(): V2 { return this.scalar(1 / this.length()); }
+	lenght2(): number { return this.ip(this); }
+	length(): number { return ut.sqrt(this.lenght2()); }
+
+	// 二項演算
+
 	add(dist: V2): V2 { return V2Impl.FromArray(fn.add(this._ref(), dist._ref())); }
 	sub(dist: V2): V2 { return V2Impl.FromArray(fn.sub(this._ref(), dist._ref())); }
 	hadamart(dist: V2): V2 { return V2Impl.FromArray(fn.hadamart(this._ref(), dist._ref())); }
 	scalar(n: number): V2 { return V2Impl.FromArray(fn.scalar(this._ref(), n)); }
 	ip(dist: V2): number { return fn.ip(this.array(), dist._ref()); }
 	cp(dist: V2): number { return fn.cp2(this._ref(), dist._ref()); }
-	unit(): V2 { return this.scalar(1 / this.length()); }
-	lenght2(): number { return this.ip(this); }
-	length(): number { return ut.sqrt(this.lenght2()); }
 }
 
 class V3Impl implements V3 {
@@ -197,21 +212,29 @@ class V3Impl implements V3 {
 		return new V3Impl(v[0], v[1], v[2]);
 	}
 
+	// 単項演算
+
+	lenght2(): number { return this.ip(this); }
+	length(): number { return ut.sqrt(this.lenght2()); }
+	unit(): V3 { return this.scalar(1 / this.length()); }
+
+	// 取得
+
 	_ref(): number[] { return this._v; }
 	array(): number[] { return this._v.slice(0); }
 	x(): number { return this._v[0]; }
 	y(): number { return this._v[1]; }
 	z(): number { return this._v[2]; }
 	clone(): V3 { return new V3Impl(this.x(), this.y(), this.z()); }
+
+	// 二項演算
+
 	add(dist: V3): V3 { return V3Impl.FromArray(fn.add(this._ref(), dist._ref())); }
 	sub(dist: V3): V3 { return V3Impl.FromArray(fn.sub(this._ref(), dist._ref())); }
 	hadamart(dist: V3): V3 { return V3Impl.FromArray(fn.hadamart(this._ref(), dist._ref())); }
 	scalar(n: number): V3 { return V3Impl.FromArray(fn.scalar(this._ref(), n)); }
 	ip(dist: V3): number { return fn.ip(this.array(), dist._ref()); }
 	cp(dist: V3): V3 { return V3Impl.FromArray(fn.cp3(this._ref(), dist._ref())); }
-	unit(): V3 { return this.scalar(1 / this.length()); }
-	lenght2(): number { return this.ip(this); }
-	length(): number { return ut.sqrt(this.lenght2()); }
 }
 
 class V4Impl implements V4 {
@@ -229,6 +252,8 @@ class V4Impl implements V4 {
 		return new V4Impl(v[0], v[1], v[2], v[3]);
 	}
 
+	// 取得
+
 	_ref(): number[] { return this._v; }
 	array(): number[] { return this._v.slice(0); }
 	x(): number { return this._v[0]; }
@@ -236,48 +261,94 @@ class V4Impl implements V4 {
 	z(): number { return this._v[2]; }
 	w(): number { return this._v[3]; }
 	clone(): V4 { return new V4Impl(this.x(), this.y(), this.z(), this.w()); }
+
+	// 単項演算
+
+	unit(): V4 { return this.scalar(1 / this.length()); }
+	lenght2(): number { return this.ip(this); }
+	length(): number { return ut.sqrt(this.lenght2()); }
+
+	// 二項演算
+
 	add(dist: V4): V4 { return V4Impl.FromArray(fn.add(this._ref(), dist._ref())); }
 	sub(dist: V4): V4 { return V4Impl.FromArray(fn.sub(this._ref(), dist._ref())); }
 	hadamart(dist: V4): V4 { return V4Impl.FromArray(fn.hadamart(this._ref(), dist._ref())); }
 	scalar(n: number): V4 { return V4Impl.FromArray(fn.scalar(this._ref(), n)); }
 	ip(dist: V4): number { return fn.ip(this.array(), dist._ref()); }
-	unit(): V4 { return this.scalar(1 / this.length()); }
-	lenght2(): number { return this.ip(this); }
-	length(): number { return ut.sqrt(this.lenght2()); }
 }
 
+// 直交座標系による生成
 
-/** (x成分, y成分) -> 2次元ベクトルオブジェクト */
+/** (x成分, y成分) -> 2次元ベクトル */
 export function v2(x: number, y: number): V2 { return new V2Impl(x, y); }
-/** (xyz成分を含む配列) -> 2次元ベクトルオブジェクト */
+/** (xyz成分を含む配列) -> 2次元ベクトル */
 export function ar_v2(v: number[]): V2 { return V2Impl.FromArray(v); }
 
-/** (x成分, y成分, z成分) -> 3次元ベクトルオブジェクト */
+/** (x成分, y成分, z成分) -> 3次元ベクトル */
 export function v3(x: number, y: number, z: number): V3 { return new V3Impl(x, y, z); }
-/** (xyz成分を含む配列) -> 3次元ベクトルオブジェクト */
+/** (xyz成分を含む配列) -> 3次元ベクトル */
 export function ar_v3(v: number[]): V3 { return V3Impl.FromArray(v); }
 
-/** (x成分, y成分, z成分, w成分) -> 4次元ベクトルオブジェクト */
+/** (x成分, y成分, z成分, w成分) -> 4次元ベクトル */
 export function v4(x: number, y: number, z: number, w: number): V4 { return new V4Impl(x, y, z, w); }
-/** (xyzw成分を含む配列) -> 4次元ベクトルオブジェクト */
+/** (xyzw成分を含む配列) -> 4次元ベクトル */
 export function ar_v4(v: number[]): V4 { return V4Impl.FromArray(v); }
 
+// 極座標系による生成
 
-/** (2次元ベクトルオブジェクト, z成分) -> 3次元ベクトルオブジェクト */
+/** (極形式の長さ, 極形式の偏角(radian)) -> 2次元ベクトル
+	偏角は、0でx軸正方向、1/2PIでy軸正方向とする */
+export function polar_v2(r: number, rad: number): V2 {
+	const x = r * ut.cos(rad);
+	const y = r * ut.sin(rad);
+	return new V2Impl(x, y);
+}
+/** (極形式の長さ, 極形式の偏角(radian), z成分) -> 3次元ベクトル
+	偏角は、0でx軸正方向、1/2PIでy軸正方向とする */
+export function polar_v3(r: number, rad: number, z: number): V3 {
+	const x = r * ut.cos(rad);
+	const y = r * ut.sin(rad);
+	return new V3Impl(x, y, z);
+}
+/** (極形式の長さ, 極形式の水平偏角(radian), 極形式の垂直偏角(radian)) -> 3次元ベクトル
+	水平偏角は、0でx軸正方向、1/2PIでy軸正方向とする
+	垂直偏角は、0でz軸と直交、1/2PIでz軸正方向、-1/2PIでz軸負方向とする */
+export function sphere_v3(r: number, radH: number, radV: number): V3 {
+	const rh = r * ut.cos(radV);
+	const z = r * ut.sin(radV);
+	const x = rh * ut.cos(radH);
+	const y = rh * ut.sin(radH);
+	return new V3Impl(x, y, z);
+}
+
+// 変換
+
+/** (2次元ベクトル, z成分) -> 3次元ベクトル */
 export function v2_v3(v2: V2, z: number): V3 { return V3Impl.FromArray(v2._ref().concat(z)); }
-/** (3次元ベクトルオブジェクト) -> 2次元ベクトルオブジェクト */
+/** (3次元ベクトル) -> 2次元ベクトル */
 export function v3_v2(v3: V3): V2 { return V2Impl.FromArray(v3._ref()); }
 
-/** (3次元ベクトルオブジェクト, w成分) -> 4次元ベクトルオブジェクト */
+/** (3次元ベクトル, w成分) -> 4次元ベクトル */
 export function v3_v4(v3: V3, w: number): V4 { return V4Impl.FromArray(v3._ref().concat(w)); }
-/** (4次元ベクトルオブジェクト) -> 3次元ベクトルオブジェクト */
+/** (4次元ベクトル) -> 3次元ベクトル */
 export function v4_v3(v4: V4): V3 { return V3Impl.FromArray(v4._ref()); }
 
+// 定数
+
+/** 2次元ゼロベクトル */
+export const zero_v2 = v2(0, 0);
+/** 3次元ゼロベクトル */
 export const zero_v3 = v3(0, 0, 0);
+/** x軸と平行な3次元単位ベクトル */
 export const unitX_v3 = v3(1, 0, 0);
+/** y軸と平行な3次元単位ベクトル */
 export const unitY_v3 = v3(0, 1, 0);
+/** z軸と平行な3次元単位ベクトル */
 export const unitZ_v3 = v3(0, 0, 1);
 
+
+
+// 削除予定
 
 /** Vector ベクトル */
 export class _Vector {

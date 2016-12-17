@@ -1,6 +1,6 @@
 ﻿// Square Matrix 正方行列
 
-import * as ut from "../util/util";
+import * as ut from "../math/util";
 import * as vc from "./vector";
 
 export namespace fn {
@@ -87,7 +87,7 @@ export interface M2 {
 	mul(dist: M2): M2;
 	/** Linear Mapping - 線形写像
 		(右辺ベクトル) -> 自身の行列*右辺ベクトルの演算結果を表すベクトル */
-	map(v: vc.V2): vc.V2;
+	map_v2(v: vc.V2): vc.V2;
 }
 
 /** Square Matrix of order 3 - 3次元正方行列 */
@@ -106,7 +106,7 @@ export interface M3 {
 	mul(dist: M3): M3;
 	/** Linear Mapping - 線形写像
 		(右辺ベクトル) -> 自身の行列*右辺ベクトルの演算結果を表すベクトル */
-	map(v: vc.V3): vc.V3;
+	map_v3(v: vc.V3): vc.V3;
 }
 
 /** Square Matrix of order 4 - 4次元正方行列 */
@@ -124,8 +124,11 @@ export interface M4 {
 		(右辺行列) -> 自身の行列*右辺行列の乗算結果を表す行列 */
 	mul(dist: M4): M4;
 	/** Linear Mapping - 線形写像
+		(3次元ベクトル, 補完w成分) -> 変換後の3次元ベクトル */
+	map_v3(v: vc.V3, w: number): vc.V3;
+	/** Linear Mapping - 線形写像
 		(右辺ベクトル) -> 自身の行列*右辺ベクトルの演算結果を表すベクトル */
-	map(v: vc.V4): vc.V4;
+	map_v4(v: vc.V4): vc.V4;
 }
 
 
@@ -145,7 +148,7 @@ class M2Impl implements M2 {
 	array_rows(): number[][] { return fn.clone(this._rows, M2Impl.Dim, M2Impl.Dim); }
 	array_cols(): number[][] { return fn.transpose(this._rows); }
 	mul(dist: M2): M2 { return M2Impl.FromRows(fn.mul(this._ref(), dist._ref())); }
-	map(v: vc.V2): vc.V2 { return vc.ar_v2(fn.map(this._ref(), v._ref())); }
+	map_v2(v: vc.V2): vc.V2 { return vc.ar_v2(fn.map(this._ref(), v._ref())); }
 }
 
 class M3Impl implements M3 {
@@ -163,7 +166,7 @@ class M3Impl implements M3 {
 	array_rows(): number[][] { return fn.clone(this._rows, M3Impl.Dim, M3Impl.Dim); }
 	array_cols(): number[][] { return fn.transpose(this._rows); }
 	mul(dist: M3): M3 { return M3Impl.FromRows(fn.mul(this._ref(), dist._ref())); }
-	map(v: vc.V3): vc.V3 { return vc.ar_v3(fn.map(this._ref(), v._ref())); }
+	map_v3(v: vc.V3): vc.V3 { return vc.ar_v3(fn.map(this._ref(), v._ref())); }
 }
 
 class M4Impl implements M4 {
@@ -181,7 +184,8 @@ class M4Impl implements M4 {
 	array_rows(): number[][] { return fn.clone(this._rows, M4Impl.Dim, M4Impl.Dim); }
 	array_cols(): number[][] { return fn.transpose(this._rows); }
 	mul(dist: M4): M4 { return M4Impl.FromRows(fn.mul(this._ref(), dist._ref())); }
-	map(v: vc.V4): vc.V4 { return vc.ar_v4(fn.map(this._ref(), v._ref())); }
+	map_v3(v: vc.V3, w: number): vc.V3 { return vc.ar_v3(fn.map(this._ref(), v._ref().concat(w))); }
+	map_v4(v: vc.V4): vc.V4 { return vc.ar_v4(fn.map(this._ref(), v._ref())); }
 }
 
 
@@ -248,7 +252,7 @@ export function m4_m3(m4: M4): M3 {
 /** 3次元ベクトル配列に対するアフィン写像
 	(3次元ベクトル配列, 4次元正方行列, 4次元ベクトルのw成分) -> 変換後の3次元正方行列 */
 export function map_m4_v3(vl: vc.V3[], m4: M4, w: number = 1): vc.V3[] {
-	return vl.map(v => vc.v4_v3(m4.map(vc.v3_v4(v, w))));
+	return vl.map(v => vc.v4_v3(m4.map_v4(vc.v3_v4(v, w))));
 }
 
 /** 平行移動写像 */
@@ -266,73 +270,84 @@ export function trans_v3_m4(v3: vc.V3): M4 {
 }
 
 /** 拡大縮小写像 */
-export function scale_m4(x: number, y: number, z: number): M4 {
-	return M4Impl.FromRows([
-		[x, 0, 0, 0],
-		[0, y, 0, 0],
-		[0, 0, z, 0],
-		[0, 0, 0, 1],
+export function scale_m3(x: number, y: number, z: number): M3 {
+	return M3Impl.FromRows([
+		[x, 0, 0],
+		[0, y, 0],
+		[0, 0, z],
 	]);
 }
 /** 拡大縮小写像 */
-export function scale_v3_m4(v3: vc.V3): M4 {
-	return scale_m4(v3.x(), v3.y(), v3.z());
-}
+export function scale_m4(x: number, y: number, z: number): M4 { return m3_m4(scale_m3(x, y, z)); }
+/** 拡大縮小写像 */
+export function scale_v3_m3(v3: vc.V3): M3 { return scale_m3(v3.x(), v3.y(), v3.z()); }
+/** 拡大縮小写像 */
+export function scale_v3_m4(v3: vc.V3): M4 { return m3_m4(scale_v3_m3(v3)); }
 
 /** x軸回転写像 */
-export function rotX_m4(rad: number): M4 {
+export function rotX_m3(rad: number): M3 {
 	const c = ut.cos(rad);
 	const s = ut.sin(rad);
-	return M4Impl.FromRows([
-		[1, 0, 0, 0],
-		[0, c, -s, 0],
-		[0, s, c, 0],
-		[0, 0, 0, 1],
+	return M3Impl.FromRows([
+		[1, 0, 0],
+		[0, c, -s],
+		[0, s, c],
+	]);
+}
+/** x軸回転写像 */
+export function rotX_m4(rad: number): M4 { return m3_m4(rotX_m3(rad)); }
+
+/** y軸回転写像 */
+export function rotY_m3(rad: number): M3 {
+	const c = ut.cos(rad);
+	const s = ut.sin(rad);
+	return M3Impl.FromRows([
+		[c, 0, s],
+		[0, 1, 0],
+		[-s, 0, c],
 	]);
 }
 /** y軸回転写像 */
-export function rotY_m4(rad: number): M4 {
+export function rotY_m4(rad: number): M4 { return m3_m4(rotY_m3(rad)); }
+
+/** z軸回転写像 */
+export function rotZ_m3(rad: number): M3 {
 	const c = ut.cos(rad);
 	const s = ut.sin(rad);
-	return M4Impl.FromRows([
-		[c, 0, s, 0],
-		[0, 1, 0, 0],
-		[-s, 0, c, 0],
-		[0, 0, 0, 1],
+	return M3Impl.FromRows([
+		[c, -s, 0],
+		[s, c, 0],
+		[0, 0, 1],
 	]);
 }
 /** z軸回転写像 */
-export function rotZ_m4(rad: number): M4 {
-	const c = ut.cos(rad);
-	const s = ut.sin(rad);
-	return M4Impl.FromRows([
-		[c, -s, 0, 0],
-		[s, c, 0, 0],
-		[0, 0, 1, 0],
-		[0, 0, 0, 1],
-	]);
-}
+export function rotZ_m4(rad: number): M4 { return m3_m4(rotZ_m3(rad)); }
 
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rotYZ_x_m4(v3: vc.V3): M4 {
+export function rotYZ_x_m3(v3: vc.V3): M3 {
 	const x = v3.x();
 	const y = v3.y();
 	const z = v3.z();
 	const radY = -ut.atan2(z, ut.sqrt(x * x + y * y));
 	const radZ = ut.atan2(y, x);
-	const mxRotY = rotY_m4(radY);
-	const mxRotZ = rotZ_m4(radZ);
+	const mxRotY = rotY_m3(radY);
+	const mxRotZ = rotZ_m3(radZ);
 	return mxRotZ.mul(mxRotY);
 }
+/** x軸ベクトルをv3ベクトルと平行にする回転写像 */
+export function rotYZ_x_m4(v3: vc.V3): M4 { return m3_m4(rotYZ_x_m3(v3)); }
+
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rotYZ_z_m4(v3: vc.V3): M4 {
+export function rotYZ_z_m3(v3: vc.V3): M3 {
 	const x = v3.x();
 	const y = v3.y();
 	const z = v3.z();
 	const radY = ut.deg90 - ut.atan2(z, ut.sqrt(x * x + y * y));
 	const radZ = ut.atan2(y, x);
-	const mxRotY = rotY_m4(radY);
-	const mxRotZ = rotZ_m4(radZ);
+	const mxRotY = rotY_m3(radY);
+	const mxRotZ = rotZ_m3(radZ);
 	return mxRotZ.mul(mxRotY);
 }
+/** z軸ベクトルをv3ベクトルと平行にする回転写像 */
+export function rotYZ_z_m4(v3: vc.V3): M4 { return m3_m4(rotYZ_z_m3(v3)); }
 

@@ -1,6 +1,6 @@
-﻿// Sequence and Linear Map
+﻿// Sequence and Linear Mapping
 
-import * as ut from "./util/util";
+import * as ut from "./math/util";
 import * as mx from "./math/matrix";
 
 export interface SeqLim {
@@ -48,5 +48,8 @@ function mul(s1: SeqLim, s2: SeqLim): SeqLim {
 	return lims(m);
 }
 export function merge(seqlims: SeqLim[]): SeqLim {
-	return seqlims.reduce((a, b) => mul(a, b));
+	if (seqlims.length == 0) {
+		return lims([]);
+	}
+	return seqlims.reduce((a, b) => mul(b, a));
 }

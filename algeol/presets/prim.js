@@ -1,16 +1,18 @@
+"use strict";
 var al = require("../al");
 var ut = require("../util/util");
 var vc = require("../math/vector");
-var mx = require("../math/matrix");
+/** プリミティブオブジェクト生成用関数群 */
 var fn;
 (function (fn) {
     var deg120_c = ut.cos(120 * ut.pi / 180);
     var deg120_s = ut.sin(120 * ut.pi / 180);
     var deg240_c = ut.cos(240 * ut.pi / 180);
     var deg240_s = ut.sin(240 * ut.pi / 180);
-    var tetrahedron_rad = ut.acos(-1 / 3); // 半径:高さ = 3:4
+    var tetrahedron_rad = ut.acos(-1 / 3); // 正4面体の半径:高さ = 3:4
     var tetrahedron_c = ut.cos(tetrahedron_rad);
     var tetrahedron_s = ut.sin(tetrahedron_rad);
+    // +zを上、+xを右、+yを奥、と考える
     var tetrahedron;
     (function (tetrahedron) {
         function verts(x, y, z) {
@@ -116,11 +118,11 @@ var fn;
         }
         dodecahedron.verts = verts;
         function faces() {
-            var xy = ut.arith(4, 0);
-            var yz = ut.arith(4, 4);
-            var zx = ut.arith(4, 8);
-            var ct = ut.arith(4, 12);
-            var cb = ut.arith(4, 16);
+            var xy = ut._arith(4, 0);
+            var yz = ut._arith(4, 4);
+            var zx = ut._arith(4, 8);
+            var ct = ut._arith(4, 12);
+            var cb = ut._arith(4, 16);
             return [
                 [xy[0], ct[0], zx[0], ct[3], xy[3]],
                 [xy[3], cb[3], zx[1], cb[0], xy[0]],
@@ -147,9 +149,9 @@ var fn;
         }
         icosahedron.verts = verts;
         function faces() {
-            var xy = ut.arith(4, 0);
-            var yz = ut.arith(4, 4);
-            var zx = ut.arith(4, 8);
+            var xy = ut._arith(4, 0);
+            var yz = ut._arith(4, 4);
+            var zx = ut._arith(4, 8);
             return [
                 [xy[0], zx[0], xy[3]],
                 [xy[3], zx[1], xy[0]],
@@ -178,7 +180,7 @@ var fn;
     var crystal;
     (function (crystal) {
         function verts(v, x, y, zt, zb) {
-            var verts_h = ut.arith(v, 0, ut.pi2 / v).map(function (rad) {
+            var verts_h = ut._arith(v, 0, ut.pi2 / v).map(function (rad) {
                 return vc.v3(x * ut.cos(rad), y * ut.sin(rad), 0);
             });
             var verts_v = [
@@ -191,8 +193,8 @@ var fn;
         function faces(v) {
             var t = v;
             var b = v + 1;
-            var faces_t = ut.arith(v).map(function (i) { return [i, (i + 1) % v, t]; });
-            var faces_b = ut.arith(v).map(function (i) { return [(i + 1) % v, i, b]; });
+            var faces_t = ut._arith(v).map(function (i) { return [i, (i + 1) % v, t]; });
+            var faces_b = ut._arith(v).map(function (i) { return [(i + 1) % v, i, b]; });
             return faces_t.concat(faces_b);
         }
         crystal.faces = faces;
@@ -211,10 +213,10 @@ var fn;
     var prism;
     (function (prism) {
         function verts(v, x, y, zt, zb) {
-            var verts_t = ut.arith(v, 0, ut.pi2 / v).map(function (rad) {
+            var verts_t = ut._arith(v, 0, ut.pi2 / v).map(function (rad) {
                 return vc.v3(x * ut.cos(rad), y * ut.sin(rad), zt);
             });
-            var verts_b = ut.arith(v, 0, ut.pi2 / v).map(function (rad) {
+            var verts_b = ut._arith(v, 0, ut.pi2 / v).map(function (rad) {
                 return vc.v3(x * ut.cos(rad), y * ut.sin(rad), zb);
             });
             var verts_v = [
@@ -227,9 +229,9 @@ var fn;
         function faces(v) {
             var t = 2 * v;
             var b = 2 * v + 1;
-            var faces_t = ut.arith(v).map(function (i) { return [i, (i + 1) % v, t]; });
-            var faces_b = ut.arith(v).map(function (i) { return [v + (i + 1) % v, v + i, b]; });
-            var faces_side = ut.arith(v).map(function (i) { return [i, (i + 1) % v, v + (i + 1) % v, v + i]; });
+            var faces_t = ut._arith(v).map(function (i) { return [i, (i + 1) % v, t]; });
+            var faces_b = ut._arith(v).map(function (i) { return [v + (i + 1) % v, v + i, b]; });
+            var faces_side = ut._arith(v).map(function (i) { return [i, (i + 1) % v, v + (i + 1) % v, v + i]; });
             return faces_t.concat(faces_b).concat(faces_side);
         }
         prism.faces = faces;
@@ -237,44 +239,33 @@ var fn;
 })(fn = exports.fn || (exports.fn = {}));
 /** Polygon - 多角形 */
 function polygon(verts, faces) {
-    return al.obj('polygon', verts, function (name, verts) {
-        return al.geo(name, verts, faces);
-    });
+    return al.geo(verts, faces);
 }
 exports.polygon = polygon;
-function obj(name, sp, geoVerts, geoFaces) {
-    return al.obj(name, sp.array(), function (name, verts) {
-        return al.geo(name, mx.map_m4_v3(geoVerts, al.ar_space(verts).m4()), geoFaces);
-    });
-}
 /** Tetrahedron - 正4面体 */
-function tetrahedron(sp) {
-    if (sp === void 0) { sp = al.default_space; }
-    return obj('tetrahedron', sp, fn.tetrahedron.verts(1, 1, 1), fn.tetrahedron.faces());
+function tetrahedron() {
+    return al.geo(fn.tetrahedron.verts(1, 1, 1), fn.tetrahedron.faces());
 }
 exports.tetrahedron = tetrahedron;
-/** Octahedron 正8面体 */
-function octahedron(sp) {
-    if (sp === void 0) { sp = al.default_space; }
-    return obj('octahedron', sp, fn.octahedron.verts(1, 1, 1), fn.octahedron.faces());
+/** Octahedron - 正8面体 */
+function octahedron() {
+    return al.geo(fn.octahedron.verts(1, 1, 1), fn.octahedron.faces());
 }
 exports.octahedron = octahedron;
-/** Cube 正6面体・正方形 */
+/** Cube - 正6面体・立方体 */
 function cube(sp) {
     if (sp === void 0) { sp = al.default_space; }
-    return obj('cube', sp, fn.cube.verts(1, 1, 1), fn.cube.faces());
+    return al.geo(fn.cube.verts(1, 1, 1), fn.cube.faces());
 }
 exports.cube = cube;
-/** Dodecahedron 正12面体 */
-function dodecahedron(sp) {
-    if (sp === void 0) { sp = al.default_space; }
-    return obj('dodecahedron', sp, fn.dodecahedron.verts(1), fn.dodecahedron.faces());
+/** Dodecahedron - 正12面体 */
+function dodecahedron() {
+    return al.geo(fn.dodecahedron.verts(1), fn.dodecahedron.faces());
 }
 exports.dodecahedron = dodecahedron;
-/** Icosahedron 正20面体 */
-function icosahedron(sp) {
-    if (sp === void 0) { sp = al.default_space; }
-    return obj('icosahedron', sp, fn.icosahedron.verts(1), fn.icosahedron.faces());
+/** Icosahedron - 正20面体 */
+function icosahedron() {
+    return al.geo(fn.icosahedron.verts(1), fn.icosahedron.faces());
 }
 exports.icosahedron = icosahedron;
 //# sourceMappingURL=prim.js.map

@@ -1,5 +1,5 @@
 ﻿import * as al from "../al";
-import * as ut from "../util/util";
+import * as ut from "../math/util";
 import * as vc from "../math/vector";
 import * as mx from "../math/matrix";
 
@@ -106,11 +106,11 @@ export namespace fn {
 			return fn.trirect.verts(s, l).concat(fn.cube.verts(c, c, c));
 		}
 		export function faces(): number[][] {
-			const xy = ut.arith(4, 0);
-			const yz = ut.arith(4, 4);
-			const zx = ut.arith(4, 8);
-			const ct = ut.arith(4, 12);
-			const cb = ut.arith(4, 16);
+			const xy = ut.seq.arith(4, 0);
+			const yz = ut.seq.arith(4, 4);
+			const zx = ut.seq.arith(4, 8);
+			const ct = ut.seq.arith(4, 12);
+			const cb = ut.seq.arith(4, 16);
 			return [
 				[xy[0], ct[0], zx[0], ct[3], xy[3]], // 上 右
 				[xy[3], cb[3], zx[1], cb[0], xy[0]], // 下 右
@@ -134,9 +134,9 @@ export namespace fn {
 			return fn.trirect.verts(s, l);
 		}
 		export function faces(): number[][] {
-			const xy = ut.arith(4, 0);
-			const yz = ut.arith(4, 4);
-			const zx = ut.arith(4, 8);
+			const xy = ut.seq.arith(4, 0);
+			const yz = ut.seq.arith(4, 4);
+			const zx = ut.seq.arith(4, 8);
 			return [
 				[xy[0], zx[0], xy[3]], // 上 右
 				[xy[3], zx[1], xy[0]], // 下 右
@@ -163,7 +163,7 @@ export namespace fn {
 	}
 	export namespace crystal {
 		export function verts(v: number, x: number, y: number, zt: number, zb: number): vc.V3[] {
-			const verts_h = ut.arith(v, 0, ut.pi2 / v).map(rad =>
+			const verts_h = ut.seq.arith(v, 0, ut.pi2 / v).map(rad =>
 				vc.v3(x * ut.cos(rad), y * ut.sin(rad), 0));
 			const verts_v = [
 				vc.v3(0, 0, zt), // 上
@@ -174,8 +174,8 @@ export namespace fn {
 		export function faces(v: number): number[][] {
 			const t = v;
 			const b = v + 1;
-			const faces_t = ut.arith(v).map(i => [i, (i + 1) % v, t]);
-			const faces_b = ut.arith(v).map(i => [(i + 1) % v, i, b]);
+			const faces_t = ut.seq.arith(v).map(i => [i, (i + 1) % v, t]);
+			const faces_b = ut.seq.arith(v).map(i => [(i + 1) % v, i, b]);
 			return faces_t.concat(faces_b);
 		}
 	}
@@ -189,9 +189,9 @@ export namespace fn {
 	}
 	export namespace prism {
 		export function verts(v: number, x: number, y: number, zt: number, zb: number): vc.V3[] {
-			const verts_t = ut.arith(v, 0, ut.pi2 / v).map(rad =>
+			const verts_t = ut.seq.arith(v, 0, ut.pi2 / v).map(rad =>
 				vc.v3(x * ut.cos(rad), y * ut.sin(rad), zt));
-			const verts_b = ut.arith(v, 0, ut.pi2 / v).map(rad =>
+			const verts_b = ut.seq.arith(v, 0, ut.pi2 / v).map(rad =>
 				vc.v3(x * ut.cos(rad), y * ut.sin(rad), zb));
 			const verts_v = [
 				vc.v3(0, 0, zt), // 上
@@ -202,48 +202,51 @@ export namespace fn {
 		export function faces(v: number): number[][] {
 			const t = 2 * v;
 			const b = 2 * v + 1;
-			const faces_t = ut.arith(v).map(i => [i, (i + 1) % v, t]);
-			const faces_b = ut.arith(v).map(i => [v + (i + 1) % v, v + i, b]);
-			const faces_side = ut.arith(v).map(i => [i, (i + 1) % v, v + (i + 1) % v, v + i]);
+			const faces_t = ut.seq.arith(v).map(i => [i, (i + 1) % v, t]);
+			const faces_b = ut.seq.arith(v).map(i => [v + (i + 1) % v, v + i, b]);
+			const faces_side = ut.seq.arith(v).map(i => [i, (i + 1) % v, v + (i + 1) % v, v + i]);
 			return faces_t.concat(faces_b).concat(faces_side);
 		}
 	}
 }
 
 /** Polygon - 多角形 */
-export function polygon(verts: vc.V3[], faces: number[][]): al.Obj {
-	return al.obj('polygon', verts, (name, verts) => {
-		return al.geo(name, verts, faces);
+export function polygon(verts: vc.V3[], faces: number[][]): al._Obj {
+	return al._obj('polygon', verts, (name, verts) => {
+		return al.geo(verts, faces);
 	});
 }
 
-function obj(name: string, sp: al.Space, geoVerts: vc.V3[], geoFaces: number[][]): al.Obj {
-	return al.obj(name, sp.array(), (name, verts) => {
-		return al.geo(name, mx.map_m4_v3(geoVerts, al.ar_space(verts).m4()), geoFaces);
+function obj(name: string, sp: al.Space, geoVerts: vc.V3[], geoFaces: number[][]): al._Obj {
+	return al._obj(name, sp.array(), (name, verts) => {
+		//verts.forEach(v => console.log(v));
+		//console.log(al.ar_space(verts).m4());
+		const m4 = al.ar_space(verts).m4();
+		return al.geo(geoVerts.map(v => m4.map_v3(v, 1)), geoFaces);
 	});
 }
 
 /** Tetrahedron - 正4面体 */
-export function tetrahedron(sp: al.Space = al.default_space): al.Obj {
+export function tetrahedron(sp: al.Space = al.default_space): al._Obj {
 	return obj('tetrahedron', sp, fn.tetrahedron.verts(1, 1, 1), fn.tetrahedron.faces());
 }
 
 /** Octahedron 正8面体 */
-export function octahedron(sp: al.Space = al.default_space): al.Obj {
+export function octahedron(sp: al.Space = al.default_space): al._Obj {
 	return obj('octahedron', sp, fn.octahedron.verts(1, 1, 1), fn.octahedron.faces());
 }
 
 /** Cube 正6面体・正方形 */
-export function cube(sp: al.Space = al.default_space): al.Obj {
+export function cube(sp: al.Space = al.default_space): al._Obj {
 	return obj('cube', sp, fn.cube.verts(1, 1, 1), fn.cube.faces());
 }
 
 /** Dodecahedron 正12面体 */
-export function dodecahedron(sp: al.Space = al.default_space): al.Obj {
+export function dodecahedron(sp: al.Space = al.default_space): al._Obj {
 	return obj('dodecahedron', sp, fn.dodecahedron.verts(1), fn.dodecahedron.faces());
 }
 
 /** Icosahedron 正20面体 */
-export function icosahedron(sp: al.Space = al.default_space): al.Obj {
+export function icosahedron(sp: al.Space = al.default_space): al._Obj {
 	return obj('icosahedron', sp, fn.icosahedron.verts(1), fn.icosahedron.faces());
 }

@@ -1,4 +1,4 @@
-// Sequence and Linear Map
+// Sequence and Linear Mapping
 var LimImpl = (function () {
     function LimImpl(_lims) {
         this._lims = _lims;
@@ -43,7 +43,10 @@ function mul(s1, s2) {
     return lims(m);
 }
 function merge(seqlims) {
-    return seqlims.reduce(function (a, b) { return mul(a, b); });
+    if (seqlims.length == 0) {
+        return lims([]);
+    }
+    return seqlims.reduce(function (a, b) { return mul(b, a); });
 }
 exports.merge = merge;
 //# sourceMappingURL=seqlim.js.map
