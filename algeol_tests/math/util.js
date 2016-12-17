@@ -1,4 +1,4 @@
-var ut = require("../../algeol/util/util");
+var ut = require("../../algeol/math/util");
 var dummy = ut.r2;
 // 簡易目視テスト
 function test() {

@@ -1,5 +1,86 @@
+var ut = require("./math/util");
 var vc = require("./math/vector");
 var mx = require("./math/matrix");
+var seqlim = require("./seqlim");
+var GeoImpl = (function () {
+    function GeoImpl(_verts, _faces) {
+        this._verts = _verts;
+        this._faces = _faces;
+    }
+    GeoImpl.prototype.verts = function () {
+        return this._verts;
+    };
+    GeoImpl.prototype.faces = function () {
+        return this._faces;
+    };
+    GeoImpl.prototype.vertsNum = function () {
+        return this._verts.length;
+    };
+    return GeoImpl;
+})();
+var GeoGroupImpl = (function () {
+    function GeoGroupImpl(_name, _geos) {
+        this._name = _name;
+        this._geos = _geos;
+    }
+    GeoGroupImpl.prototype.name = function () {
+        return this._name;
+    };
+    GeoGroupImpl.prototype.geos = function () {
+        return this._geos;
+    };
+    GeoGroupImpl.prototype.vertsNum = function () {
+        return this.geos().reduce(function (n, geo) { return n + geo.vertsNum(); }, 0);
+    };
+    return GeoGroupImpl;
+})();
+function geo(verts, faces) {
+    return new GeoImpl(verts, faces);
+}
+exports.geo = geo;
+function geoGroup(name, geos) {
+    return new GeoGroupImpl(name, geos);
+}
+exports.geoGroup = geoGroup;
+var ObjBaseImpl = (function () {
+    function ObjBaseImpl(_o, _x, _y, _z) {
+        if (_o === void 0) { _o = vc.zero_v3; }
+        if (_x === void 0) { _x = vc.unitX_v3; }
+        if (_y === void 0) { _y = vc.unitY_v3; }
+        if (_z === void 0) { _z = vc.unitZ_v3; }
+        this._o = _o;
+        this._x = _x;
+        this._y = _y;
+        this._z = _z;
+    }
+    ObjBaseImpl.FromArrayOXYZ = function (v) { return new ObjBaseImpl(v[0], v[1], v[2], v[3]); };
+    ObjBaseImpl.prototype.arrayOXYZ = function () { return [this._o, this._x, this._y, this._z]; };
+    ObjBaseImpl.prototype.o = function () { return this._o; };
+    ObjBaseImpl.prototype.x = function () { return this._x; };
+    ObjBaseImpl.prototype.y = function () { return this._y; };
+    ObjBaseImpl.prototype.z = function () { return this._z; };
+    ObjBaseImpl.prototype.m4 = function () { return mx.v4cols_m4([this._x, this._y, this._z, this._o].map(function (v) { return vc.v3_v4(v, 1); })); };
+    return ObjBaseImpl;
+})();
+exports.oxyz_default = new ObjBaseImpl();
+var ObjOXYZ = (function () {
+    function ObjOXYZ(_geo, _oxyz) {
+        if (_oxyz === void 0) { _oxyz = exports.oxyz_default; }
+        this._geo = _geo;
+        this._oxyz = _oxyz;
+    }
+    ObjOXYZ.prototype.duplicate = function (seqlim) {
+        var _this = this;
+        var ar_oxyz = this._oxyz.arrayOXYZ().map(seqlim);
+        var la_oxyz = function (i) { return ObjBaseImpl.FromArrayOXYZ(ut.seq.arith(4).map(function (j) { return ar_oxyz[j][i]; })); };
+        var ar_i = ut.seq.arith(ar_oxyz[0].length);
+        return ar_i.map(function (i) { return new ObjOXYZ(_this._geo, la_oxyz(i)); });
+    };
+    ObjOXYZ.prototype.geo = function () {
+        return this._geo(this._oxyz);
+    };
+    return ObjOXYZ;
+})();
 var Basis3Impl = (function () {
     function Basis3Impl(_x, _y, _z) {
         this._x = _x;
@@ -60,68 +141,62 @@ function space(c, d) {
 }
 exports.space = space;
 function ar_space(vl) {
-    return new SpaceImpl(vl[0], ar_basis3(vl.slice(1)));
+    var c = vl[0];
+    var d = vl.slice(1).map(function (v) { return v.sub(c); });
+    return new SpaceImpl(c, ar_basis3(d));
 }
 exports.ar_space = ar_space;
 exports.default_space = new SpaceDefault();
-var ObjImpl = (function () {
-    function ObjImpl(_name, _verts, _geo) {
+var _ObjImpl = (function () {
+    function _ObjImpl(_name, _verts, _geo) {
         this._name = _name;
         this._verts = _verts;
         this._geo = _geo;
     }
-    ObjImpl.prototype._apply = function (m) {
-        this._verts = this._verts.map(function (v) { return vc.v4_v3(m.map(vc.v3_v4(v, 1))); });
+    _ObjImpl.prototype._apply = function (m) {
+        this._verts = this._verts.map(function (v) { return vc.v4_v3(m.map_v4(vc.v3_v4(v, 1))); });
     };
-    ObjImpl.prototype.duplicateOne = function (m) {
+    _ObjImpl.prototype.duplicateOne = function (m) {
         var o = this.clone();
         o._apply(m);
         return o;
     };
-    ObjImpl.prototype.duplicateList = function (ms) {
+    _ObjImpl.prototype.duplicateList = function (ms) {
         var _this = this;
         return ms.map(function (m) { return _this.duplicateOne(m); });
     };
-    ObjImpl.prototype.clone = function () {
-        return new ObjImpl(this._name, this._verts, this._geo);
+    _ObjImpl.prototype.clone = function () {
+        return new _ObjImpl(this._name, this._verts, this._geo);
     };
-    ObjImpl.prototype.geo = function () {
+    _ObjImpl.prototype.geo = function () {
         return this._geo(this._name, this._verts);
     };
-    return ObjImpl;
+    return _ObjImpl;
 })();
-function obj(name, verts, geo) {
-    return new ObjImpl(name, verts, geo);
+function _obj(name, verts, geo) {
+    return new _ObjImpl(name, verts, geo);
 }
-exports.obj = obj;
-var GeoImpl = (function () {
-    function GeoImpl(_name, _verts, _faces) {
-        this._name = _name;
-        this._verts = _verts;
-        this._faces = _faces;
+exports._obj = _obj;
+var LimObjImpl = (function () {
+    function LimObjImpl(_obj, _lims) {
+        this._obj = _obj;
+        this._lims = _lims;
     }
-    GeoImpl.prototype.name = function () { return this._name; };
-    GeoImpl.prototype.verts = function () { return this._verts; };
-    GeoImpl.prototype.faces = function () { return this._faces; };
-    return GeoImpl;
+    LimObjImpl.prototype.obj = function () {
+        return this._obj;
+    };
+    LimObjImpl.prototype.lims = function () {
+        return this._lims;
+    };
+    LimObjImpl.prototype.geo = function () {
+        return this._obj.duplicateList(seqlim.merge(this._lims).lim()).map(function (o) { return o.geo(); });
+    };
+    return LimObjImpl;
 })();
-function geo(name, verts, faces) {
-    return new GeoImpl(name, verts, faces);
+function limobj(obj, lims) {
+    return new LimObjImpl(obj, lims);
 }
-exports.geo = geo;
-function geos_wavefrontObj(geos) {
-    return geos.map(function (geo) { return geo_wavefrontObj(geo); }).reduce(function (a, b) { return a.concat(b); });
-}
-exports.geos_wavefrontObj = geos_wavefrontObj;
-function geo_wavefrontObj(geo, offset) {
-    if (offset === void 0) { offset = 0; }
-    var strs = [];
-    strs.push(['g', geo.name()].join(' '));
-    geo.verts().forEach(function (v) { return strs.push(['v', v.x(), v.z(), -v.y()].join(' ')); });
-    geo.faces().forEach(function (f) { return strs.push(['f'].concat(f.map(function (i) { return '' + (i + 1 + offset); })).join(' ')); });
-    return strs;
-}
-exports.geo_wavefrontObj = geo_wavefrontObj;
+exports.limobj = limobj;
 /*
 class Spiral implements Curve {
     constructor(

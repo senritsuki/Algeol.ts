@@ -1,12 +1,11 @@
 var fs = require('fs');
-var al = require("../../algeol/al");
 var vc = require("../../algeol/math/vector");
 var prim = require("../../algeol/presets/prim");
 var dummy = prim;
 // 簡易目視テスト
 function test() {
     var exportGeo = function (obj, name) {
-        fs.writeFile("prim/" + name + ".obj", al.geo_wavefrontObj(obj.geo()).join('\n'));
+        fs.writeFile("prim_out/" + name + ".obj", obj.geo().toWOString());
     };
     {
         console.log('polygon');

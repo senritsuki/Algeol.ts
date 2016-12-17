@@ -3,14 +3,16 @@ const fs = require('fs');
 
 import * as al from "../../algeol/al";
 import * as vc from "../../algeol/math/vector";
-import * as prim from "../../algeol/presets/prim";
+
+import * as wo from "../../algeol/presets/format_wavefrontobj";
+import * as prim from "../../algeol/presets/prim_old";
 
 const dummy = prim;
 
 // 簡易目視テスト
 function test() {
-	const exportGeo = (obj: al.Obj, name: string) => {
-		fs.writeFile(`prim/${name}.obj`, al.geo_wavefrontObj(obj.geo()).join('\n'));
+	const exportGeo = (obj: al._Obj, name: string) => {
+		fs.writeFile(`prim_out/${name}.obj`, wo.geo_str(obj.geo()));
 	};
 	{
 		console.log('polygon');
@@ -30,7 +32,7 @@ function test() {
 		console.log(obj);
 		exportGeo(obj, 'polygon');
 	}
-	const testObj = (name: string, fn: () => al.Obj) => {
+	const testObj = (name: string, fn: () => al._Obj) => {
 		console.log(name);
 		const obj = fn();
 		console.log(obj);

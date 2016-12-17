@@ -1,4 +1,4 @@
-﻿import * as ut from "../../algeol/util/util";
+﻿import * as ut from "../../algeol/math/util";
 
 const dummy = ut.r2;
 
