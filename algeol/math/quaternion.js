@@ -1,5 +1,5 @@
 /** Quaternion - クォータニオン・四元数 */
-var ut = require("../math/util");
+var ut = require("../math/utility");
 var vc = require("./vector");
 var mx = require("./matrix");
 var QuaternionImpl = (function () {

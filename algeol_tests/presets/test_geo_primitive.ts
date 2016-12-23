@@ -1,7 +1,7 @@
 ﻿declare const require: any;
 const fs = require('fs');
 
-import * as al from "../../algeol/algeo";
+import * as al from "../../algeol/algeol";
 import * as wo from "../../algeol/presets/format_wavefrontobj";
 import * as prim from "../../algeol/presets/geo_primitive";
 

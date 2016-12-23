@@ -1,6 +1,6 @@
 /** プリミティブオブジェクト */
-var al = require("../algeo");
-var ut = require("../math/util");
+var al = require("../algeol");
+var ut = require("../math/utility");
 var vc = require("../math/vector");
 /** プリミティブオブジェクト生成用関数群 */
 var fn;
@@ -12,7 +12,7 @@ var fn;
     var tetrahedron_rad = ut.acos(-1 / 3); // 正4面体の半径:高さ = 3:4
     var tetrahedron_c = ut.cos(tetrahedron_rad);
     var tetrahedron_s = ut.sin(tetrahedron_rad);
-    // +xを右、+yを奥、+zを上、と考える
+    // +xを右、+yを奥、+zを上、と考える（Blender）
     /** Tetrahedron - 正4面体 */
     var tetrahedron;
     (function (tetrahedron) {
@@ -214,14 +214,22 @@ var fn;
     /** Circle - 円 */
     var circle;
     (function (circle) {
-        function verts_i(n_gonal, r) {
-            return ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-                .map(function (rad) { return vc.polar_v3(r, rad, 0); });
+        /** 円に内接するn角形 */
+        function verts_i(n_gonal, r, p, z) {
+            if (p === void 0) { p = 0; }
+            if (z === void 0) { z = 0; }
+            return ut.seq.arith(n_gonal, p, ut.deg360 / n_gonal)
+                .map(function (rad) { return vc.polar_v3(r, rad, z); });
         }
         circle.verts_i = verts_i;
-        function verts_c(n_gonal, r) {
-            return ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-                .map(function (rad) { return vc.polar_v3(r, rad, 0); });
+        /** 円に外接するn角形 */
+        function verts_c(n_gonal, r, p, z) {
+            if (p === void 0) { p = 0; }
+            if (z === void 0) { z = 0; }
+            var theta = ut.deg360 / (n_gonal * 2);
+            var r2 = r / ut.cos(theta);
+            var p2 = p + theta;
+            return verts_i(n_gonal, r2, p2, z);
         }
         circle.verts_c = verts_c;
     })(circle = fn.circle || (fn.circle = {}));
@@ -231,17 +239,19 @@ var fn;
         /** (底面の頂点数, 底面の外接円の半径, 高さ) -> 角柱の頂点の配列 */
         function verts_i(n_gonal, r, h) {
             var verts = [];
-            // 上面
-            ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-                .map(function (rad) { return vc.polar_v3(r, rad, h); })
-                .forEach(function (v) { return verts.push(v); });
-            // 底面
-            ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-                .map(function (rad) { return vc.polar_v3(r, rad, 0); })
-                .forEach(function (v) { return verts.push(v); });
+            circle.verts_i(n_gonal, r, 0, h).forEach(function (v) { return verts.push(v); }); // 上面
+            circle.verts_i(n_gonal, r, 0, 0).forEach(function (v) { return verts.push(v); }); // 底面
             return verts;
         }
         prism.verts_i = verts_i;
+        /** (底面の頂点数, 底面の内接円の半径, 高さ) -> 角柱の頂点の配列 */
+        function verts_c(n_gonal, r, h) {
+            var verts = [];
+            circle.verts_c(n_gonal, r, 0, h).forEach(function (v) { return verts.push(v); }); // 上面
+            circle.verts_c(n_gonal, r, 0, 0).forEach(function (v) { return verts.push(v); }); // 底面
+            return verts;
+        }
+        prism.verts_c = verts_c;
         function faces(n_gonal) {
             var faces = [];
             // 側面
@@ -260,17 +270,21 @@ var fn;
     var pyramid;
     (function (pyramid) {
         /** (底面の頂点数, 底面の外接円の半径, 高さ) -> 角錐の頂点の配列 */
-        function verts(n_gonal, r, h) {
+        function verts_i(n_gonal, r, h) {
             var verts = [];
-            // 頭頂点
-            verts.push(vc.v3(0, 0, h));
-            // 底面
-            ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-                .map(function (rad) { return vc.polar_v3(r, rad, 0); })
-                .forEach(function (v) { return verts.push(v); });
+            verts.push(vc.v3(0, 0, h)); // // 頭頂点
+            circle.verts_i(n_gonal, r, 0, 0).forEach(function (v) { return verts.push(v); }); // 底面
             return verts;
         }
-        pyramid.verts = verts;
+        pyramid.verts_i = verts_i;
+        /** (底面の頂点数, 底面の内接円の半径, 高さ) -> 角錐の頂点の配列 */
+        function verts_c(n_gonal, r, h) {
+            var verts = [];
+            verts.push(vc.v3(0, 0, h)); // // 頭頂点
+            circle.verts_c(n_gonal, r, 0, 0).forEach(function (v) { return verts.push(v); }); // 底面
+            return verts;
+        }
+        pyramid.verts_c = verts_c;
         /** (底面の頂点数) -> 角錐の面の配列 */
         function faces(n_gonal) {
             var faces = [];
@@ -288,18 +302,23 @@ var fn;
     var bipyramid;
     (function (bipyramid) {
         /** (底面の頂点数, 底面の外接円の半径, 高さ, 深さ) -> 双角錐の頂点の配列 */
-        function verts(n_gonal, r, h, d) {
+        function verts_i(n_gonal, r, h, d) {
             var verts = [];
-            // 頭頂点と逆頭頂点
-            verts.push(vc.v3(0, 0, h));
-            verts.push(vc.v3(0, 0, -d));
-            // 底面
-            ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-                .map(function (rad) { return vc.polar_v3(r, rad, 0); })
-                .forEach(function (v) { return verts.push(v); });
+            verts.push(vc.v3(0, 0, h)); // 頭頂点
+            verts.push(vc.v3(0, 0, -d)); // 頭頂点の逆
+            circle.verts_i(n_gonal, r, 0, 0).forEach(function (v) { return verts.push(v); }); // 底面
             return verts;
         }
-        bipyramid.verts = verts;
+        bipyramid.verts_i = verts_i;
+        /** (底面の頂点数, 底面の内接円の半径, 高さ, 深さ) -> 双角錐の頂点の配列 */
+        function verts_c(n_gonal, r, h, d) {
+            var verts = [];
+            verts.push(vc.v3(0, 0, h)); // 頭頂点
+            verts.push(vc.v3(0, 0, -d)); // 頭頂点の逆
+            circle.verts_c(n_gonal, r, 0, 0).forEach(function (v) { return verts.push(v); }); // 底面
+            return verts;
+        }
+        bipyramid.verts_c = verts_c;
         function faces(n_gonal) {
             var faces = [];
             // 上側面
@@ -358,7 +377,7 @@ exports.prism = prism;
 function pyramid(n_gonal, r, h) {
     if (r === void 0) { r = 1; }
     if (h === void 0) { h = 1; }
-    return al.geo(fn.pyramid.verts(n_gonal, r, h), fn.pyramid.faces(n_gonal));
+    return al.geo(fn.pyramid.verts_i(n_gonal, r, h), fn.pyramid.faces(n_gonal));
 }
 exports.pyramid = pyramid;
 /** Bipyramid - 双角錐
@@ -367,7 +386,7 @@ function bipyramid(n_gonal, r, h, d) {
     if (r === void 0) { r = 1; }
     if (h === void 0) { h = 1; }
     if (d === void 0) { d = 1; }
-    return al.geo(fn.bipyramid.verts(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
+    return al.geo(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
 }
 exports.bipyramid = bipyramid;
 //# sourceMappingURL=geo_primitive.js.map

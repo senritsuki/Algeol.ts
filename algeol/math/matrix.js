@@ -1,5 +1,5 @@
 // Square Matrix 正方行列
-var ut = require("../math/util");
+var ut = require("../math/utility");
 var vc = require("./vector");
 var fn;
 (function (fn) {
@@ -295,4 +295,28 @@ exports.rotYZ_z_m3 = rotYZ_z_m3;
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
 function rotYZ_z_m4(v3) { return m3_m4(rotYZ_z_m3(v3)); }
 exports.rotYZ_z_m4 = rotYZ_z_m4;
+/** オイラー角XYZの回転写像 */
+function rotXYZ_m3(radX, radY, radZ) {
+    return rotX_m3(radX)
+        .mul(rotY_m3(radY))
+        .mul(rotZ_m3(radZ));
+}
+exports.rotXYZ_m3 = rotXYZ_m3;
+/** オイラー角XYZの回転写像 */
+function rotXYZ_m4(radX, radY, radZ) {
+    return m3_m4(rotXYZ_m3(radX, radY, radZ));
+}
+exports.rotXYZ_m4 = rotXYZ_m4;
+/** オイラー角XYZの逆回転写像 */
+function rotInvXYZ_m3(radX, radY, radZ) {
+    return rotZ_m3(-radZ)
+        .mul(rotY_m3(-radY))
+        .mul(rotX_m3(-radX));
+}
+exports.rotInvXYZ_m3 = rotInvXYZ_m3;
+/** オイラー角XYZの回転写像 */
+function rotInvXYZ_m4(radX, radY, radZ) {
+    return m3_m4(rotInvXYZ_m3(radX, radY, radZ));
+}
+exports.rotInvXYZ_m4 = rotInvXYZ_m4;
 //# sourceMappingURL=matrix.js.map

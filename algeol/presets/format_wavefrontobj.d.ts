@@ -1,5 +1,5 @@
 /** Wavefront .obj */
-import * as al from "../algeo";
+import * as al from "../algeol";
 import * as vc from "../math/vector";
 /** 頂点vを文字列化する方法
     デフォルトでは3次元ベクトルを x z -y と並べていますが、変えたい場合は上書きしてください */

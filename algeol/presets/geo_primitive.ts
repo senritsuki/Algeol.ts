@@ -1,9 +1,8 @@
 ﻿/** プリミティブオブジェクト */
 
-import * as al from "../algeo";
-import * as ut from "../math/util";
+import * as al from "../algeol";
+import * as ut from "../math/utility";
 import * as vc from "../math/vector";
-import * as mx from "../math/matrix";
 
 /** プリミティブオブジェクト生成用関数群 */
 export namespace fn {
@@ -16,7 +15,7 @@ export namespace fn {
 	const tetrahedron_c = ut.cos(tetrahedron_rad);
 	const tetrahedron_s = ut.sin(tetrahedron_rad);
 
-	// +xを右、+yを奥、+zを上、と考える
+	// +xを右、+yを奥、+zを上、と考える（Blender）
 	
 	/** Tetrahedron - 正4面体 */
 	export namespace tetrahedron {
@@ -200,13 +199,17 @@ export namespace fn {
 	}
 	/** Circle - 円 */
 	export namespace circle {
-		export function verts_i(n_gonal: number, r: number): vc.V3[] {
-			return ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-				.map(rad => vc.polar_v3(r, rad, 0));
+		/** 円に内接するn角形 */
+		export function verts_i(n_gonal: number, r: number, p: number = 0, z: number = 0): vc.V3[] {
+			return ut.seq.arith(n_gonal, p, ut.deg360 / n_gonal)
+				.map(rad => vc.polar_v3(r, rad, z));
 		}
-		export function verts_c(n_gonal: number, r: number): vc.V3[] {
-			return ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-				.map(rad => vc.polar_v3(r, rad, 0));
+		/** 円に外接するn角形 */
+		export function verts_c(n_gonal: number, r: number, p: number = 0, z: number = 0): vc.V3[] {
+			const theta = ut.deg360 / (n_gonal * 2);
+			const r2 = r / ut.cos(theta);
+			const p2 = p + theta;
+			return verts_i(n_gonal, r2, p2, z);
 		}
 	}
 	/** Prism - 角柱 */
@@ -214,14 +217,15 @@ export namespace fn {
 		/** (底面の頂点数, 底面の外接円の半径, 高さ) -> 角柱の頂点の配列 */
 		export function verts_i(n_gonal: number, r: number, h: number): vc.V3[] {
 			const verts: vc.V3[] = [];
-			// 上面
-			ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-				.map(rad => vc.polar_v3(r, rad, h))
-				.forEach(v => verts.push(v));
-			// 底面
-			ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-				.map(rad => vc.polar_v3(r, rad, 0))
-				.forEach(v => verts.push(v));
+			circle.verts_i(n_gonal, r, 0, h).forEach(v => verts.push(v)); // 上面
+			circle.verts_i(n_gonal, r, 0, 0).forEach(v => verts.push(v)); // 底面
+			return verts;
+		}
+		/** (底面の頂点数, 底面の内接円の半径, 高さ) -> 角柱の頂点の配列 */
+		export function verts_c(n_gonal: number, r: number, h: number): vc.V3[] {
+			const verts: vc.V3[] = [];
+			circle.verts_c(n_gonal, r, 0, h).forEach(v => verts.push(v)); // 上面
+			circle.verts_c(n_gonal, r, 0, 0).forEach(v => verts.push(v)); // 底面
 			return verts;
 		}
 		export function faces(n_gonal: number): number[][] {
@@ -240,14 +244,17 @@ export namespace fn {
 	/** Pyramid - 角錐 */
 	export namespace pyramid {
 		/** (底面の頂点数, 底面の外接円の半径, 高さ) -> 角錐の頂点の配列 */
-		export function verts(n_gonal: number, r: number, h: number): vc.V3[] {
+		export function verts_i(n_gonal: number, r: number, h: number): vc.V3[] {
 			const verts: vc.V3[] = [];
-			// 頭頂点
-			verts.push(vc.v3(0, 0, h));
-			// 底面
-			ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-				.map(rad => vc.polar_v3(r, rad, 0))
-				.forEach(v => verts.push(v));
+			verts.push(vc.v3(0, 0, h)); // // 頭頂点
+			circle.verts_i(n_gonal, r, 0, 0).forEach(v => verts.push(v)); // 底面
+			return verts;
+		}
+		/** (底面の頂点数, 底面の内接円の半径, 高さ) -> 角錐の頂点の配列 */
+		export function verts_c(n_gonal: number, r: number, h: number): vc.V3[] {
+			const verts: vc.V3[] = [];
+			verts.push(vc.v3(0, 0, h)); // // 頭頂点
+			circle.verts_c(n_gonal, r, 0, 0).forEach(v => verts.push(v)); // 底面
 			return verts;
 		}
 		/** (底面の頂点数) -> 角錐の面の配列 */
@@ -265,15 +272,19 @@ export namespace fn {
 	/** Bipyramid - 双角錐 */
 	export namespace bipyramid {
 		/** (底面の頂点数, 底面の外接円の半径, 高さ, 深さ) -> 双角錐の頂点の配列 */
-		export function verts(n_gonal: number, r: number, h: number, d: number): vc.V3[] {
+		export function verts_i(n_gonal: number, r: number, h: number, d: number): vc.V3[] {
 			const verts: vc.V3[] = [];
-			// 頭頂点と逆頭頂点
-			verts.push(vc.v3(0, 0, h));
-			verts.push(vc.v3(0, 0, -d));
-			// 底面
-			ut.seq.arith(n_gonal, 0, ut.deg360 / n_gonal)
-				.map(rad => vc.polar_v3(r, rad, 0))
-				.forEach(v => verts.push(v));
+			verts.push(vc.v3(0, 0, h)); // 頭頂点
+			verts.push(vc.v3(0, 0, -d)); // 頭頂点の逆
+			circle.verts_i(n_gonal, r, 0, 0).forEach(v => verts.push(v)); // 底面
+			return verts;
+		}
+		/** (底面の頂点数, 底面の内接円の半径, 高さ, 深さ) -> 双角錐の頂点の配列 */
+		export function verts_c(n_gonal: number, r: number, h: number, d: number): vc.V3[] {
+			const verts: vc.V3[] = [];
+			verts.push(vc.v3(0, 0, h)); // 頭頂点
+			verts.push(vc.v3(0, 0, -d)); // 頭頂点の逆
+			circle.verts_c(n_gonal, r, 0, 0).forEach(v => verts.push(v)); // 底面
 			return verts;
 		}
 		export function faces(n_gonal: number): number[][] {
@@ -320,10 +331,10 @@ export function prism(n_gonal: number, r: number = 1, h: number = 1): al.Geo {
 /** Pyramid - 角錐
 	(底面の頂点数, 底面の外接円の半径, 高さ) -> ジオメトリ */
 export function pyramid(n_gonal: number, r: number = 1, h: number = 1): al.Geo {
-	return al.geo(fn.pyramid.verts(n_gonal, r, h), fn.pyramid.faces(n_gonal));
+	return al.geo(fn.pyramid.verts_i(n_gonal, r, h), fn.pyramid.faces(n_gonal));
 }
 /** Bipyramid - 双角錐
 	(底面の頂点数, 底面の外接円の半径, 高さ, 深さ) -> ジオメトリ */
 export function bipyramid(n_gonal: number, r: number = 1, h: number = 1, d: number = 1): al.Geo {
-	return al.geo(fn.bipyramid.verts(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
+	return al.geo(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
 }
