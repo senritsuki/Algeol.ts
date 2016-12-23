@@ -1,18 +1,10 @@
 ﻿/** Turtle graphics - タートルグラフィックス */
 
-import * as ut from './util';
+import * as ut from './utility';
 import * as vc from './vector';
-import * as mx from './matrix';
-import * as cv from './curve';
+import * as cv2 from './curve2';
+import * as cv3 from './curve3';
 
-export interface Line2 {
-	start(): vc.V2;
-	end(): vc.V2;
-}
-export interface Line3 {
-	start(): vc.V3;
-	end(): vc.V3;
-}
 
 export interface Turtle2 {
 	coord(): vc.V2;
@@ -32,36 +24,11 @@ export interface Turtle3 {
 
 export interface TLTuple2 {
 	turtle: Turtle2;
-	line: Line2;
+	line: cv2.Curve;
 }
 export interface TLTuple3 {
 	turtle: Turtle3;
-	line: Line3;
-}
-
-
-class LineImpl2 implements Line2 {
-	constructor(
-		public _start: vc.V2,
-		public _end: vc.V2) { }
-
-	start(): vc.V2 { return this._start; }
-	end(): vc.V2 { return this._end; }
-}
-class LineImpl3 implements Line3 {
-	constructor(
-		public _start: vc.V3,
-		public _end: vc.V3) { }
-
-	start(): vc.V3 { return this._start; }
-	end(): vc.V3 { return this._end; }
-}
-
-function line2(v1: vc.V2, v2: vc.V2): Line2 {
-	return new LineImpl2(v1, v2);
-}
-function line3(v1: vc.V3, v2: vc.V3): Line3 {
-	return new LineImpl3(v1, v2);
+	line: cv3.Curve;
 }
 
 
@@ -79,7 +46,7 @@ class Turtle2Impl implements Turtle2 {
 	}
 	moveDraw(len: number): TLTuple2 {
 		const dist = this.move(len);
-		const line = line2(this.coord(), dist.coord());
+		const line = cv2.line(this.coord(), dist.coord());
 		return { turtle: dist, line: line };
 	}
 	move(len: number): Turtle2 {
@@ -108,7 +75,7 @@ class Turtle3Impl implements Turtle3 {
 	}
 	moveDraw(len: number): TLTuple3 {
 		const dist = this.move(len);
-		const line = line3(this.coord(), dist.coord());
+		const line = cv3.line(this.coord(), dist.coord());
 		return { turtle: dist, line: line };
 	}
 	move(len: number): Turtle3 {

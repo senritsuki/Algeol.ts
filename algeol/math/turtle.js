@@ -1,30 +1,8 @@
 /** Turtle graphics - タートルグラフィックス */
-var ut = require('./util');
+var ut = require('./utility');
 var vc = require('./vector');
-var LineImpl2 = (function () {
-    function LineImpl2(_start, _end) {
-        this._start = _start;
-        this._end = _end;
-    }
-    LineImpl2.prototype.start = function () { return this._start; };
-    LineImpl2.prototype.end = function () { return this._end; };
-    return LineImpl2;
-})();
-var LineImpl3 = (function () {
-    function LineImpl3(_start, _end) {
-        this._start = _start;
-        this._end = _end;
-    }
-    LineImpl3.prototype.start = function () { return this._start; };
-    LineImpl3.prototype.end = function () { return this._end; };
-    return LineImpl3;
-})();
-function line2(v1, v2) {
-    return new LineImpl2(v1, v2);
-}
-function line3(v1, v2) {
-    return new LineImpl3(v1, v2);
-}
+var cv2 = require('./curve2');
+var cv3 = require('./curve3');
 var Turtle2Impl = (function () {
     function Turtle2Impl(_coord, _degree) {
         this._coord = _coord;
@@ -38,7 +16,7 @@ var Turtle2Impl = (function () {
     };
     Turtle2Impl.prototype.moveDraw = function (len) {
         var dist = this.move(len);
-        var line = line2(this.coord(), dist.coord());
+        var line = cv2.line(this.coord(), dist.coord());
         return { turtle: dist, line: line };
     };
     Turtle2Impl.prototype.move = function (len) {
@@ -63,7 +41,7 @@ var Turtle3Impl = (function () {
     };
     Turtle3Impl.prototype.moveDraw = function (len) {
         var dist = this.move(len);
-        var line = line3(this.coord(), dist.coord());
+        var line = cv3.line(this.coord(), dist.coord());
         return { turtle: dist, line: line };
     };
     Turtle3Impl.prototype.move = function (len) {

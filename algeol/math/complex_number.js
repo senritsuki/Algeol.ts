@@ -1,5 +1,5 @@
 // Complex Number - 複素数・二元数
-var ut = require("../math/util");
+var ut = require("../math/utility");
 var vc = require("./vector");
 var ComplexNumberImpl = (function () {
     function ComplexNumberImpl(real, imag) {

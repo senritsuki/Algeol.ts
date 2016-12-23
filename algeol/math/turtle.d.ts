@@ -1,12 +1,6 @@
 import * as vc from './vector';
-export interface Line2 {
-    start(): vc.V2;
-    end(): vc.V2;
-}
-export interface Line3 {
-    start(): vc.V3;
-    end(): vc.V3;
-}
+import * as cv2 from './curve2';
+import * as cv3 from './curve3';
 export interface Turtle2 {
     coord(): vc.V2;
     dir(): vc.V2;
@@ -24,11 +18,11 @@ export interface Turtle3 {
 }
 export interface TLTuple2 {
     turtle: Turtle2;
-    line: Line2;
+    line: cv2.Curve;
 }
 export interface TLTuple3 {
     turtle: Turtle3;
-    line: Line3;
+    line: cv3.Curve;
 }
 export declare function turtle2(coord?: vc.V2, degree?: number): Turtle2;
 export declare function turtle3(coord?: vc.V3, degreeH?: number, degreeV?: number): Turtle3;

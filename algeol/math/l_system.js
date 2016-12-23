@@ -10,231 +10,240 @@ function l_system(start, rec) {
     return l_system(v2, rec - 1);
 }
 exports.l_system = l_system;
-/** Algae - 藻 */
-var Algae;
-(function (Algae) {
-    Algae.A = {
-        v: function () { return 'A'; },
-        p: function () { return [Algae.A, Algae.B]; },
-    };
-    Algae.B = {
-        v: function () { return 'B'; },
-        p: function () { return [Algae.A]; },
-    };
-    Algae.start = [Algae.A];
-})(Algae = exports.Algae || (exports.Algae = {}));
-/** Fibonacci Sequence - フィボナッチ数列 */
-var FibonacciSequence;
-(function (FibonacciSequence) {
-    FibonacciSequence.A = {
-        v: function () { return 'A'; },
-        p: function () { return [FibonacciSequence.B]; },
-    };
-    FibonacciSequence.B = {
-        v: function () { return 'B'; },
-        p: function () { return [FibonacciSequence.A, FibonacciSequence.B]; },
-    };
-    FibonacciSequence.start = [FibonacciSequence.A];
-})(FibonacciSequence = exports.FibonacciSequence || (exports.FibonacciSequence = {}));
-/** Cantor Set - カントール集合 */
-var CantorSet;
-(function (CantorSet) {
-    CantorSet.A = {
-        v: function () { return 'A'; },
-        p: function () { return [CantorSet.A, CantorSet.B, CantorSet.A]; },
-    };
-    CantorSet.B = {
-        v: function () { return 'B'; },
-        p: function () { return [CantorSet.B, CantorSet.B, CantorSet.B]; },
-    };
-    CantorSet.start = [CantorSet.A];
-})(CantorSet = exports.CantorSet || (exports.CantorSet = {}));
-/** Koch Curve - コッホ曲線 */
-var KochCurve;
-(function (KochCurve) {
-    KochCurve.F = {
-        v: function () { return 'F'; },
-        p: function () { return [KochCurve.F, KochCurve.P, KochCurve.F, KochCurve.N, KochCurve.F, KochCurve.N, KochCurve.F, KochCurve.P, KochCurve.F]; },
-    };
-    KochCurve.P = {
-        v: function () { return '+'; },
-        p: function () { return [KochCurve.P]; },
-    };
-    KochCurve.N = {
-        v: function () { return '-'; },
-        p: function () { return [KochCurve.N]; },
-    };
-    KochCurve.start = [KochCurve.F];
-    function turtle2(vl, r) {
-        if (r === void 0) { r = 1; }
+/** 共通 */
+var presets;
+(function (presets) {
+    /** turn left */
+    presets.P = { v: function () { return '+'; }, p: function () { return [presets.P]; }, };
+    /** turn right */
+    presets.N = { v: function () { return '-'; }, p: function () { return [presets.N]; }, };
+    /** push position */
+    presets.I = { v: function () { return '['; }, p: function () { return [presets.I]; }, };
+    /** pop position */
+    presets.O = { v: function () { return ']'; }, p: function () { return [presets.O]; }, };
+    function turtle_common(vl, dict) {
         var lines = [];
-        var movedraw = function (t) { var d = t.moveDraw(r); lines.push(d.line); return d.turtle; };
-        var dict = {
-            'F': movedraw,
-            '+': function (t) { return t.turn(90); },
-            '-': function (t) { return t.turn(-90); },
-        };
-        var turtle = tt.turtle2();
-        vl.forEach(function (v) { return turtle = dict[v.v()](turtle); });
-        return lines;
-    }
-    KochCurve.turtle2 = turtle2;
-})(KochCurve = exports.KochCurve || (exports.KochCurve = {}));
-/** Koch Island - コッホ島 */
-var KochIsland;
-(function (KochIsland) {
-    KochIsland.F = {
-        v: function () { return 'F'; },
-        p: function () { return [KochIsland.F, KochIsland.P, KochIsland.F, KochIsland.N, KochIsland.F, KochIsland.N, KochIsland.F, KochIsland.P, KochIsland.F]; },
-    };
-    KochIsland.P = {
-        v: function () { return '+'; },
-        p: function () { return [KochIsland.P]; },
-    };
-    KochIsland.N = {
-        v: function () { return '-'; },
-        p: function () { return [KochIsland.N]; },
-    };
-    KochIsland.start = [KochIsland.F];
-    function turtle2(vl, r) {
-        if (r === void 0) { r = 1; }
-        var lines = [];
-        var movedraw = function (t) { var d = t.moveDraw(r); lines.push(d.line); return d.turtle; };
-        var dict = {
-            'F': movedraw,
-            '+': function (t) { return t.turn(90); },
-            '-': function (t) { return t.turn(-90); },
-        };
-        var turtle = tt.turtle2();
-        vl.forEach(function (v) { return turtle = dict[v.v()](turtle); });
-        return lines;
-    }
-    KochIsland.turtle2 = turtle2;
-})(KochIsland = exports.KochIsland || (exports.KochIsland = {}));
-/** Sierpinski triangle - シェルピンスキーの三角形 */
-var SierpinskiTriangle;
-(function (SierpinskiTriangle) {
-    /** F: draw forward
-        F → F−G+F+G−F */
-    SierpinskiTriangle.F = {
-        v: function () { return 'F'; },
-        p: function () { return [SierpinskiTriangle.F, SierpinskiTriangle.N, SierpinskiTriangle.G, SierpinskiTriangle.P, SierpinskiTriangle.F, SierpinskiTriangle.P, SierpinskiTriangle.G, SierpinskiTriangle.N, SierpinskiTriangle.F]; },
-    };
-    /** G: draw forward
-        G → GG */
-    SierpinskiTriangle.G = {
-        v: function () { return 'G'; },
-        p: function () { return [SierpinskiTriangle.G, SierpinskiTriangle.G]; },
-    };
-    /** +: turn left
-        constants */
-    SierpinskiTriangle.P = {
-        v: function () { return '+'; },
-        p: function () { return [SierpinskiTriangle.P]; },
-    };
-    /** -: turn right
-        constants */
-    SierpinskiTriangle.N = {
-        v: function () { return '-'; },
-        p: function () { return [SierpinskiTriangle.N]; },
-    };
-    /** start: F−G−G */
-    SierpinskiTriangle.start = [SierpinskiTriangle.F, SierpinskiTriangle.N, SierpinskiTriangle.G, SierpinskiTriangle.N, SierpinskiTriangle.G];
-    function turtle2(vl, r) {
-        if (r === void 0) { r = 1; }
-        var lines = [];
-        var movedraw = function (t) { var d = t.moveDraw(r); lines.push(d.line); return d.turtle; };
-        var dict = {
-            'F': movedraw,
-            'G': movedraw,
-            '+': function (t) { return t.turn(120); },
-            '-': function (t) { return t.turn(-120); },
-        };
-        var turtle = tt.turtle2();
-        vl.forEach(function (v) { return turtle = dict[v.v()](turtle); });
-        return lines;
-    }
-    SierpinskiTriangle.turtle2 = turtle2;
-})(SierpinskiTriangle = exports.SierpinskiTriangle || (exports.SierpinskiTriangle = {}));
-/** Sierpinski arrowhead curve - シェルピンスキーの三角形 */
-var SierpinskiArrowheadCurve;
-(function (SierpinskiArrowheadCurve) {
-    SierpinskiArrowheadCurve.A = {
-        v: function () { return 'A'; },
-        p: function () { return [SierpinskiArrowheadCurve.B, SierpinskiArrowheadCurve.N, SierpinskiArrowheadCurve.A, SierpinskiArrowheadCurve.N, SierpinskiArrowheadCurve.B]; },
-    };
-    SierpinskiArrowheadCurve.B = {
-        v: function () { return 'B'; },
-        p: function () { return [SierpinskiArrowheadCurve.A, SierpinskiArrowheadCurve.P, SierpinskiArrowheadCurve.B, SierpinskiArrowheadCurve.P, SierpinskiArrowheadCurve.A]; },
-    };
-    SierpinskiArrowheadCurve.P = {
-        v: function () { return '+'; },
-        p: function () { return [SierpinskiArrowheadCurve.P]; },
-    };
-    SierpinskiArrowheadCurve.N = {
-        v: function () { return '-'; },
-        p: function () { return [SierpinskiArrowheadCurve.N]; },
-    };
-    SierpinskiArrowheadCurve.start = [SierpinskiArrowheadCurve.A];
-    function turtle2(vl, r) {
-        if (r === void 0) { r = 1; }
-        var lines = [];
-        var movedraw = function (t) { var d = t.moveDraw(r); lines.push(d.line); return d.turtle; };
-        var dict = {
-            'A': movedraw,
-            'B': movedraw,
-            '+': function (t) { return t.turn(60); },
-            '-': function (t) { return t.turn(-60); },
-        };
-        var turtle = tt.turtle2();
-        vl.forEach(function (v) { return turtle = dict[v.v()](turtle); });
-        return lines;
-    }
-    SierpinskiArrowheadCurve.turtle2 = turtle2;
-})(SierpinskiArrowheadCurve = exports.SierpinskiArrowheadCurve || (exports.SierpinskiArrowheadCurve = {}));
-/** Pythagoras Tree - ピタゴラスの木 */
-var PythagorasTree;
-(function (PythagorasTree) {
-    /** 0: draw a line segment ending in a leaf
-        0 → 1[0]0 */
-    PythagorasTree.A = {
-        v: function () { return '0'; },
-        p: function () { return [PythagorasTree.B, PythagorasTree.I, PythagorasTree.A, PythagorasTree.O, PythagorasTree.A]; },
-    };
-    /** 1: draw a line segment
-        1 → 11 */
-    PythagorasTree.B = {
-        v: function () { return '1'; },
-        p: function () { return [PythagorasTree.B, PythagorasTree.B]; },
-    };
-    /** [: push position and angle, turn left 45 degrees
-        constants */
-    PythagorasTree.I = {
-        v: function () { return '['; },
-        p: function () { return [PythagorasTree.I]; },
-    };
-    /** ]: pop position and angle, turn right 45 degrees
-        constants */
-    PythagorasTree.O = {
-        v: function () { return ']'; },
-        p: function () { return [PythagorasTree.O]; },
-    };
-    PythagorasTree.start = [PythagorasTree.A];
-    function turtle2(vl, r) {
-        if (r === void 0) { r = 1; }
         var queue = [];
-        var lines = [];
-        var movedraw = function (t) { var d = t.moveDraw(r); lines.push(d.line); return d.turtle; };
-        var dict = {
-            '0': movedraw,
-            '1': movedraw,
-            '[': function (t) { queue.push(t); return t.turn(45); },
-            ']': function (t) { var t2 = queue.pop(); return (t2 != undefined ? t2 : t).turn(-45); },
-        };
         var turtle = tt.turtle2();
-        vl.forEach(function (v) { return turtle = dict[v.v()](turtle); });
+        vl.forEach(function (v) { return turtle = dict[v.v()](turtle, lines, queue); });
         return lines;
     }
-    PythagorasTree.turtle2 = turtle2;
-})(PythagorasTree = exports.PythagorasTree || (exports.PythagorasTree = {}));
+    presets.turtle_common = turtle_common;
+    function movedraw(r) {
+        return function (turtlePrev, lines, queue) {
+            var d = turtlePrev.moveDraw(r);
+            lines.push(d.line);
+            return d.turtle;
+        };
+    }
+    presets.movedraw = movedraw;
+    function turn(degree) {
+        return function (turtlePrev, lines, queue) { return turtlePrev.turn(degree); };
+    }
+    presets.turn = turn;
+    /** Algae - 藻
+        A, A -> AB, B -> A */
+    var Algae;
+    (function (Algae) {
+        Algae.A = { v: function () { return 'A'; }, p: function () { return [Algae.A, Algae.B]; }, };
+        Algae.B = { v: function () { return 'B'; }, p: function () { return [Algae.A]; }, };
+        Algae.start = [Algae.A];
+    })(Algae = presets.Algae || (presets.Algae = {}));
+    /** Fibonacci Sequence - フィボナッチ数列
+        A, A -> B, B -> AB */
+    var FibonacciSequence;
+    (function (FibonacciSequence) {
+        FibonacciSequence.A = { v: function () { return 'A'; }, p: function () { return [FibonacciSequence.B]; }, };
+        FibonacciSequence.B = { v: function () { return 'B'; }, p: function () { return [FibonacciSequence.A, FibonacciSequence.B]; }, };
+        FibonacciSequence.start = [FibonacciSequence.A];
+    })(FibonacciSequence = presets.FibonacciSequence || (presets.FibonacciSequence = {}));
+    /** Cantor Set - カントール集合
+        A, A -> ABA, B -> BBB */
+    var CantorSet;
+    (function (CantorSet) {
+        CantorSet.A = { v: function () { return 'A'; }, p: function () { return [CantorSet.A, CantorSet.B, CantorSet.A]; }, };
+        CantorSet.B = { v: function () { return 'B'; }, p: function () { return [CantorSet.B, CantorSet.B, CantorSet.B]; }, };
+        CantorSet.start = [CantorSet.A];
+    })(CantorSet = presets.CantorSet || (presets.CantorSet = {}));
+    /** Koch Curve - コッホ曲線 60deg
+        F, F -> F+F--F+F */
+    var KochCurve60;
+    (function (KochCurve60) {
+        KochCurve60.F = { v: function () { return 'F'; }, p: function () { return [KochCurve60.F, presets.P, KochCurve60.F, presets.N, presets.N, KochCurve60.F, presets.P, KochCurve60.F]; }, };
+        KochCurve60.start = [KochCurve60.F];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'F': movedraw(r),
+                '+': turn(60),
+                '-': turn(-60),
+            });
+        }
+        KochCurve60.turtle = turtle;
+    })(KochCurve60 = presets.KochCurve60 || (presets.KochCurve60 = {}));
+    /** Koch Curve - コッホ曲線 90deg
+        F, F -> F+F-F-F+F */
+    var KochCurve90;
+    (function (KochCurve90) {
+        KochCurve90.F = { v: function () { return 'F'; }, p: function () { return [KochCurve90.F, presets.P, KochCurve90.F, presets.N, KochCurve90.F, presets.N, KochCurve90.F, presets.P, KochCurve90.F]; }, };
+        KochCurve90.start = [KochCurve90.F];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'F': movedraw(r),
+                '+': turn(90),
+                '-': turn(-90),
+            });
+        }
+        KochCurve90.turtle = turtle;
+    })(KochCurve90 = presets.KochCurve90 || (presets.KochCurve90 = {}));
+    /** Koch Island - コッホ島
+        F+F+F+F, F -> F-F+F+FFF-F-F+F */
+    var KochIsland;
+    (function (KochIsland) {
+        KochIsland.F = { v: function () { return 'F'; }, p: function () { return [KochIsland.F, presets.N, KochIsland.F, presets.P, KochIsland.F, presets.P, KochIsland.F, KochIsland.F, KochIsland.F, presets.N, KochIsland.F, presets.N, KochIsland.F, presets.P, KochIsland.F]; }, };
+        KochIsland.start = [KochIsland.F, presets.P, KochIsland.F, presets.P, KochIsland.F, presets.P, KochIsland.F];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'F': movedraw(r),
+                '+': turn(90),
+                '-': turn(-90),
+            });
+        }
+        KochIsland.turtle = turtle;
+    })(KochIsland = presets.KochIsland || (presets.KochIsland = {}));
+    /** Peano Curve
+        F, F -> F+F-F-F-F+F+F+F-F */
+    var PeanoCurve;
+    (function (PeanoCurve) {
+        PeanoCurve.F = { v: function () { return 'F'; }, p: function () { return [PeanoCurve.F, presets.P, PeanoCurve.F, presets.N, PeanoCurve.F, presets.N, PeanoCurve.F, presets.N, PeanoCurve.F, presets.P, PeanoCurve.F, presets.P, PeanoCurve.F, presets.P, PeanoCurve.F, presets.N, PeanoCurve.F]; }, };
+        PeanoCurve.start = [PeanoCurve.F];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'F': movedraw(r),
+                '+': turn(90),
+                '-': turn(-90),
+            });
+        }
+        PeanoCurve.turtle = turtle;
+    })(PeanoCurve = presets.PeanoCurve || (presets.PeanoCurve = {}));
+    /** Peano-Gosper Curve
+        A, A -> A-B--B+A++AA+B-, B -> +A-BB--B-A++A+B */
+    var PeanoGosperCurve;
+    (function (PeanoGosperCurve) {
+        PeanoGosperCurve.A = { v: function () { return 'A'; }, p: function () { return [PeanoGosperCurve.A, presets.N, PeanoGosperCurve.B, presets.N, presets.N, PeanoGosperCurve.B, presets.P, PeanoGosperCurve.A, presets.P, presets.P, PeanoGosperCurve.A, PeanoGosperCurve.A, presets.P, PeanoGosperCurve.B, presets.N]; }, };
+        PeanoGosperCurve.B = { v: function () { return 'B'; }, p: function () { return [presets.P, PeanoGosperCurve.A, presets.N, PeanoGosperCurve.B, PeanoGosperCurve.B, presets.N, presets.N, PeanoGosperCurve.B, presets.N, PeanoGosperCurve.A, presets.P, presets.P, PeanoGosperCurve.A, presets.P, PeanoGosperCurve.B]; }, };
+        PeanoGosperCurve.start = [PeanoGosperCurve.A];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'A': movedraw(r),
+                'B': movedraw(r),
+                '+': turn(60),
+                '-': turn(-60),
+            });
+        }
+        PeanoGosperCurve.turtle = turtle;
+    })(PeanoGosperCurve = presets.PeanoGosperCurve || (presets.PeanoGosperCurve = {}));
+    /** Sierpinski Arrowhead Curve - シェルピンスキーの三角形
+        A, A -> B+A+B, B -> A-B-A */
+    var SierpinskiArrowheadCurve;
+    (function (SierpinskiArrowheadCurve) {
+        SierpinskiArrowheadCurve.A = { v: function () { return 'A'; }, p: function () { return [SierpinskiArrowheadCurve.B, presets.P, SierpinskiArrowheadCurve.A, presets.P, SierpinskiArrowheadCurve.B]; }, };
+        SierpinskiArrowheadCurve.B = { v: function () { return 'B'; }, p: function () { return [SierpinskiArrowheadCurve.A, presets.N, SierpinskiArrowheadCurve.B, presets.N, SierpinskiArrowheadCurve.A]; }, };
+        SierpinskiArrowheadCurve.start = [SierpinskiArrowheadCurve.A];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'A': movedraw(r),
+                'B': movedraw(r),
+                '+': turn(60),
+                '-': turn(-60),
+            });
+        }
+        SierpinskiArrowheadCurve.turtle = turtle;
+    })(SierpinskiArrowheadCurve = presets.SierpinskiArrowheadCurve || (presets.SierpinskiArrowheadCurve = {}));
+    /** Sierpinski Triangle - シェルピンスキーの三角形
+        A+B+B, A -> A+B-A-B+A, B -> BB */
+    var SierpinskiTriangle;
+    (function (SierpinskiTriangle) {
+        SierpinskiTriangle.A = { v: function () { return 'A'; }, p: function () { return [SierpinskiTriangle.A, presets.P, SierpinskiTriangle.B, presets.N, SierpinskiTriangle.A, presets.N, SierpinskiTriangle.B, presets.P, SierpinskiTriangle.A]; }, };
+        SierpinskiTriangle.B = { v: function () { return 'B'; }, p: function () { return [SierpinskiTriangle.B, SierpinskiTriangle.B]; }, };
+        SierpinskiTriangle.start = [SierpinskiTriangle.A, presets.P, SierpinskiTriangle.B, presets.P, SierpinskiTriangle.B];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'A': movedraw(r),
+                'B': movedraw(r),
+                '+': turn(120),
+                '-': turn(-120),
+            });
+        }
+        SierpinskiTriangle.turtle = turtle;
+    })(SierpinskiTriangle = presets.SierpinskiTriangle || (presets.SierpinskiTriangle = {}));
+    /** Square Curve
+        A+B+A+B, A -> A, B -> B-A+A-B+A+B-A+A-B */
+    var SquareCurve;
+    (function (SquareCurve) {
+        SquareCurve.A = { v: function () { return 'A'; }, p: function () { return [SquareCurve.A]; }, };
+        SquareCurve.B = { v: function () { return 'B'; }, p: function () { return [SquareCurve.B, presets.N, SquareCurve.A, presets.P, SquareCurve.A, presets.N, SquareCurve.B, presets.P, SquareCurve.A, presets.P, SquareCurve.B, presets.N, SquareCurve.A, presets.P, SquareCurve.A, presets.N, SquareCurve.B]; }, };
+        SquareCurve.start = [SquareCurve.A, presets.P, SquareCurve.B, presets.P, SquareCurve.A, presets.P, SquareCurve.B];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'A': movedraw(r),
+                'B': movedraw(r),
+                '+': turn(90),
+                '-': turn(-90),
+            });
+        }
+        SquareCurve.turtle = turtle;
+    })(SquareCurve = presets.SquareCurve || (presets.SquareCurve = {}));
+    /** Dragon Curve - ドラゴン曲線
+        A, A -> A+B+, B -> -A-B */
+    var DragonCurve;
+    (function (DragonCurve) {
+        DragonCurve.A = { v: function () { return 'A'; }, p: function () { return [DragonCurve.A, presets.P, DragonCurve.B, presets.P]; }, };
+        DragonCurve.B = { v: function () { return 'B'; }, p: function () { return [presets.N, DragonCurve.A, presets.N, DragonCurve.B]; }, };
+        DragonCurve.start = [DragonCurve.A];
+        function turtle(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'A': movedraw(r),
+                'B': movedraw(r),
+                '+': turn(90),
+                '-': turn(-90),
+            });
+        }
+        DragonCurve.turtle = turtle;
+    })(DragonCurve = presets.DragonCurve || (presets.DragonCurve = {}));
+    /** Pythagoras Tree - ピタゴラスの木
+        A, A -> B[A]A, B -> BB */
+    var PythagorasTree;
+    (function (PythagorasTree) {
+        PythagorasTree.A = { v: function () { return 'A'; }, p: function () { return [PythagorasTree.B, presets.I, PythagorasTree.A, presets.O, PythagorasTree.A]; }, };
+        PythagorasTree.B = { v: function () { return 'B'; }, p: function () { return [PythagorasTree.B, PythagorasTree.B]; }, };
+        PythagorasTree.start = [PythagorasTree.A];
+        function turtle2(vl, r) {
+            if (r === void 0) { r = 1; }
+            return turtle_common(vl, {
+                'A': movedraw(r),
+                'B': movedraw(r),
+                '[': function (t, l, q) { q.push(t); return t.turn(45); },
+                ']': function (t, l, q) { var t2 = q.pop(); return (t2 != undefined ? t2 : t).turn(-45); },
+            });
+        }
+        PythagorasTree.turtle2 = turtle2;
+    })(PythagorasTree = presets.PythagorasTree || (presets.PythagorasTree = {}));
+})(presets = exports.presets || (exports.presets = {}));
+/*
+LShowColor@LSystem["L", (* Hilbert curve *)
+    {"L" -> "+RF-LFL-FR+", "R" -> "-LF+RFR+FL-"}, 6];
+
+LShowColor@LSystem["X", (* Hilbert curve II *)
+    {"X" -> "XFYFX+F+YFXFY-F-XFYFX",
+     "Y" -> "YFXFY-F-XFYFX+F+YFXFY"}, 3];
+ */ 
 //# sourceMappingURL=l_system.js.map

@@ -1,6 +1,6 @@
 ﻿// Square Matrix 正方行列
 
-import * as ut from "../math/util";
+import * as ut from "../math/utility";
 import * as vc from "./vector";
 
 export namespace fn {
@@ -350,4 +350,27 @@ export function rotYZ_z_m3(v3: vc.V3): M3 {
 }
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
 export function rotYZ_z_m4(v3: vc.V3): M4 { return m3_m4(rotYZ_z_m3(v3)); }
+
+
+/** オイラー角XYZの回転写像 */
+export function rotXYZ_m3(radX: number, radY: number, radZ: number): M3 {
+	return rotX_m3(radX)
+		.mul(rotY_m3(radY))
+		.mul(rotZ_m3(radZ));
+}
+/** オイラー角XYZの回転写像 */
+export function rotXYZ_m4(radX: number, radY: number, radZ: number): M4 {
+	return m3_m4(rotXYZ_m3(radX, radY, radZ));
+}
+
+/** オイラー角XYZの逆回転写像 */
+export function rotInvXYZ_m3(radX: number, radY: number, radZ: number): M3 {
+	return rotZ_m3(-radZ)
+		.mul(rotY_m3(-radY))
+		.mul(rotX_m3(-radX));
+}
+/** オイラー角XYZの回転写像 */
+export function rotInvXYZ_m4(radX: number, radY: number, radZ: number): M4 {
+	return m3_m4(rotInvXYZ_m3(radX, radY, radZ));
+}
 

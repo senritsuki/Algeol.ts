@@ -1,5 +1,5 @@
 /** プリミティブオブジェクト */
-import * as al from "../algeo";
+import * as al from "../algeol";
 import * as vc from "../math/vector";
 /** プリミティブオブジェクト生成用関数群 */
 export declare namespace fn {
@@ -59,26 +59,34 @@ export declare namespace fn {
     }
     /** Circle - 円 */
     namespace circle {
-        function verts_i(n_gonal: number, r: number): vc.V3[];
-        function verts_c(n_gonal: number, r: number): vc.V3[];
+        /** 円に内接するn角形 */
+        function verts_i(n_gonal: number, r: number, p?: number, z?: number): vc.V3[];
+        /** 円に外接するn角形 */
+        function verts_c(n_gonal: number, r: number, p?: number, z?: number): vc.V3[];
     }
     /** Prism - 角柱 */
     namespace prism {
         /** (底面の頂点数, 底面の外接円の半径, 高さ) -> 角柱の頂点の配列 */
         function verts_i(n_gonal: number, r: number, h: number): vc.V3[];
+        /** (底面の頂点数, 底面の内接円の半径, 高さ) -> 角柱の頂点の配列 */
+        function verts_c(n_gonal: number, r: number, h: number): vc.V3[];
         function faces(n_gonal: number): number[][];
     }
     /** Pyramid - 角錐 */
     namespace pyramid {
         /** (底面の頂点数, 底面の外接円の半径, 高さ) -> 角錐の頂点の配列 */
-        function verts(n_gonal: number, r: number, h: number): vc.V3[];
+        function verts_i(n_gonal: number, r: number, h: number): vc.V3[];
+        /** (底面の頂点数, 底面の内接円の半径, 高さ) -> 角錐の頂点の配列 */
+        function verts_c(n_gonal: number, r: number, h: number): vc.V3[];
         /** (底面の頂点数) -> 角錐の面の配列 */
         function faces(n_gonal: number): number[][];
     }
     /** Bipyramid - 双角錐 */
     namespace bipyramid {
         /** (底面の頂点数, 底面の外接円の半径, 高さ, 深さ) -> 双角錐の頂点の配列 */
-        function verts(n_gonal: number, r: number, h: number, d: number): vc.V3[];
+        function verts_i(n_gonal: number, r: number, h: number, d: number): vc.V3[];
+        /** (底面の頂点数, 底面の内接円の半径, 高さ, 深さ) -> 双角錐の頂点の配列 */
+        function verts_c(n_gonal: number, r: number, h: number, d: number): vc.V3[];
         function faces(n_gonal: number): number[][];
     }
 }

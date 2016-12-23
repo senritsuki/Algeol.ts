@@ -137,3 +137,11 @@ export declare function rotYZ_x_m4(v3: vc.V3): M4;
 export declare function rotYZ_z_m3(v3: vc.V3): M3;
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
 export declare function rotYZ_z_m4(v3: vc.V3): M4;
+/** オイラー角XYZの回転写像 */
+export declare function rotXYZ_m3(radX: number, radY: number, radZ: number): M3;
+/** オイラー角XYZの回転写像 */
+export declare function rotXYZ_m4(radX: number, radY: number, radZ: number): M4;
+/** オイラー角XYZの逆回転写像 */
+export declare function rotInvXYZ_m3(radX: number, radY: number, radZ: number): M3;
+/** オイラー角XYZの回転写像 */
+export declare function rotInvXYZ_m4(radX: number, radY: number, radZ: number): M4;
