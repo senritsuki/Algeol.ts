@@ -29,6 +29,9 @@ export const deg90 = pi / 2;
 export const deg60 = pi / 3;
 export const deg45 = pi / 4;
 export const deg30 = pi / 6;
+export const deg15 = pi / 12;
+export const deg5 = pi / 36;
+export const deg1 = pi / 180;
 
 /** Golden Ratio - 黄金比 */
 export const phi = (1 + r5) / 2;

@@ -1,6 +1,5 @@
 ﻿/** Algorithm and Geometry - ジオメトリと複製アルゴリズム */
 
-import * as ut from "./math/utility";
 import * as vc from "./math/vector";
 import * as mx from "./math/matrix";
 
@@ -151,19 +150,28 @@ export function merge_geoDict(geodicts: GeoDict[]): GeoDict {
 }
 
 
-/** アフィン写像配列を用いたジオメトリ複製 */
-export function duplicateGeoWithAffine(g: Geo, m4: mx.M4[]): Geo[] {
-	return duplicateGeo(g, m4.map(m => (v: vc.V3) => m.map_v3(v, 1)));
+/** 写像配列を用いた3次元ベクトル配列複製 */
+export function duplicateVerts(verts: vc.V3[], maps: Array<(v: vc.V3) => vc.V3>): vc.V3[][] {
+	return maps.map(m => verts.map(m));
 }
+/** アフィン写像配列を用いた3次元ベクトル配列複製 */
+export function duplicateVertsWithAffine(verts: vc.V3[], m4: mx.M4[]): vc.V3[][] {
+	return duplicateVerts(verts, m4.map(m => (v: vc.V3) => m.map_v3(v, 1)));
+}
+
 /** 写像配列を用いたジオメトリ複製 */
 export function duplicateGeo(g: Geo, maps: Array<(v: vc.V3) => vc.V3>): Geo[] {
 	const verts = g.verts();
 	const faces = g.faces();
 	return maps.map(m => geo(verts.map(m), faces));
 }
+/** アフィン写像配列を用いたジオメトリ複製 */
+export function duplicateGeoWithAffine(g: Geo, m4: mx.M4[]): Geo[] {
+	return duplicateGeo(g, m4.map(m => (v: vc.V3) => m.map_v3(v, 1)));
+}
 
 /** 任意のデータ配列を用いた合成写像の生成 */
 export function compositeMap<T>(data: T[], lambdas: Array<(d: T) => mx.M4>): mx.M4[] {
-	return data.map(d => lambdas.reduce((m, lambda) => m.mul(lambda(d)), mx.unit_m4));
+	return data.map(d => lambdas.reduce((m, lambda) => lambda(d).mul(m), mx.unit_m4));
 }
 

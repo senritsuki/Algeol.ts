@@ -23,6 +23,9 @@ export declare const deg90: number;
 export declare const deg60: number;
 export declare const deg45: number;
 export declare const deg30: number;
+export declare const deg15: number;
+export declare const deg5: number;
+export declare const deg1: number;
 /** Golden Ratio - 黄金比 */
 export declare const phi: number;
 /** (角度:度数法) -> 角度:弧度法 */

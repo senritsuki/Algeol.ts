@@ -48,4 +48,6 @@ export declare function ellipse(o: vc.V2, x: vc.V2, y: vc.V2): Curve;
 /** (中心, x, y, z) -> 螺旋 */
 export declare function spiral(o: vc.V2, x: vc.V2, y: vc.V2, z: vc.V2): Curve;
 /** 連続曲線 */
-export declare function multicurve2(curves: Curve[]): CurveArray;
+export declare function curves(curves: Curve[]): CurveArray;
+/** 折れ線 */
+export declare function lines(verts: vc.V2[]): CurveArray;

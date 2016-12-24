@@ -1,3 +1,4 @@
+/** Algorithm and Geometry - ジオメトリと複製アルゴリズム */
 import * as vc from "./math/vector";
 import * as mx from "./math/matrix";
 export interface GeoRoot {
@@ -39,9 +40,13 @@ export declare function geoGroup(name: string, geos: Geo[]): GeoGroup;
 export declare function geoDict(geogroups: GeoGroup[]): GeoDict;
 /** (ジオメトリグループ辞書の配列) -> ジオメトリグループ辞書 */
 export declare function merge_geoDict(geodicts: GeoDict[]): GeoDict;
-/** アフィン写像配列を用いたジオメトリ複製 */
-export declare function duplicateGeoWithAffine(g: Geo, m4: mx.M4[]): Geo[];
+/** 写像配列を用いた3次元ベクトル配列複製 */
+export declare function duplicateVerts(verts: vc.V3[], maps: Array<(v: vc.V3) => vc.V3>): vc.V3[][];
+/** アフィン写像配列を用いた3次元ベクトル配列複製 */
+export declare function duplicateVertsWithAffine(verts: vc.V3[], m4: mx.M4[]): vc.V3[][];
 /** 写像配列を用いたジオメトリ複製 */
 export declare function duplicateGeo(g: Geo, maps: Array<(v: vc.V3) => vc.V3>): Geo[];
+/** アフィン写像配列を用いたジオメトリ複製 */
+export declare function duplicateGeoWithAffine(g: Geo, m4: mx.M4[]): Geo[];
 /** 任意のデータ配列を用いた合成写像の生成 */
 export declare function compositeMap<T>(data: T[], lambdas: Array<(d: T) => mx.M4>): mx.M4[];
