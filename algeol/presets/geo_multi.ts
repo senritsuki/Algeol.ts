@@ -43,8 +43,8 @@ function common_prismArray(polygons: vc.V3[][], faces_side: (i: number[][], j: n
 	const verts = verts_flat(polygons, n_gonal);
 
 	const faces = faces_side(seq_i2, seq_j2);
-	faces.push(seq_j); // 上面
-	faces.push(seq_j.map(j => (count - 1) * n_gonal + j)); // 底面
+	faces.push(seq_j); // 底面
+	faces.push(seq_j.map(j => (count - 1) * n_gonal + j)); // 上面
 
 	return al.geo(verts, faces);
 }
@@ -62,7 +62,8 @@ function common_prismArray_pyramid(polygons: vc.V3[][], v1: vc.V3, faces_side: (
 	const count = polygons.length;
 	const n_gonal = polygons[0].length;
 	const seq_i2 = ut.seq.arith(count - 1).map(i => [i * n_gonal, (i + 1) * n_gonal]);
-	const seq_j2 = ut.seq.arith(n_gonal).map(j => [j, (j + 1) % n_gonal]);
+	const seq_j = ut.seq.arith(n_gonal);
+	const seq_j2 = seq_j.map(j => [j, (j + 1) % n_gonal]);
 
 	const verts = verts_flat(polygons, n_gonal);
 	verts.push(v1);
@@ -72,6 +73,7 @@ function common_prismArray_pyramid(polygons: vc.V3[][], v1: vc.V3, faces_side: (
 	
 	const faces = faces_side(seq_i2, seq_j2);
 	seq_j2.forEach(j2 => faces.push([i1 + j2[0], i1 + j2[1], v1i])); // 角錐 上
+	faces.push(seq_j); // 底面
 
 	return al.geo(verts, faces);
 }

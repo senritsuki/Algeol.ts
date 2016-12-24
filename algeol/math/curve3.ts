@@ -215,6 +215,10 @@ export function spiral(o: vc.V3, x: vc.V3, y: vc.V3, z: vc.V3): Curve {
 }
 
 /** 連続曲線 */
-export function multicurve3(curves: Curve[]): CurveArray {
+export function curves(curves: Curve[]): CurveArray {
 	return new CurveArrayImpl(curves);
+}
+/** 折れ線 */
+export function lines(verts: vc.V3[]): CurveArray {
+	return curves(ut.seq.arith(verts.length - 1, 1).map(i => line(verts[i - 1], verts[i])));
 }

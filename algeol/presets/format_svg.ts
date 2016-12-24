@@ -20,14 +20,14 @@ export function curve_line(line: cv.Curve, stroke: string, strokeWidth: number):
 }
 
 /** (連続直線) -> <path> */
-export function curveArray_path(lines: cv.CurveArray): string {
+export function curveArray_path(lines: cv.CurveArray, fill: string, stroke: string, strokeWidth: number, z: boolean): string {
 	const strs: string[] = [];
 	const c0 = lines.start();
 	strs.push(`M ${c0.x()} ${c0.y()}`);
 	ut.seq.arith(lines.curveNum(), 1)
 		.map(i => lines.coord(i))
 		.forEach(v => strs.push(`L ${v.x()} ${v.y()}`));
-	return `<path d="${strs.join(' ')}" />`;
+	return `<path fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" d="${strs.join(' ') + (z ? ' z' : '')}" />`;
 }
 
 /** (3次元ベクトル(x=cx, y=cy, z=r)) -> <circle> */

@@ -34,8 +34,8 @@ function common_prismArray(polygons, faces_side) {
     var seq_j2 = seq_j.map(function (j) { return [j, (j + 1) % n_gonal]; });
     var verts = verts_flat(polygons, n_gonal);
     var faces = faces_side(seq_i2, seq_j2);
-    faces.push(seq_j); // 上面
-    faces.push(seq_j.map(function (j) { return (count - 1) * n_gonal + j; })); // 底面
+    faces.push(seq_j); // 底面
+    faces.push(seq_j.map(function (j) { return (count - 1) * n_gonal + j; })); // 上面
     return al.geo(verts, faces);
 }
 /** 連続角柱 */
@@ -52,13 +52,15 @@ function common_prismArray_pyramid(polygons, v1, faces_side) {
     var count = polygons.length;
     var n_gonal = polygons[0].length;
     var seq_i2 = ut.seq.arith(count - 1).map(function (i) { return [i * n_gonal, (i + 1) * n_gonal]; });
-    var seq_j2 = ut.seq.arith(n_gonal).map(function (j) { return [j, (j + 1) % n_gonal]; });
+    var seq_j = ut.seq.arith(n_gonal);
+    var seq_j2 = seq_j.map(function (j) { return [j, (j + 1) % n_gonal]; });
     var verts = verts_flat(polygons, n_gonal);
     verts.push(v1);
     var v1i = verts.length - 1;
     var i1 = (count - 1) * n_gonal;
     var faces = faces_side(seq_i2, seq_j2);
     seq_j2.forEach(function (j2) { return faces.push([i1 + j2[0], i1 + j2[1], v1i]); }); // 角錐 上
+    faces.push(seq_j); // 底面
     return al.geo(verts, faces);
 }
 /** 連続角柱 + 上に角錐 */

@@ -24,6 +24,9 @@ exports.deg90 = exports.pi / 2;
 exports.deg60 = exports.pi / 3;
 exports.deg45 = exports.pi / 4;
 exports.deg30 = exports.pi / 6;
+exports.deg15 = exports.pi / 12;
+exports.deg5 = exports.pi / 36;
+exports.deg1 = exports.pi / 180;
 /** Golden Ratio - 黄金比 */
 exports.phi = (1 + exports.r5) / 2;
 /** (角度:度数法) -> 角度:弧度法 */

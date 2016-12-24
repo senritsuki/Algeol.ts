@@ -115,11 +115,16 @@ function merge_geoDict(geodicts) {
     return GeoDictImpl.Merge(geodicts);
 }
 exports.merge_geoDict = merge_geoDict;
-/** アフィン写像配列を用いたジオメトリ複製 */
-function duplicateGeoWithAffine(g, m4) {
-    return duplicateGeo(g, m4.map(function (m) { return function (v) { return m.map_v3(v, 1); }; }));
+/** 写像配列を用いた3次元ベクトル配列複製 */
+function duplicateVerts(verts, maps) {
+    return maps.map(function (m) { return verts.map(m); });
 }
-exports.duplicateGeoWithAffine = duplicateGeoWithAffine;
+exports.duplicateVerts = duplicateVerts;
+/** アフィン写像配列を用いた3次元ベクトル配列複製 */
+function duplicateVertsWithAffine(verts, m4) {
+    return duplicateVerts(verts, m4.map(function (m) { return function (v) { return m.map_v3(v, 1); }; }));
+}
+exports.duplicateVertsWithAffine = duplicateVertsWithAffine;
 /** 写像配列を用いたジオメトリ複製 */
 function duplicateGeo(g, maps) {
     var verts = g.verts();
@@ -127,9 +132,14 @@ function duplicateGeo(g, maps) {
     return maps.map(function (m) { return geo(verts.map(m), faces); });
 }
 exports.duplicateGeo = duplicateGeo;
+/** アフィン写像配列を用いたジオメトリ複製 */
+function duplicateGeoWithAffine(g, m4) {
+    return duplicateGeo(g, m4.map(function (m) { return function (v) { return m.map_v3(v, 1); }; }));
+}
+exports.duplicateGeoWithAffine = duplicateGeoWithAffine;
 /** 任意のデータ配列を用いた合成写像の生成 */
 function compositeMap(data, lambdas) {
-    return data.map(function (d) { return lambdas.reduce(function (m, lambda) { return m.mul(lambda(d)); }, mx.unit_m4); });
+    return data.map(function (d) { return lambdas.reduce(function (m, lambda) { return lambda(d).mul(m); }, mx.unit_m4); });
 }
 exports.compositeMap = compositeMap;
 //# sourceMappingURL=algeol.js.map

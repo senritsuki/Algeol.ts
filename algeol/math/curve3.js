@@ -193,8 +193,13 @@ function spiral(o, x, y, z) {
 }
 exports.spiral = spiral;
 /** 連続曲線 */
-function multicurve3(curves) {
+function curves(curves) {
     return new CurveArrayImpl(curves);
 }
-exports.multicurve3 = multicurve3;
+exports.curves = curves;
+/** 折れ線 */
+function lines(verts) {
+    return curves(ut.seq.arith(verts.length - 1, 1).map(function (i) { return line(verts[i - 1], verts[i]); }));
+}
+exports.lines = lines;
 //# sourceMappingURL=curve3.js.map
