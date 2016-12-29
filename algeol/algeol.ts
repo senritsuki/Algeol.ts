@@ -13,7 +13,7 @@ export interface GeoRoot {
 /** Geometry - ジオメトリ */
 export interface Geo extends GeoRoot {
 	/** 複製 */
-	duplicate(lambda: (geo: Geo) => Geo[]): Geo[];
+	clone(lambda: (v: vc.V3) => vc.V3): Geo;
 }
 
 /** Geometry Group - ジオメトリグループ */
@@ -23,7 +23,7 @@ export interface GeoGroup extends GeoRoot {
 	/** () -> ジオメトリ */
 	geos(): Geo[];
 	/** 複製 */
-	duplicate(lambda: (geo: Geo) => Geo[]): GeoGroup;
+	clone(lambda: (v: vc.V3) => vc.V3): GeoGroup;
 }
 
 /** ジオメトリグループの辞書 */
@@ -33,7 +33,7 @@ export interface GeoDict extends GeoRoot {
 	/** () -> ジオメトリ */
 	geogroups(): GeoGroup[];
 	/** 複製 */
-	duplicate(lambda: (geo: Geo) => Geo[]): GeoDict;
+	clone(lambda: (v: vc.V3) => vc.V3): GeoDict;
 }
 
 
@@ -48,8 +48,8 @@ class GeoImpl implements Geo {
 	faces(): number[][] {
 		return this._faces;
 	}
-	duplicate(lambda: (geo: Geo) => Geo[]): Geo[] {
-		return lambda(this);
+	clone(lambda: (v: vc.V3) => vc.V3): Geo {
+		return new GeoImpl(this._verts.map(lambda), this._faces);
 	}
 }
 
@@ -80,8 +80,8 @@ class GeoGroupImpl implements GeoGroup {
 	geos(): Geo[] {
 		return this._geos;
 	}
-	duplicate(lambda: (geo: Geo) => Geo[]): GeoGroup {
-		return new GeoGroupImpl(this._name, this._geos.map(lambda).reduce((a, b) => a.concat(b), <Geo[]>[]));
+	clone(lambda: (v: vc.V3) => vc.V3): GeoGroup {
+		return new GeoGroupImpl(this._name, this._geos.map(g => g.clone(lambda)));
 	}
 }
 
@@ -127,8 +127,8 @@ class GeoDictImpl implements GeoDict {
 	geogroups(): GeoGroup[] {
 		return this._names.map(name => this._dict[name]);
 	}
-	duplicate(lambda: (geo: Geo) => Geo[]): GeoDict {
-		return new GeoDictImpl(this.geogroups().map(geogroup => geogroup.duplicate(lambda)));
+	clone(lambda: (v: vc.V3) => vc.V3): GeoDict {
+		return new GeoDictImpl(this.geogroups().map(geogroup => geogroup.clone(lambda)));
 	}
 }
 
@@ -150,13 +150,15 @@ export function merge_geoDict(geodicts: GeoDict[]): GeoDict {
 }
 
 
+const map_mm4 = (mm: mx.M4[]) => mm.map(m => (v: vc.V3) => m.map_v3(v, 1));
+
 /** 写像配列を用いた3次元ベクトル配列複製 */
 export function duplicateVerts(verts: vc.V3[], maps: Array<(v: vc.V3) => vc.V3>): vc.V3[][] {
 	return maps.map(m => verts.map(m));
 }
 /** アフィン写像配列を用いた3次元ベクトル配列複製 */
-export function duplicateVertsWithAffine(verts: vc.V3[], m4: mx.M4[]): vc.V3[][] {
-	return duplicateVerts(verts, m4.map(m => (v: vc.V3) => m.map_v3(v, 1)));
+export function duplicateVertsAffine(verts: vc.V3[], m4: mx.M4[]): vc.V3[][] {
+	return duplicateVerts(verts, map_mm4(m4));
 }
 
 /** 写像配列を用いたジオメトリ複製 */
@@ -166,8 +168,30 @@ export function duplicateGeo(g: Geo, maps: Array<(v: vc.V3) => vc.V3>): Geo[] {
 	return maps.map(m => geo(verts.map(m), faces));
 }
 /** アフィン写像配列を用いたジオメトリ複製 */
-export function duplicateGeoWithAffine(g: Geo, m4: mx.M4[]): Geo[] {
-	return duplicateGeo(g, m4.map(m => (v: vc.V3) => m.map_v3(v, 1)));
+export function duplicateGeoAffine(g: Geo, m4: mx.M4[]): Geo[] {
+	return duplicateGeo(g, map_mm4(m4));
+}
+/** 写像配列を用いたジオメトリグループ複製 */
+export function duplicateGeoGroup(gg: GeoGroup, maps: Array<(v: vc.V3) => vc.V3>): GeoGroup {
+	const gg2 = gg.geos()
+		.map(g => duplicateGeo(g, maps))
+		.reduce((a, b) => a.concat(b), <GeoGroup[]>[]);
+	return geoGroup(gg.name(), gg2);
+}
+/** アフィン写像配列を用いたジオメトリグループ複製 */
+export function duplicateGeoGroupAffine(gg: GeoGroup, m4: mx.M4[]): GeoGroup {
+	return duplicateGeoGroup(gg, map_mm4(m4));
+}
+/** 写像配列を用いたジオメトリ辞書複製 */
+export function duplicateGeoDict(gd: GeoDict, maps: Array<(v: vc.V3) => vc.V3>): GeoDict {
+	const gg2 = gd.geogroups()
+		.map(gg => duplicateGeoGroup(gg, maps))
+		.reduce((a, b) => a.concat(b), <GeoGroup[]>[]);
+	return geoDict(gg2);
+}
+/** アフィン写像配列を用いたジオメトリ辞書複製 */
+export function duplicateGeoDictAffine(gd: GeoDict, m4: mx.M4[]): GeoDict {
+	return duplicateGeoDict(gd, map_mm4(m4));
 }
 
 /** 任意のデータ配列を用いた合成写像の生成 */

@@ -80,11 +80,21 @@ var M2Impl = (function () {
     }
     M2Impl.FromRows = function (rows) { return new M2Impl(rows); };
     M2Impl.FromCols = function (cols) { return new M2Impl(fn.transpose(cols)); };
-    M2Impl.prototype._ref = function () { return this._rows; };
-    M2Impl.prototype.array_rows = function () { return fn.clone(this._rows, M2Impl.Dim, M2Impl.Dim); };
-    M2Impl.prototype.array_cols = function () { return fn.transpose(this._rows); };
-    M2Impl.prototype.mul = function (dist) { return M2Impl.FromRows(fn.mul(this._ref(), dist._ref())); };
-    M2Impl.prototype.map_v2 = function (v) { return vc.ar_v2(fn.map(this._ref(), v._ref())); };
+    M2Impl.prototype._ref = function () {
+        return this._rows;
+    };
+    M2Impl.prototype.array_rows = function () {
+        return fn.clone(this._rows, M2Impl.Dim, M2Impl.Dim);
+    };
+    M2Impl.prototype.array_cols = function () {
+        return fn.transpose(this._rows);
+    };
+    M2Impl.prototype.mul = function (dist) {
+        return M2Impl.FromRows(fn.mul(this._ref(), dist._ref()));
+    };
+    M2Impl.prototype.map_v2 = function (v) {
+        return vc.ar_v2(fn.map(this._ref(), v._ref()));
+    };
     M2Impl.Dim = 2;
     return M2Impl;
 })();
@@ -94,11 +104,21 @@ var M3Impl = (function () {
     }
     M3Impl.FromRows = function (rows) { return new M3Impl(rows); };
     M3Impl.FromCols = function (cols) { return new M3Impl(fn.transpose(cols)); };
-    M3Impl.prototype._ref = function () { return this._rows; };
-    M3Impl.prototype.array_rows = function () { return fn.clone(this._rows, M3Impl.Dim, M3Impl.Dim); };
-    M3Impl.prototype.array_cols = function () { return fn.transpose(this._rows); };
-    M3Impl.prototype.mul = function (dist) { return M3Impl.FromRows(fn.mul(this._ref(), dist._ref())); };
-    M3Impl.prototype.map_v3 = function (v) { return vc.ar_v3(fn.map(this._ref(), v._ref())); };
+    M3Impl.prototype._ref = function () {
+        return this._rows;
+    };
+    M3Impl.prototype.array_rows = function () {
+        return fn.clone(this._rows, M3Impl.Dim, M3Impl.Dim);
+    };
+    M3Impl.prototype.array_cols = function () {
+        return fn.transpose(this._rows);
+    };
+    M3Impl.prototype.mul = function (dist) {
+        return M3Impl.FromRows(fn.mul(this._ref(), dist._ref()));
+    };
+    M3Impl.prototype.map_v3 = function (v) {
+        return vc.ar_v3(fn.map(this._ref(), v._ref()));
+    };
     M3Impl.Dim = 3;
     return M3Impl;
 })();
@@ -108,12 +128,24 @@ var M4Impl = (function () {
     }
     M4Impl.FromRows = function (rows) { return new M4Impl(rows); };
     M4Impl.FromCols = function (cols) { return new M4Impl(fn.transpose(cols)); };
-    M4Impl.prototype._ref = function () { return this._rows; };
-    M4Impl.prototype.array_rows = function () { return fn.clone(this._rows, M4Impl.Dim, M4Impl.Dim); };
-    M4Impl.prototype.array_cols = function () { return fn.transpose(this._rows); };
-    M4Impl.prototype.mul = function (dist) { return M4Impl.FromRows(fn.mul(this._ref(), dist._ref())); };
-    M4Impl.prototype.map_v3 = function (v, w) { return vc.ar_v3(fn.map(this._ref(), v._ref().concat(w))); };
-    M4Impl.prototype.map_v4 = function (v) { return vc.ar_v4(fn.map(this._ref(), v._ref())); };
+    M4Impl.prototype._ref = function () {
+        return this._rows;
+    };
+    M4Impl.prototype.array_rows = function () {
+        return fn.clone(this._rows, M4Impl.Dim, M4Impl.Dim);
+    };
+    M4Impl.prototype.array_cols = function () {
+        return fn.transpose(this._rows);
+    };
+    M4Impl.prototype.mul = function (dist) {
+        return M4Impl.FromRows(fn.mul(this._ref(), dist._ref()));
+    };
+    M4Impl.prototype.map_v3 = function (v, w) {
+        return vc.ar_v3(fn.map(this._ref(), v._ref().concat(w)));
+    };
+    M4Impl.prototype.map_v4 = function (v) {
+        return vc.ar_v4(fn.map(this._ref(), v._ref()));
+    };
     M4Impl.Dim = 4;
     return M4Impl;
 })();
@@ -215,13 +247,19 @@ function scale_m3(x, y, z) {
 }
 exports.scale_m3 = scale_m3;
 /** 拡大縮小写像 */
-function scale_m4(x, y, z) { return m3_m4(scale_m3(x, y, z)); }
+function scale_m4(x, y, z) {
+    return m3_m4(scale_m3(x, y, z));
+}
 exports.scale_m4 = scale_m4;
 /** 拡大縮小写像 */
-function scale_v3_m3(v3) { return scale_m3(v3.x(), v3.y(), v3.z()); }
+function scale_v3_m3(v3) {
+    return scale_m3(v3.x(), v3.y(), v3.z());
+}
 exports.scale_v3_m3 = scale_v3_m3;
 /** 拡大縮小写像 */
-function scale_v3_m4(v3) { return m3_m4(scale_v3_m3(v3)); }
+function scale_v3_m4(v3) {
+    return m3_m4(scale_v3_m3(v3));
+}
 exports.scale_v3_m4 = scale_v3_m4;
 /** x軸回転写像 */
 function rotX_m3(rad) {
@@ -235,7 +273,9 @@ function rotX_m3(rad) {
 }
 exports.rotX_m3 = rotX_m3;
 /** x軸回転写像 */
-function rotX_m4(rad) { return m3_m4(rotX_m3(rad)); }
+function rotX_m4(rad) {
+    return m3_m4(rotX_m3(rad));
+}
 exports.rotX_m4 = rotX_m4;
 /** y軸回転写像 */
 function rotY_m3(rad) {
@@ -249,7 +289,9 @@ function rotY_m3(rad) {
 }
 exports.rotY_m3 = rotY_m3;
 /** y軸回転写像 */
-function rotY_m4(rad) { return m3_m4(rotY_m3(rad)); }
+function rotY_m4(rad) {
+    return m3_m4(rotY_m3(rad));
+}
 exports.rotY_m4 = rotY_m4;
 /** z軸回転写像 */
 function rotZ_m3(rad) {
@@ -263,7 +305,9 @@ function rotZ_m3(rad) {
 }
 exports.rotZ_m3 = rotZ_m3;
 /** z軸回転写像 */
-function rotZ_m4(rad) { return m3_m4(rotZ_m3(rad)); }
+function rotZ_m4(rad) {
+    return m3_m4(rotZ_m3(rad));
+}
 exports.rotZ_m4 = rotZ_m4;
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
 function rotYZ_x_m3(v3) {
@@ -278,7 +322,9 @@ function rotYZ_x_m3(v3) {
 }
 exports.rotYZ_x_m3 = rotYZ_x_m3;
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
-function rotYZ_x_m4(v3) { return m3_m4(rotYZ_x_m3(v3)); }
+function rotYZ_x_m4(v3) {
+    return m3_m4(rotYZ_x_m3(v3));
+}
 exports.rotYZ_x_m4 = rotYZ_x_m4;
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
 function rotYZ_z_m3(v3) {
@@ -293,7 +339,9 @@ function rotYZ_z_m3(v3) {
 }
 exports.rotYZ_z_m3 = rotYZ_z_m3;
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
-function rotYZ_z_m4(v3) { return m3_m4(rotYZ_z_m3(v3)); }
+function rotYZ_z_m4(v3) {
+    return m3_m4(rotYZ_z_m3(v3));
+}
 exports.rotYZ_z_m4 = rotYZ_z_m4;
 /** オイラー角XYZの回転写像 */
 function rotXYZ_m3(radX, radY, radZ) {
@@ -319,4 +367,16 @@ function rotInvXYZ_m4(radX, radY, radZ) {
     return m3_m4(rotInvXYZ_m3(radX, radY, radZ));
 }
 exports.rotInvXYZ_m4 = rotInvXYZ_m4;
+function compositeLeft_m2(mm) {
+    return mm.reduce(function (a, b) { return b.mul(a); });
+}
+exports.compositeLeft_m2 = compositeLeft_m2;
+function compositeLeft_m3(mm) {
+    return mm.reduce(function (a, b) { return b.mul(a); });
+}
+exports.compositeLeft_m3 = compositeLeft_m3;
+function compositeLeft_m4(mm) {
+    return mm.reduce(function (a, b) { return b.mul(a); });
+}
+exports.compositeLeft_m4 = compositeLeft_m4;
 //# sourceMappingURL=matrix.js.map

@@ -43,17 +43,22 @@ export function geo_str(geo: al.GeoRoot, offset: number = 1): string {
 }
 
 /** ジオメトリ配列を文字列化 */
-export function geoarray_str(geoarray: al.GeoRoot[], offset: number = 1): string {
-	return array_vfo<al.GeoRoot>(geoarray, offset).map(go => geo_str(go.geo, go.offset)).join('\n');
+export function geoArray_str(geoArray: al.GeoRoot[], offset: number = 1): string {
+	return array_vfo<al.GeoRoot>(geoArray, offset).map(go => geo_str(go.geo, go.offset)).join('\n');
 }
 
 /** ジオメトリグループを文字列化 */
-export function geogroup_str(geogroup: al.GeoGroup, offset: number = 1): string {
-	return `name ${geogroup.name()}\n` + geo_str(geogroup, offset);
+export function geoGroup_str(geoGroup: al.GeoGroup, offset: number = 1): string {
+	return `g ${geoGroup.name()}\n` + geo_str(geoGroup, offset);
 }
 
 /** ジオメトリグループ配列を文字列化 */
-export function geogrouparray_str(geogrouparray: al.GeoGroup[], offset: number = 1): string {
-	return array_vfo<al.GeoGroup>(geogrouparray, offset).map(go => geogroup_str(go.geo, go.offset)).join('\n');
+export function geoGroupArray_str(geoGroupArray: al.GeoGroup[], offset: number = 1): string {
+	return array_vfo<al.GeoGroup>(geoGroupArray, offset).map(go => geoGroup_str(go.geo, go.offset)).join('\n');
+}
+
+/** ジオメトリ辞書を文字列化 */
+export function geoDict_str(geoDict: al.GeoDict, offset: number = 1): string {
+	return geoGroupArray_str(geoDict.geogroups());
 }
 

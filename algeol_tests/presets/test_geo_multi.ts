@@ -17,7 +17,7 @@ function save(name: string, geo: al.Geo): void {
 }
 
 function test_al() {
-	al.duplicateVertsWithAffine(
+	al.duplicateVertsAffine(
 		[vc.v3(0, 0, 0), vc.v3(1, 0, 0)],
 		[mx.trans_m4(1, 0, 0), mx.trans_m4(2, 0, 0)]).forEach(vv => vv.forEach(v => console.log(v)));
 	al.compositeMap<number>([0, 1], [
@@ -69,7 +69,7 @@ function test() {
 		multi.antiprismArray_bipyramid(ut.seq.arith(5, ut.deg30, ut.deg30).map(rad => prim.fn.circle.verts_i(12, 2 * ut.sin(rad), rad / 2, 2 * -ut.cos(rad))),
 			vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
 	save('prismRing',
-		multi.prismRing(al.duplicateVertsWithAffine(
+		multi.prismRing(al.duplicateVertsAffine(
 			prim.fn.circle.verts_i(4, 1),
 			al.compositeMap<number>(ut.seq.arith(4), [
 				d => mx.rotX_m4(ut.deg90),
@@ -77,7 +77,7 @@ function test() {
 				d => mx.rotZ_m4(ut.deg90 * d),
 			]))));
 	save('antiprismRing',
-		multi.antiprismRing(al.duplicateVertsWithAffine(
+		multi.antiprismRing(al.duplicateVertsAffine(
 			prim.fn.circle.verts_i(4, 1),
 			al.compositeMap<number>(ut.seq.arith(8), [
 				d => mx.rotZ_m4(ut.deg45 * d),

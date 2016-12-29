@@ -145,3 +145,6 @@ export declare function rotXYZ_m4(radX: number, radY: number, radZ: number): M4;
 export declare function rotInvXYZ_m3(radX: number, radY: number, radZ: number): M3;
 /** オイラー角XYZの回転写像 */
 export declare function rotInvXYZ_m4(radX: number, radY: number, radZ: number): M4;
+export declare function compositeLeft_m2(mm: M2[]): M2;
+export declare function compositeLeft_m3(mm: M3[]): M3;
+export declare function compositeLeft_m4(mm: M4[]): M4;

@@ -24,6 +24,9 @@ function writeSvg(name, start, rec, turtle) {
     }
 }
 function test() {
+    writeText('SierpinskiArrowheadCurve', ls.presets.SierpinskiArrowheadCurve.start, 6);
+    writeSvg('SierpinskiArrowheadCurve', ls.presets.SierpinskiArrowheadCurve.start, 6, function (vl, rec) { return ls.presets.SierpinskiArrowheadCurve.turtle(vl, 10); });
+    return;
     writeText('Algae', ls.presets.Algae.start, 4);
     writeText('FibonacciSequence', ls.presets.FibonacciSequence.start, 4);
     writeText('CantorSet', ls.presets.CantorSet.start, 4);

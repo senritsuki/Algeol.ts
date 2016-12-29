@@ -144,11 +144,21 @@ class M2Impl implements M2 {
 	static FromRows(rows: number[][]): M2Impl { return new M2Impl(rows); }
 	static FromCols(cols: number[][]): M2Impl { return new M2Impl(fn.transpose(cols)); }
 
-	_ref(): number[][] { return this._rows; }
-	array_rows(): number[][] { return fn.clone(this._rows, M2Impl.Dim, M2Impl.Dim); }
-	array_cols(): number[][] { return fn.transpose(this._rows); }
-	mul(dist: M2): M2 { return M2Impl.FromRows(fn.mul(this._ref(), dist._ref())); }
-	map_v2(v: vc.V2): vc.V2 { return vc.ar_v2(fn.map(this._ref(), v._ref())); }
+	_ref(): number[][] {
+		return this._rows;
+	}
+	array_rows(): number[][] {
+		return fn.clone(this._rows, M2Impl.Dim, M2Impl.Dim);
+	}
+	array_cols(): number[][] {
+		return fn.transpose(this._rows);
+	}
+	mul(dist: M2): M2 {
+		return M2Impl.FromRows(fn.mul(this._ref(), dist._ref()));
+	}
+	map_v2(v: vc.V2): vc.V2 {
+		return vc.ar_v2(fn.map(this._ref(), v._ref()));
+	}
 }
 
 class M3Impl implements M3 {
@@ -162,11 +172,21 @@ class M3Impl implements M3 {
 	static FromRows(rows: number[][]): M3Impl { return new M3Impl(rows); }
 	static FromCols(cols: number[][]): M3Impl { return new M3Impl(fn.transpose(cols)); }
 
-	_ref(): number[][] { return this._rows; }
-	array_rows(): number[][] { return fn.clone(this._rows, M3Impl.Dim, M3Impl.Dim); }
-	array_cols(): number[][] { return fn.transpose(this._rows); }
-	mul(dist: M3): M3 { return M3Impl.FromRows(fn.mul(this._ref(), dist._ref())); }
-	map_v3(v: vc.V3): vc.V3 { return vc.ar_v3(fn.map(this._ref(), v._ref())); }
+	_ref(): number[][] {
+		return this._rows;
+	}
+	array_rows(): number[][] {
+		return fn.clone(this._rows, M3Impl.Dim, M3Impl.Dim);
+	}
+	array_cols(): number[][] {
+		return fn.transpose(this._rows);
+	}
+	mul(dist: M3): M3 {
+		return M3Impl.FromRows(fn.mul(this._ref(), dist._ref()));
+	}
+	map_v3(v: vc.V3): vc.V3 {
+		return vc.ar_v3(fn.map(this._ref(), v._ref()));
+	}
 }
 
 class M4Impl implements M4 {
@@ -180,12 +200,24 @@ class M4Impl implements M4 {
 	static FromRows(rows: number[][]): M4Impl { return new M4Impl(rows); }
 	static FromCols(cols: number[][]): M4Impl { return new M4Impl(fn.transpose(cols)); }
 
-	_ref(): number[][] { return this._rows; }
-	array_rows(): number[][] { return fn.clone(this._rows, M4Impl.Dim, M4Impl.Dim); }
-	array_cols(): number[][] { return fn.transpose(this._rows); }
-	mul(dist: M4): M4 { return M4Impl.FromRows(fn.mul(this._ref(), dist._ref())); }
-	map_v3(v: vc.V3, w: number): vc.V3 { return vc.ar_v3(fn.map(this._ref(), v._ref().concat(w))); }
-	map_v4(v: vc.V4): vc.V4 { return vc.ar_v4(fn.map(this._ref(), v._ref())); }
+	_ref(): number[][] {
+		return this._rows;
+	}
+	array_rows(): number[][] {
+		return fn.clone(this._rows, M4Impl.Dim, M4Impl.Dim);
+	}
+	array_cols(): number[][] {
+		return fn.transpose(this._rows);
+	}
+	mul(dist: M4): M4 {
+		return M4Impl.FromRows(fn.mul(this._ref(), dist._ref()));
+	}
+	map_v3(v: vc.V3, w: number): vc.V3 {
+		return vc.ar_v3(fn.map(this._ref(), v._ref().concat(w)));
+	}
+	map_v4(v: vc.V4): vc.V4 {
+		return vc.ar_v4(fn.map(this._ref(), v._ref()));
+	}
 }
 
 
@@ -278,11 +310,17 @@ export function scale_m3(x: number, y: number, z: number): M3 {
 	]);
 }
 /** 拡大縮小写像 */
-export function scale_m4(x: number, y: number, z: number): M4 { return m3_m4(scale_m3(x, y, z)); }
+export function scale_m4(x: number, y: number, z: number): M4 {
+	return m3_m4(scale_m3(x, y, z));
+}
 /** 拡大縮小写像 */
-export function scale_v3_m3(v3: vc.V3): M3 { return scale_m3(v3.x(), v3.y(), v3.z()); }
+export function scale_v3_m3(v3: vc.V3): M3 {
+	return scale_m3(v3.x(), v3.y(), v3.z());
+}
 /** 拡大縮小写像 */
-export function scale_v3_m4(v3: vc.V3): M4 { return m3_m4(scale_v3_m3(v3)); }
+export function scale_v3_m4(v3: vc.V3): M4 {
+	return m3_m4(scale_v3_m3(v3));
+}
 
 /** x軸回転写像 */
 export function rotX_m3(rad: number): M3 {
@@ -295,7 +333,9 @@ export function rotX_m3(rad: number): M3 {
 	]);
 }
 /** x軸回転写像 */
-export function rotX_m4(rad: number): M4 { return m3_m4(rotX_m3(rad)); }
+export function rotX_m4(rad: number): M4 {
+	return m3_m4(rotX_m3(rad));
+}
 
 /** y軸回転写像 */
 export function rotY_m3(rad: number): M3 {
@@ -308,7 +348,9 @@ export function rotY_m3(rad: number): M3 {
 	]);
 }
 /** y軸回転写像 */
-export function rotY_m4(rad: number): M4 { return m3_m4(rotY_m3(rad)); }
+export function rotY_m4(rad: number): M4 {
+	return m3_m4(rotY_m3(rad));
+}
 
 /** z軸回転写像 */
 export function rotZ_m3(rad: number): M3 {
@@ -321,7 +363,9 @@ export function rotZ_m3(rad: number): M3 {
 	]);
 }
 /** z軸回転写像 */
-export function rotZ_m4(rad: number): M4 { return m3_m4(rotZ_m3(rad)); }
+export function rotZ_m4(rad: number): M4 {
+	return m3_m4(rotZ_m3(rad));
+}
 
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
 export function rotYZ_x_m3(v3: vc.V3): M3 {
@@ -335,7 +379,9 @@ export function rotYZ_x_m3(v3: vc.V3): M3 {
 	return mxRotZ.mul(mxRotY);
 }
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rotYZ_x_m4(v3: vc.V3): M4 { return m3_m4(rotYZ_x_m3(v3)); }
+export function rotYZ_x_m4(v3: vc.V3): M4 {
+	return m3_m4(rotYZ_x_m3(v3));
+}
 
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
 export function rotYZ_z_m3(v3: vc.V3): M3 {
@@ -349,7 +395,9 @@ export function rotYZ_z_m3(v3: vc.V3): M3 {
 	return mxRotZ.mul(mxRotY);
 }
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rotYZ_z_m4(v3: vc.V3): M4 { return m3_m4(rotYZ_z_m3(v3)); }
+export function rotYZ_z_m4(v3: vc.V3): M4 {
+	return m3_m4(rotYZ_z_m3(v3));
+}
 
 
 /** オイラー角XYZの回転写像 */
@@ -372,5 +420,16 @@ export function rotInvXYZ_m3(radX: number, radY: number, radZ: number): M3 {
 /** オイラー角XYZの回転写像 */
 export function rotInvXYZ_m4(radX: number, radY: number, radZ: number): M4 {
 	return m3_m4(rotInvXYZ_m3(radX, radY, radZ));
+}
+
+
+export function compositeLeft_m2(mm: M2[]): M2 {
+	return mm.reduce((a, b) => b.mul(a));
+}
+export function compositeLeft_m3(mm: M3[]): M3 {
+	return mm.reduce((a, b) => b.mul(a));
+}
+export function compositeLeft_m4(mm: M4[]): M4 {
+	return mm.reduce((a, b) => b.mul(a));
 }
 

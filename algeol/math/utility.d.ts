@@ -7,6 +7,7 @@ export declare const atan2: (y: number, x: number) => number;
 export declare const min: (...values: number[]) => number;
 export declare const max: (...values: number[]) => number;
 export declare const floor: (x: number) => number;
+export declare const abs: (x: number) => number;
 /** Square Root of 2 - 2の平方根 */
 export declare const r2: number;
 /** Square Root of 3 - 3の平方根 */

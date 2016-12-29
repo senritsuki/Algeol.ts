@@ -40,21 +40,27 @@ function geo_str(geo, offset) {
 }
 exports.geo_str = geo_str;
 /** ジオメトリ配列を文字列化 */
-function geoarray_str(geoarray, offset) {
+function geoArray_str(geoArray, offset) {
     if (offset === void 0) { offset = 1; }
-    return array_vfo(geoarray, offset).map(function (go) { return geo_str(go.geo, go.offset); }).join('\n');
+    return array_vfo(geoArray, offset).map(function (go) { return geo_str(go.geo, go.offset); }).join('\n');
 }
-exports.geoarray_str = geoarray_str;
+exports.geoArray_str = geoArray_str;
 /** ジオメトリグループを文字列化 */
-function geogroup_str(geogroup, offset) {
+function geoGroup_str(geoGroup, offset) {
     if (offset === void 0) { offset = 1; }
-    return ("name " + geogroup.name() + "\n") + geo_str(geogroup, offset);
+    return ("g " + geoGroup.name() + "\n") + geo_str(geoGroup, offset);
 }
-exports.geogroup_str = geogroup_str;
+exports.geoGroup_str = geoGroup_str;
 /** ジオメトリグループ配列を文字列化 */
-function geogrouparray_str(geogrouparray, offset) {
+function geoGroupArray_str(geoGroupArray, offset) {
     if (offset === void 0) { offset = 1; }
-    return array_vfo(geogrouparray, offset).map(function (go) { return geogroup_str(go.geo, go.offset); }).join('\n');
+    return array_vfo(geoGroupArray, offset).map(function (go) { return geoGroup_str(go.geo, go.offset); }).join('\n');
 }
-exports.geogrouparray_str = geogrouparray_str;
+exports.geoGroupArray_str = geoGroupArray_str;
+/** ジオメトリ辞書を文字列化 */
+function geoDict_str(geoDict, offset) {
+    if (offset === void 0) { offset = 1; }
+    return geoGroupArray_str(geoDict.geogroups());
+}
+exports.geoDict_str = geoDict_str;
 //# sourceMappingURL=format_wavefrontobj.js.map

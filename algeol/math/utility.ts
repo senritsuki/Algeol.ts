@@ -9,6 +9,7 @@ export const atan2 = Math.atan2;
 export const min = Math.min;
 export const max = Math.max;
 export const floor = Math.floor;
+export const abs = Math.abs;
 
 
 /** Square Root of 2 - 2の平方根 */
