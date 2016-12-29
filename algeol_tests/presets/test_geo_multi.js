@@ -12,7 +12,7 @@ function save(name, geo) {
     console.log('save: ' + path);
 }
 function test_al() {
-    al.duplicateVertsWithAffine([vc.v3(0, 0, 0), vc.v3(1, 0, 0)], [mx.trans_m4(1, 0, 0), mx.trans_m4(2, 0, 0)]).forEach(function (vv) { return vv.forEach(function (v) { return console.log(v); }); });
+    al.duplicateVertsAffine([vc.v3(0, 0, 0), vc.v3(1, 0, 0)], [mx.trans_m4(1, 0, 0), mx.trans_m4(2, 0, 0)]).forEach(function (vv) { return vv.forEach(function (v) { return console.log(v); }); });
     al.compositeMap([0, 1], [
         function (d) { return mx.trans_m4(d + 1, 0, 0); },
         function (d) { return mx.scale_m4(2, 2, 2); },
@@ -52,12 +52,12 @@ function test() {
     ], vc.v3(0, 0, 9.0)));
     save('prismArray_bipyramid', multi.prismArray_bipyramid(ut.seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * ut.sin(rad), 0, 2 * -ut.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('antiprismArray_bipyramid', multi.antiprismArray_bipyramid(ut.seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * ut.sin(rad), rad / 2, 2 * -ut.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
-    save('prismRing', multi.prismRing(al.duplicateVertsWithAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(ut.seq.arith(4), [
+    save('prismRing', multi.prismRing(al.duplicateVertsAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(ut.seq.arith(4), [
         function (d) { return mx.rotX_m4(ut.deg90); },
         function (d) { return mx.trans_m4(3, 0, 0); },
         function (d) { return mx.rotZ_m4(ut.deg90 * d); },
     ]))));
-    save('antiprismRing', multi.antiprismRing(al.duplicateVertsWithAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(ut.seq.arith(8), [
+    save('antiprismRing', multi.antiprismRing(al.duplicateVertsAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(ut.seq.arith(8), [
         function (d) { return mx.rotZ_m4(ut.deg45 * d); },
         function (d) { return mx.rotX_m4(ut.deg90); },
         function (d) { return mx.trans_m4(3, 0, 0); },

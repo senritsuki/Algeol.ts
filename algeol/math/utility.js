@@ -8,6 +8,7 @@ exports.atan2 = Math.atan2;
 exports.min = Math.min;
 exports.max = Math.max;
 exports.floor = Math.floor;
+exports.abs = Math.abs;
 /** Square Root of 2 - 2の平方根 */
 exports.r2 = exports.sqrt(2);
 /** Square Root of 3 - 3の平方根 */

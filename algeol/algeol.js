@@ -11,8 +11,8 @@ var GeoImpl = (function () {
     GeoImpl.prototype.faces = function () {
         return this._faces;
     };
-    GeoImpl.prototype.duplicate = function (lambda) {
-        return lambda(this);
+    GeoImpl.prototype.clone = function (lambda) {
+        return new GeoImpl(this._verts.map(lambda), this._faces);
     };
     return GeoImpl;
 })();
@@ -43,8 +43,8 @@ var GeoGroupImpl = (function () {
     GeoGroupImpl.prototype.geos = function () {
         return this._geos;
     };
-    GeoGroupImpl.prototype.duplicate = function (lambda) {
-        return new GeoGroupImpl(this._name, this._geos.map(lambda).reduce(function (a, b) { return a.concat(b); }, []));
+    GeoGroupImpl.prototype.clone = function (lambda) {
+        return new GeoGroupImpl(this._name, this._geos.map(function (g) { return g.clone(lambda); }));
     };
     return GeoGroupImpl;
 })();
@@ -90,8 +90,8 @@ var GeoDictImpl = (function () {
         var _this = this;
         return this._names.map(function (name) { return _this._dict[name]; });
     };
-    GeoDictImpl.prototype.duplicate = function (lambda) {
-        return new GeoDictImpl(this.geogroups().map(function (geogroup) { return geogroup.duplicate(lambda); }));
+    GeoDictImpl.prototype.clone = function (lambda) {
+        return new GeoDictImpl(this.geogroups().map(function (geogroup) { return geogroup.clone(lambda); }));
     };
     return GeoDictImpl;
 })();
@@ -115,16 +115,17 @@ function merge_geoDict(geodicts) {
     return GeoDictImpl.Merge(geodicts);
 }
 exports.merge_geoDict = merge_geoDict;
+var map_mm4 = function (mm) { return mm.map(function (m) { return function (v) { return m.map_v3(v, 1); }; }); };
 /** 写像配列を用いた3次元ベクトル配列複製 */
 function duplicateVerts(verts, maps) {
     return maps.map(function (m) { return verts.map(m); });
 }
 exports.duplicateVerts = duplicateVerts;
 /** アフィン写像配列を用いた3次元ベクトル配列複製 */
-function duplicateVertsWithAffine(verts, m4) {
-    return duplicateVerts(verts, m4.map(function (m) { return function (v) { return m.map_v3(v, 1); }; }));
+function duplicateVertsAffine(verts, m4) {
+    return duplicateVerts(verts, map_mm4(m4));
 }
-exports.duplicateVertsWithAffine = duplicateVertsWithAffine;
+exports.duplicateVertsAffine = duplicateVertsAffine;
 /** 写像配列を用いたジオメトリ複製 */
 function duplicateGeo(g, maps) {
     var verts = g.verts();
@@ -133,10 +134,36 @@ function duplicateGeo(g, maps) {
 }
 exports.duplicateGeo = duplicateGeo;
 /** アフィン写像配列を用いたジオメトリ複製 */
-function duplicateGeoWithAffine(g, m4) {
-    return duplicateGeo(g, m4.map(function (m) { return function (v) { return m.map_v3(v, 1); }; }));
+function duplicateGeoAffine(g, m4) {
+    return duplicateGeo(g, map_mm4(m4));
 }
-exports.duplicateGeoWithAffine = duplicateGeoWithAffine;
+exports.duplicateGeoAffine = duplicateGeoAffine;
+/** 写像配列を用いたジオメトリグループ複製 */
+function duplicateGeoGroup(gg, maps) {
+    var gg2 = gg.geos()
+        .map(function (g) { return duplicateGeo(g, maps); })
+        .reduce(function (a, b) { return a.concat(b); }, []);
+    return geoGroup(gg.name(), gg2);
+}
+exports.duplicateGeoGroup = duplicateGeoGroup;
+/** アフィン写像配列を用いたジオメトリグループ複製 */
+function duplicateGeoGroupAffine(gg, m4) {
+    return duplicateGeoGroup(gg, map_mm4(m4));
+}
+exports.duplicateGeoGroupAffine = duplicateGeoGroupAffine;
+/** 写像配列を用いたジオメトリ辞書複製 */
+function duplicateGeoDict(gd, maps) {
+    var gg2 = gd.geogroups()
+        .map(function (gg) { return duplicateGeoGroup(gg, maps); })
+        .reduce(function (a, b) { return a.concat(b); }, []);
+    return geoDict(gg2);
+}
+exports.duplicateGeoDict = duplicateGeoDict;
+/** アフィン写像配列を用いたジオメトリ辞書複製 */
+function duplicateGeoDictAffine(gd, m4) {
+    return duplicateGeoDict(gd, map_mm4(m4));
+}
+exports.duplicateGeoDictAffine = duplicateGeoDictAffine;
 /** 任意のデータ配列を用いた合成写像の生成 */
 function compositeMap(data, lambdas) {
     return data.map(function (d) { return lambdas.reduce(function (m, lambda) { return lambda(d).mul(m); }, mx.unit_m4); });

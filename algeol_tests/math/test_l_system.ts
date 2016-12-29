@@ -30,6 +30,12 @@ function writeSvg(name: string, start: ls.V[], rec: number, turtle: (vl: ls.V[],
 }
 
 function test() {
+	writeText('SierpinskiArrowheadCurve',
+		ls.presets.SierpinskiArrowheadCurve.start, 6);
+	writeSvg('SierpinskiArrowheadCurve',
+		ls.presets.SierpinskiArrowheadCurve.start, 6,
+		(vl, rec) => ls.presets.SierpinskiArrowheadCurve.turtle(vl, 10));
+	return;
 	writeText('Algae',
 		ls.presets.Algae.start, 4);
 	writeText('FibonacciSequence',
