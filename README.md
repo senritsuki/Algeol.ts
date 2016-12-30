@@ -15,7 +15,7 @@
 
 ## ディレクトリ構成
 |ディレクトリ名|概要|依存先|
-|-|-|-|
+|---|---|---|
 |algeol/|メイン。ジオメトリの生成や複製など。|algeol/math|
 |algeol/math/|数学・アルゴリズム関連の様々なオブジェクトや関数。|なし|
 |algeol/presets/|特定のジオメトリの生成や、特定のフォーマットへの変換など。|algeol, algeol/math|
@@ -25,7 +25,7 @@
 
 ## ファイル・モジュール構成
 |モジュール名|ファイルパス|概要|依存モジュール|
-|-|-|-|-|
+|---|---|---|---|
 |algeol|algeol\algeol.ts|Geometry Generating and Duplicating - ジオメトリ生成と複製|vector, matrix|
 |complex_number|algeol\math\complex_number.ts|Complex Number - 複素数・二元数|utility, vector|
 |curve2|algeol\math\curve2.ts|Curve with Parametric Equation - 2次元平面におけるパラメトリック方程式による曲線|utility, vector|
