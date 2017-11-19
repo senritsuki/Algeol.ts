@@ -6,28 +6,28 @@ import * as prim from "../../geometry/primitive";
 import * as wo from "../../decoder/wavefront";
 
 
-export function save(name: string, geo: al.Geo): void {
-	const path = `test_geo_primitive/${name}.obj`;
-	fs.writeFile(path, wo.geo_str(geo));
-	console.log('save: ' + path);
+function save(name: string, geo: al.GeoUnit): void {
+    const path = `test_geo_primitive/${name}.obj`;
+    fs.writeFile(path, wo.geoUnit_to_objstr(geo));
+    console.log('save: ' + path);
 }
 
-export function test() {
-	save('tetrahedron',
-		prim.tetrahedron());
-	save('octahedron',
-		prim.octahedron());
-	save('cube',
-		prim.cube());
-	save('dodecahedron',
-		prim.dodecahedron());
-	save('icosahedron',
-		prim.icosahedron());
-	save('prism',
-		prim.prism(8));
-	save('pyramid',
-		prim.pyramid(8));
-	save('bipyramid',
-		prim.bipyramid(8));
+function test() {
+    save('tetrahedron',
+        prim.tetrahedron(1));
+    save('octahedron',
+        prim.octahedron(1));
+    save('cube',
+        prim.cube(1));
+    save('dodecahedron',
+        prim.dodecahedron(1));
+    save('icosahedron',
+        prim.icosahedron(1));
+    save('prism',
+        prim.prism(8, 1, 2));
+    save('pyramid',
+        prim.pyramid(8, 1 , 2));
+    save('bipyramid',
+        prim.bipyramid(8, 1, 1, 1));
 }
 test();

@@ -8,9 +8,6 @@ var ComplexNumberImpl = (function () {
         this._v = [real, imag];
     }
     // 取得
-    ComplexNumberImpl.prototype._ref = function () {
-        return this._v;
-    };
     ComplexNumberImpl.prototype.array = function () {
         return this._v.slice(0);
     };
@@ -51,11 +48,11 @@ var ComplexNumberImpl = (function () {
     };
     // 二項演算
     ComplexNumberImpl.prototype.add = function (dist) {
-        var v = vc.fn.add(this._ref(), dist._ref());
+        var v = vc.fn.add(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     ComplexNumberImpl.prototype.sub = function (dist) {
-        var v = vc.fn.sub(this._ref(), dist._ref());
+        var v = vc.fn.sub(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     ComplexNumberImpl.prototype.mul = function (dist) {
@@ -64,7 +61,7 @@ var ComplexNumberImpl = (function () {
         return new ComplexNumberImpl(r, i);
     };
     ComplexNumberImpl.prototype.scalar = function (n) {
-        var v = vc.fn.scalar(this._ref(), n);
+        var v = vc.fn.scalar(this._v, n);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     // 写像

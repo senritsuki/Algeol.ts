@@ -2,106 +2,107 @@
 
 import * as ut from './utility';
 import * as vc from './vector';
-import * as cv2 from './curve2';
-import * as cv3 from './curve3';
+import * as cv from './curve';
 
 
-export interface Turtle2 {
-	coord(): vc.V2;
-	dir(): vc.V2;
-	moveDraw(len: number): TLTuple2;
-	move(len: number): Turtle2;
-	turn(degree: number): Turtle2;
-}
-export interface Turtle3 {
-	coord(): vc.V3;
-	dir(): vc.V3;
-	moveDraw(len: number): TLTuple3;
-	move(len: number): Turtle3;
-	turnH(degree: number): Turtle3;
-	turnV(degree: number): Turtle3;
+/** タートル（T: タートル実装の型, V: 座標ベクトルの型） */
+export interface Turtle<T, V extends vc.Vector<V>> {
+    coord(): V;
+    move(len: number): TupleTurtleLine<T, V>;
 }
 
-export interface TLTuple2 {
-	turtle: Turtle2;
-	line: cv2.Curve;
+export interface TurtleD extends Turtle<TurtleD, vc.V2> {
+    degree(): number;
+    setDegree(degree: number): TurtleD;
+    addDegree(degree: number): TurtleD;
 }
-export interface TLTuple3 {
-	turtle: Turtle3;
-	line: cv3.Curve;
+export interface TurtleV<V extends vc.Vector<V>> extends Turtle<TurtleV<V>, V> {
+    dir(): V;
+    setDir(dir: V): TurtleV<V>;
+    addDir(dir: V): TurtleV<V>;
+}
+export interface TurtleV2 extends TurtleV<vc.V2> {}
+export interface TurtleV3 extends TurtleV<vc.V3> {}
+export interface TurtleV4 extends TurtleV<vc.V4> {}
+
+export interface TupleTurtleLine<T, V extends vc.Vector<V>> {
+    turtle: T;
+    line: cv.Curve<V>;
 }
 
 
-class Turtle2Impl implements Turtle2 {
-	constructor(
-		public _coord: vc.V2,
-		public _degree: number) {
-	}
-	
-	coord(): vc.V2 {
-		return this._coord;
-	}
-	dir(): vc.V2 {
-		return vc.polar_v2(1, ut.deg_rad(this._degree));
-	}
-	moveDraw(len: number): TLTuple2 {
-		const dist = this.move(len);
-		const line = cv2.line(this.coord(), dist.coord());
-		return { turtle: dist, line: line };
-	}
-	move(len: number): Turtle2 {
-		return new Turtle2Impl(
-			this._coord.add(this.dir().scalar(len)),
-			this._degree);
-	}
-	turn(degree: number): Turtle2 {
-		return new Turtle2Impl(
-			this._coord,
-			this._degree + degree);
-	}
-}
-class Turtle3Impl implements Turtle3 {
-	constructor(
-		public _coord: vc.V3,
-		public _degreeH: number,
-		public _degreeV: number) {
-	}
+namespace priv {
+    export class TLTupleImpl<T extends Turtle<T, V>, V extends vc.Vector<V>> implements TupleTurtleLine<T, V> {
+        constructor(
+            public turtle: T,
+            public line: cv.Curve<V>,
+        ) {}
+    }
 
-	coord(): vc.V3 {
-		return this._coord;
-	}
-	dir(): vc.V3 {
-		return vc.sphere_v3(1, ut.deg_rad(this._degreeH), ut.deg_rad(this._degreeV));
-	}
-	moveDraw(len: number): TLTuple3 {
-		const dist = this.move(len);
-		const line = cv3.line(this.coord(), dist.coord());
-		return { turtle: dist, line: line };
-	}
-	move(len: number): Turtle3 {
-		return new Turtle3Impl(
-			this._coord.add(this.dir().scalar(len)),
-			this._degreeH,
-			this._degreeV);
-	}
-	turnH(degree: number): Turtle3 {
-		return new Turtle3Impl(
-			this._coord,
-			this._degreeH + degree,
-			this._degreeV);
-	}
-	turnV(degree: number): Turtle3 {
-		return new Turtle3Impl(
-			this._coord,
-			this._degreeH,
-			this._degreeV + degree);
-	}
+    export abstract class TurtleImpl<T extends Turtle<T, V>, V extends vc.Vector<V>> implements Turtle<T, V> {
+        constructor(
+            public _coord: V) {}
+
+        coord(): V {
+            return this._coord;
+        }
+        abstract move(len: number): TupleTurtleLine<T, V>;
+    }
+    export class TurtleDImpl extends TurtleImpl<TurtleDImpl, vc.V2> implements TurtleD {
+        constructor(
+            _coord: vc.V2,
+            public _degree: number) {
+                super(_coord);
+        }
+        move(len: number): TupleTurtleLine<TurtleDImpl, vc.V2> {
+            const src = this._coord;
+            const dir = vc.polar_to_v2(len, ut.deg_to_rad(this._degree));
+            const dst = this._coord.add(dir);
+            const newTurtle = new TurtleDImpl(dst, this._degree);
+            const line = cv.line2(src, dst);
+            return new TLTupleImpl<TurtleDImpl, vc.V2>(newTurtle, line);
+        }
+        degree(): number {
+            return this._degree;
+        }
+        setDegree(degree: number): TurtleD {
+            return new TurtleDImpl(this._coord, degree);
+        }
+        addDegree(degree: number): TurtleD {
+            return new TurtleDImpl(this._coord, this._degree + degree);
+        }
+    }
+    export class TurtleVImpl<V extends vc.Vector<V>> extends TurtleImpl<TurtleVImpl<V>, V> implements TurtleV<V> {
+        constructor(
+            _coord: V,
+            public _dir: V) {
+                super(_coord);
+        }
+        move(len: number): TupleTurtleLine<TurtleVImpl<V>, V> {
+            const src = this._coord;
+            const dir = this._dir.scalar(len);
+            const dst = this._coord.add(dir);
+            const newTurtle = new TurtleVImpl(dst, this._dir);
+            const line = cv.line<V>(src, dst);
+            return new TLTupleImpl<TurtleVImpl<V>, V>(newTurtle, line);
+        }
+        dir(): V {
+            return this._dir;
+        }
+        setDir(dir: V): TurtleV<V> {
+            return new TurtleVImpl(this._coord, dir);
+        }
+        addDir(dir: V): TurtleV<V> {
+            return new TurtleVImpl(this._coord, this._dir.add(dir));
+        }
+    }
 }
 
-export function turtle2(coord: vc.V2 = vc.zero_v2, degree: number = 0): Turtle2 {
-	return new Turtle2Impl(coord, degree);
-}
-export function turtle3(coord: vc.V3 = vc.zero_v3, degreeH: number = 0, degreeV: number = 0): Turtle3 {
-	return new Turtle3Impl(coord, degreeH, degreeV);
-}
+
+export const turtle_with_deg = (coord: vc.V2, degree: number): TurtleD => new priv.TurtleDImpl(coord, degree);
+
+export const turtle_with_dir = <V extends vc.Vector<V>>(coord: V, dir: V): TurtleV<V> => new priv.TurtleVImpl<V>(coord, dir);
+export const turtle_with_dir2 = (coord: vc.V2, dir: vc.V2): TurtleV<vc.V2> => turtle_with_dir(coord, dir);
+export const turtle_with_dir3 = (coord: vc.V3, dir: vc.V3): TurtleV<vc.V3> => turtle_with_dir(coord, dir);
+export const turtle_with_dir4 = (coord: vc.V4, dir: vc.V4): TurtleV<vc.V4> => turtle_with_dir(coord, dir);
 

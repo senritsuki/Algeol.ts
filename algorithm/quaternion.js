@@ -9,9 +9,6 @@ var QuaternionImpl = (function () {
         this._v = [real, imag[0], imag[1], imag[2]];
     }
     // 取得
-    QuaternionImpl.prototype._ref = function () {
-        return this._v;
-    };
     QuaternionImpl.prototype.array = function () {
         return this._v.slice(0);
     };
@@ -65,7 +62,7 @@ var QuaternionImpl = (function () {
             2 * (z * y + r * x),
             1 - 2 * (x * x + y * y),
         ];
-        return mx.rows_m3([row1, row2, row3]);
+        return mx.rows_to_m3([row1, row2, row3]);
     };
     // 二項演算
     QuaternionImpl.prototype.add = function (dist) {
@@ -83,7 +80,7 @@ var QuaternionImpl = (function () {
         var r2 = dist.r();
         var i1 = this.i();
         var i2 = dist.i();
-        var r = r1 - r2 + vc.fn.ip(i1, i2);
+        var r = r1 * r2 - vc.fn.ip(i1, i2);
         var i_1 = vc.fn.scalar(i2, r1);
         var i_2 = vc.fn.scalar(i1, r2);
         var i_3 = vc.fn.cp3(i1, i2);
@@ -104,15 +101,15 @@ var QuaternionImpl = (function () {
         return q.i();
     };
     QuaternionImpl.prototype.map_v3 = function (v) {
-        return vc.ar_v3(this.map_ar(v._ref()));
+        return vc.array_to_v3(this.map_ar(v._v));
     };
     QuaternionImpl.prototype.map_v3ar = function (vl) {
         var _this = this;
         var q1 = this;
         var q3 = this.invMul();
         return vl
-            .map(function (v) { return _this._mul3(q1, new QuaternionImpl(0, v._ref()), q3); })
-            .map(function (q) { return vc.ar_v3(q.i()); });
+            .map(function (v) { return _this._mul3(q1, new QuaternionImpl(0, v._v), q3); })
+            .map(function (q) { return vc.array_to_v3(q.i()); });
     };
     return QuaternionImpl;
 }());

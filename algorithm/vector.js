@@ -1,28 +1,20 @@
 "use strict";
 /** Vector - ベクトル */
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("./utility");
-/** ベクトル演算 */
+/** 関数 */
 var fn;
 (function (fn_1) {
-    function op(a, dim, fn) {
+    /** 配列の単項演算を行い、新しい配列を返す */
+    function op1(a, dim, fn) {
         var v = [];
         for (var i = 0; i < dim; i++) {
             v.push(fn(a[i]));
         }
         return v;
     }
-    fn_1.op = op;
+    fn_1.op1 = op1;
+    /** 配列同士の二項演算を行い、新しい配列を返す */
     function op2(a, b, dim, fn) {
         var v = [];
         for (var i = 0; i < dim; i++) {
@@ -33,22 +25,22 @@ var fn;
     fn_1.op2 = op2;
     /** Addition 加算 */
     function add(a, b) {
-        return op2(a, b, a.length, function (n1, n2) { return n1 + n2; });
+        return op2(a, b, ut.min(a.length, b.length), function (n1, n2) { return n1 + n2; });
     }
     fn_1.add = add;
     /** Subtraction 減算 */
     function sub(a, b) {
-        return op2(a, b, a.length, function (n1, n2) { return n1 - n2; });
+        return op2(a, b, ut.min(a.length, b.length), function (n1, n2) { return n1 - n2; });
     }
     fn_1.sub = sub;
     /** スカラー倍 */
     function scalar(a, n) {
-        return op(a, a.length, function (n1) { return n1 * n; });
+        return op1(a, a.length, function (n1) { return n1 * n; });
     }
     fn_1.scalar = scalar;
     /** 要素ごとの積, アダマール積 */
     function hadamart(a, b) {
-        return op2(a, b, a.length, function (n1, n2) { return n1 * n2; });
+        return op2(a, b, ut.min(a.length, b.length), function (n1, n2) { return n1 * n2; });
     }
     fn_1.hadamart = hadamart;
     /** Inner Product, Dot Product 内積 */
@@ -71,337 +63,202 @@ var fn;
     }
     fn_1.cp3 = cp3;
 })(fn = exports.fn || (exports.fn = {}));
-var V2Impl = (function () {
-    function V2Impl(x, y) {
-        this._v = [x, y];
-    }
-    V2Impl.FromArray = function (v) {
-        return new V2Impl(v[0], v[1]);
-    };
-    // 取得
-    V2Impl.prototype._ref = function () { return this._v; };
-    V2Impl.prototype.array = function () { return this._v.slice(0); };
-    V2Impl.prototype.x = function () { return this._v[0]; };
-    V2Impl.prototype.y = function () { return this._v[1]; };
-    V2Impl.prototype.clone = function () { return new V2Impl(this.x(), this.y()); };
-    // 単項演算
-    V2Impl.prototype.unit = function () { return this.scalar(1 / this.length()); };
-    V2Impl.prototype.lenght2 = function () { return this.ip(this); };
-    V2Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
-    // 二項演算
-    V2Impl.prototype.add = function (dist) { return V2Impl.FromArray(fn.add(this._ref(), dist._ref())); };
-    V2Impl.prototype.sub = function (dist) { return V2Impl.FromArray(fn.sub(this._ref(), dist._ref())); };
-    V2Impl.prototype.hadamart = function (dist) { return V2Impl.FromArray(fn.hadamart(this._ref(), dist._ref())); };
-    V2Impl.prototype.scalar = function (n) { return V2Impl.FromArray(fn.scalar(this._ref(), n)); };
-    V2Impl.prototype.ip = function (dist) { return fn.ip(this.array(), dist._ref()); };
-    V2Impl.prototype.cp = function (dist) { return fn.cp2(this._ref(), dist._ref()); };
-    return V2Impl;
-}());
-var V3Impl = (function () {
-    function V3Impl(x, y, z) {
-        this._v = [x, y, z];
-    }
-    V3Impl.FromArray = function (v) {
-        return new V3Impl(v[0], v[1], v[2]);
-    };
-    // 単項演算
-    V3Impl.prototype.lenght2 = function () { return this.ip(this); };
-    V3Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
-    V3Impl.prototype.unit = function () { return this.scalar(1 / this.length()); };
-    // 取得
-    V3Impl.prototype._ref = function () { return this._v; };
-    V3Impl.prototype.array = function () { return this._v.slice(0); };
-    V3Impl.prototype.x = function () { return this._v[0]; };
-    V3Impl.prototype.y = function () { return this._v[1]; };
-    V3Impl.prototype.z = function () { return this._v[2]; };
-    V3Impl.prototype.clone = function () { return new V3Impl(this.x(), this.y(), this.z()); };
-    // 二項演算
-    V3Impl.prototype.add = function (dist) { return V3Impl.FromArray(fn.add(this._ref(), dist._ref())); };
-    V3Impl.prototype.sub = function (dist) { return V3Impl.FromArray(fn.sub(this._ref(), dist._ref())); };
-    V3Impl.prototype.hadamart = function (dist) { return V3Impl.FromArray(fn.hadamart(this._ref(), dist._ref())); };
-    V3Impl.prototype.scalar = function (n) { return V3Impl.FromArray(fn.scalar(this._ref(), n)); };
-    V3Impl.prototype.ip = function (dist) { return fn.ip(this.array(), dist._ref()); };
-    V3Impl.prototype.cp = function (dist) { return V3Impl.FromArray(fn.cp3(this._ref(), dist._ref())); };
-    return V3Impl;
-}());
-var V4Impl = (function () {
-    function V4Impl(x, y, z, w) {
-        this._v = [x, y, z, w];
-    }
-    V4Impl.FromArray = function (v) {
-        return new V4Impl(v[0], v[1], v[2], v[3]);
-    };
-    // 取得
-    V4Impl.prototype._ref = function () { return this._v; };
-    V4Impl.prototype.array = function () { return this._v.slice(0); };
-    V4Impl.prototype.x = function () { return this._v[0]; };
-    V4Impl.prototype.y = function () { return this._v[1]; };
-    V4Impl.prototype.z = function () { return this._v[2]; };
-    V4Impl.prototype.w = function () { return this._v[3]; };
-    V4Impl.prototype.clone = function () { return new V4Impl(this.x(), this.y(), this.z(), this.w()); };
-    // 単項演算
-    V4Impl.prototype.unit = function () { return this.scalar(1 / this.length()); };
-    V4Impl.prototype.lenght2 = function () { return this.ip(this); };
-    V4Impl.prototype.length = function () { return ut.sqrt(this.lenght2()); };
-    // 二項演算
-    V4Impl.prototype.add = function (dist) { return V4Impl.FromArray(fn.add(this._ref(), dist._ref())); };
-    V4Impl.prototype.sub = function (dist) { return V4Impl.FromArray(fn.sub(this._ref(), dist._ref())); };
-    V4Impl.prototype.hadamart = function (dist) { return V4Impl.FromArray(fn.hadamart(this._ref(), dist._ref())); };
-    V4Impl.prototype.scalar = function (n) { return V4Impl.FromArray(fn.scalar(this._ref(), n)); };
-    V4Impl.prototype.ip = function (dist) { return fn.ip(this.array(), dist._ref()); };
-    return V4Impl;
-}());
+/** 非公開処理 */
+var priv;
+(function (priv) {
+    var toArray = function (n) { return n instanceof Array ? n : n._v; };
+    var V2Impl = (function () {
+        function V2Impl(x, y) {
+            var _this = this;
+            // 取得
+            this.array = function () { return _this._v.slice(0); };
+            this.clone = function () { return new V2Impl(_this.x(), _this.y()); };
+            this.x = function () { return _this._v[0]; };
+            this.y = function () { return _this._v[1]; };
+            // 単項演算
+            this.unit = function () { return _this.scalar(1 / _this.length()); };
+            this.lenght2 = function () { return _this.ip(_this); };
+            this.length = function () { return ut.sqrt(_this.lenght2()); };
+            // 二項演算
+            this.add = function (dist) { return V2Impl.FromArray(fn.add(_this._v, toArray(dist))); };
+            this.sub = function (dist) { return V2Impl.FromArray(fn.sub(_this._v, toArray(dist))); };
+            this.hadamart = function (dist) { return V2Impl.FromArray(fn.hadamart(_this._v, toArray(dist))); };
+            this.scalar = function (n) { return V2Impl.FromArray(fn.scalar(_this._v, n)); };
+            this.ip = function (dist) { return fn.ip(_this.array(), toArray(dist)); };
+            this.cp = function (dist) { return fn.cp2(_this._v, toArray(dist)); };
+            this._v = [x, y];
+        }
+        V2Impl.FromArray = function (v) {
+            return new V2Impl(v[0], v[1]);
+        };
+        return V2Impl;
+    }());
+    priv.V2Impl = V2Impl;
+    var V3Impl = (function () {
+        function V3Impl(x, y, z) {
+            var _this = this;
+            // 単項演算
+            this.lenght2 = function () { return _this.ip(_this); };
+            this.length = function () { return ut.sqrt(_this.lenght2()); };
+            this.unit = function () { return _this.scalar(1 / _this.length()); };
+            // 取得
+            this.array = function () { return _this._v.slice(0); };
+            this.clone = function () { return new V3Impl(_this.x(), _this.y(), _this.z()); };
+            this.x = function () { return _this._v[0]; };
+            this.y = function () { return _this._v[1]; };
+            this.z = function () { return _this._v[2]; };
+            // 二項演算
+            this.add = function (dist) { return V3Impl.FromArray(fn.add(_this._v, toArray(dist))); };
+            this.sub = function (dist) { return V3Impl.FromArray(fn.sub(_this._v, toArray(dist))); };
+            this.hadamart = function (dist) { return V3Impl.FromArray(fn.hadamart(_this._v, toArray(dist))); };
+            this.scalar = function (n) { return V3Impl.FromArray(fn.scalar(_this._v, n)); };
+            this.ip = function (dist) { return fn.ip(_this.array(), toArray(dist)); };
+            this.cp = function (dist) { return V3Impl.FromArray(fn.cp3(_this._v, toArray(dist))); };
+            this._v = [x, y, z];
+        }
+        V3Impl.FromArray = function (v) {
+            return new V3Impl(v[0], v[1], v[2]);
+        };
+        return V3Impl;
+    }());
+    priv.V3Impl = V3Impl;
+    var V4Impl = (function () {
+        function V4Impl(x, y, z, w) {
+            var _this = this;
+            // 取得
+            this.array = function () { return _this._v.slice(0); };
+            this.clone = function () { return new V4Impl(_this.x(), _this.y(), _this.z(), _this.w()); };
+            this.x = function () { return _this._v[0]; };
+            this.y = function () { return _this._v[1]; };
+            this.z = function () { return _this._v[2]; };
+            this.w = function () { return _this._v[3]; };
+            // 単項演算
+            this.unit = function () { return _this.scalar(1 / _this.length()); };
+            this.lenght2 = function () { return _this.ip(_this); };
+            this.length = function () { return ut.sqrt(_this.lenght2()); };
+            // 二項演算
+            this.add = function (dist) { return V4Impl.FromArray(fn.add(_this._v, toArray(dist))); };
+            this.sub = function (dist) { return V4Impl.FromArray(fn.sub(_this._v, toArray(dist))); };
+            this.hadamart = function (dist) { return V4Impl.FromArray(fn.hadamart(_this._v, toArray(dist))); };
+            this.scalar = function (n) { return V4Impl.FromArray(fn.scalar(_this._v, n)); };
+            this.ip = function (dist) { return fn.ip(_this.array(), toArray(dist)); };
+            this._v = [x, y, z, w];
+        }
+        V4Impl.FromArray = function (v) {
+            return new V4Impl(v[0], v[1], v[2], v[3]);
+        };
+        return V4Impl;
+    }());
+    priv.V4Impl = V4Impl;
+})(priv || (priv = {}));
+// --------------------------------------------------------
 // 直交座標系による生成
 /** (x成分, y成分) -> 2次元ベクトル */
-function v2(x, y) { return new V2Impl(x, y); }
-exports.v2 = v2;
-/** (xyz成分を含む配列) -> 2次元ベクトル */
-function ar_v2(v) { return V2Impl.FromArray(v); }
-exports.ar_v2 = ar_v2;
+exports.v2 = function (x, y) { return new priv.V2Impl(x, y); };
 /** (x成分, y成分, z成分) -> 3次元ベクトル */
-function v3(x, y, z) { return new V3Impl(x, y, z); }
-exports.v3 = v3;
-/** (xyz成分を含む配列) -> 3次元ベクトル */
-function ar_v3(v) { return V3Impl.FromArray(v); }
-exports.ar_v3 = ar_v3;
+exports.v3 = function (x, y, z) { return new priv.V3Impl(x, y, z); };
 /** (x成分, y成分, z成分, w成分) -> 4次元ベクトル */
-function v4(x, y, z, w) { return new V4Impl(x, y, z, w); }
-exports.v4 = v4;
-/** (xyzw成分を含む配列) -> 4次元ベクトル */
-function ar_v4(v) { return V4Impl.FromArray(v); }
-exports.ar_v4 = ar_v4;
+exports.v4 = function (x, y, z, w) { return new priv.V4Impl(x, y, z, w); };
+/** ([x成分, y成分]) -> 2次元ベクトル */
+exports.array_to_v2 = function (n) { return priv.V2Impl.FromArray(n); };
+/** ([x成分, y成分, z成分]) -> 3次元ベクトル */
+exports.array_to_v3 = function (n) { return priv.V3Impl.FromArray(n); };
+/** ([x成分, y成分, z成分, w成分]) -> 4次元ベクトル */
+exports.array_to_v4 = function (n) { return priv.V4Impl.FromArray(n); };
+// --------------------------------------------------------
 // 極座標系による生成
-/** (極形式の長さ, 極形式の偏角(radian)) -> 2次元ベクトル
-    偏角は、0でx軸正方向、1/2PIでy軸正方向とする */
-function polar_v2(r, rad) {
+/**
+ * 極座標系から直交座標系の2次元ベクトルを生成する
+ * @param r     極形式の長さ
+ * @param rad   極形式の偏角(radian). 0でx軸正方向、1/2PIでy軸正方向とする
+ * <ul>
+ * <li> polar_to_v2(2, 0) -> v2(2, 0)
+ * <li> polar_to_v2(2, PI/2) -> v2(0, 2)
+ * <li> polar_to_v2(2, PI) -> v2(-2, 0)
+ * </ul>
+ */
+function polar_to_v2(r, rad) {
     var x = r * ut.cos(rad);
     var y = r * ut.sin(rad);
-    return new V2Impl(x, y);
+    return new priv.V2Impl(x, y);
 }
-exports.polar_v2 = polar_v2;
-/** (極形式の長さ, 極形式の偏角(radian), z成分) -> 3次元ベクトル
-    偏角は、0でx軸正方向、1/2PIでy軸正方向とする */
-function polar_v3(r, rad, z) {
+exports.polar_to_v2 = polar_to_v2;
+/**
+ * 円柱座標系から直交座標系の3次元ベクトルを生成する
+ * @param r     極形式のxy成分の長さ
+ * @param rad   極形式のxy成分の偏角(radian). 0でx軸正方向、1/2PIでy軸正方向とする
+ * @param z     z成分
+ * <ul>
+ * <li> polar_to_v3(2, 0, 3) -> v3(2, 0, 3)
+ * <li> polar_to_v3(2, PI/2, 4) -> v3(0, 2, 4)
+ * <li> polar_to_v3(2, PI, 5) -> v3(-2, 0, 5)
+ * </ul>
+ */
+function polar_to_v3(r, rad, z) {
     var x = r * ut.cos(rad);
     var y = r * ut.sin(rad);
-    return new V3Impl(x, y, z);
+    return new priv.V3Impl(x, y, z);
 }
-exports.polar_v3 = polar_v3;
-/** (極形式の長さ, 極形式の水平偏角(radian), 極形式の垂直偏角(radian)) -> 3次元ベクトル
-    水平偏角は、0でx軸正方向、1/2PIでy軸正方向とする
-    垂直偏角は、0でz軸と直交、1/2PIでz軸正方向、-1/2PIでz軸負方向とする */
-function sphere_v3(r, radH, radV) {
+exports.polar_to_v3 = polar_to_v3;
+/**
+ * 球面座標系から直交座標系の3次元ベクトルを生成する
+ * @param r     極形式の長さ
+ * @param radH  水平偏角。0でx軸正方向、1/2PIでy軸正方向とする
+ * @param radV  垂直偏角。0でz軸と直交、1/2PIでz軸正方向、-1/2PIでz軸負方向とする
+ * <ul>
+ * <li> sphere_to_v3(2, 0, 0) -> v3(2, 0, 0)
+ * <li> sphere_to_v3(2, PI/2, 0) -> v3(0, 2, 0)
+ * <li> sphere_to_v3(2, PI, 0) -> v3(-2, 0, 0)
+ * <li> sphere_to_v3(2, 0, PI/3) -> v3(1, 0, sqrt(3))
+ * <li> sphere_to_v3(2, PI/2, PI/3) -> v3(0, 1, sqrt(3))
+ * <li> sphere_to_v3(2, PI, PI/3) -> v3(-1, 0, sqrt(3))
+ * </ul>
+ */
+function sphere_to_v3(r, radH, radV) {
     var rh = r * ut.cos(radV);
     var z = r * ut.sin(radV);
     var x = rh * ut.cos(radH);
     var y = rh * ut.sin(radH);
-    return new V3Impl(x, y, z);
+    return new priv.V3Impl(x, y, z);
 }
-exports.sphere_v3 = sphere_v3;
+exports.sphere_to_v3 = sphere_to_v3;
 // 変換
-/** (2次元ベクトル, z成分) -> 3次元ベクトル */
-function v2_v3(v2, z) { return V3Impl.FromArray(v2._ref().concat(z)); }
-exports.v2_v3 = v2_v3;
-/** (3次元ベクトル) -> 2次元ベクトル */
-function v3_v2(v3) { return V2Impl.FromArray(v3._ref()); }
-exports.v3_v2 = v3_v2;
-/** (3次元ベクトル, w成分) -> 4次元ベクトル */
-function v3_v4(v3, w) { return V4Impl.FromArray(v3._ref().concat(w)); }
-exports.v3_v4 = v3_v4;
-/** (4次元ベクトル) -> 3次元ベクトル */
-function v4_v3(v4) { return V3Impl.FromArray(v4._ref()); }
-exports.v4_v3 = v4_v3;
+/**
+ * (2次元ベクトル, z成分) -> 3次元ベクトル
+ * <ul>
+ * <li> v2_to_v3(v2(1, 2), 3) -> v3(1, 2, 3)
+ * </ul>
+ */
+exports.v2_to_v3 = function (v2, z) { return priv.V3Impl.FromArray(v2._v.concat(z)); };
+/**
+ * (3次元ベクトル) -> 2次元ベクトル
+ * <ul>
+ * <li> v3_to_v2(v3(1, 2, 3)) -> v2(1, 2)
+ * </ul>
+ */
+exports.v3_to_v2 = function (v3) { return priv.V2Impl.FromArray(v3._v); };
+/**
+ * (3次元ベクトル, w成分) -> 4次元ベクトル
+ * <ul>
+ * <li> v3_to_v4(v3(1, 2, 3), 4) -> v4(1, 2, 3, 4)
+ * </ul>
+ */
+exports.v3_to_v4 = function (v3, w) { return priv.V4Impl.FromArray(v3._v.concat(w)); };
+/**
+ * (4次元ベクトル) -> 3次元ベクトル
+ * <ul>
+ * <li> v4_to_v3(v4(1, 2, 3, 4)) -> v3(1, 2, 3)
+ * </ul>
+ */
+exports.v4_to_v3 = function (v4) { return priv.V3Impl.FromArray(v4._v); };
 // 定数
-/** 2次元ゼロベクトル */
-exports.zero_v2 = v2(0, 0);
-/** 3次元ゼロベクトル */
-exports.zero_v3 = v3(0, 0, 0);
-/** x軸と平行な3次元単位ベクトル */
-exports.unitX_v3 = v3(1, 0, 0);
-/** y軸と平行な3次元単位ベクトル */
-exports.unitY_v3 = v3(0, 1, 0);
-/** z軸と平行な3次元単位ベクトル */
-exports.unitZ_v3 = v3(0, 0, 1);
-// 削除予定
-/** Vector ベクトル */
-var _Vector = (function () {
-    function _Vector(v) {
-        this.v = v;
-    }
-    _Vector.FromArray = function (v) {
-        return new _Vector(v);
-    };
-    _Vector.prototype.dim = function () {
-        return this.v.length;
-    };
-    _Vector.prototype.toString = function () {
-        return this.v.join(', ');
-    };
-    _Vector.prototype.add = function (dist) {
-        return _Vector.FromArray(fn.add(this.v, dist.v));
-    };
-    _Vector.prototype.sub = function (dist) {
-        return _Vector.FromArray(fn.sub(this.v, dist.v));
-    };
-    _Vector.prototype.hadamart = function (dist) {
-        return _Vector.FromArray(fn.hadamart(this.v, dist.v));
-    };
-    _Vector.prototype.scalar = function (n) {
-        return _Vector.FromArray(fn.scalar(this.v, n));
-    };
-    /** Inner Product, Dot Product 内積 */
-    _Vector.prototype.ip = function (dist) {
-        return fn.ip(this.v, dist.v);
-    };
-    /** Unit Vector 単位ベクトル */
-    _Vector.prototype.normalize = function () {
-        return this.scalar(1 / this.length());
-    };
-    /** 長さの二乗 */
-    _Vector.prototype.length2 = function () {
-        return this.ip(this);
-    };
-    /** 長さ */
-    _Vector.prototype.length = function () {
-        return ut.sqrt(this.length2());
-    };
-    return _Vector;
-}());
-exports._Vector = _Vector;
-var _Vector2 = (function (_super) {
-    __extends(_Vector2, _super);
-    function _Vector2(x, y) {
-        return _super.call(this, [x, y]) || this;
-    }
-    _Vector2.FromArray = function (v) {
-        return new _Vector2(v[0], v[1]);
-    };
-    _Vector2.prototype.dim = function () {
-        return 2;
-    };
-    _Vector2.prototype.x = function () {
-        return this.v[0];
-    };
-    _Vector2.prototype.y = function () {
-        return this.v[1];
-    };
-    _Vector2.prototype.add = function (dist) {
-        return _Vector2.FromArray(fn.add(this.v, dist.v));
-    };
-    _Vector2.prototype.sub = function (dist) {
-        return _Vector2.FromArray(fn.sub(this.v, dist.v));
-    };
-    _Vector2.prototype.hadamart = function (dist) {
-        return _Vector2.FromArray(fn.hadamart(this.v, dist.v));
-    };
-    _Vector2.prototype.scalar = function (n) {
-        return _Vector2.FromArray(fn.scalar(this.v, n));
-    };
-    /** Inner Product, Dot Product 内積 */
-    _Vector2.prototype.ip = function (dist) {
-        return _super.prototype.ip.call(this, dist);
-    };
-    /** Unit Vector 単位ベクトル */
-    _Vector2.prototype.normalize = function () {
-        return this.scalar(1 / this.length());
-    };
-    /** Cross Product 外積 */
-    _Vector2.prototype.cp = function (dist) {
-        return fn.cp2(this.v, dist.v);
-    };
-    return _Vector2;
-}(_Vector));
-exports._Vector2 = _Vector2;
-var _Vector3 = (function (_super) {
-    __extends(_Vector3, _super);
-    function _Vector3(x, y, z) {
-        return _super.call(this, [x, y, z]) || this;
-    }
-    _Vector3.FromArray = function (v) {
-        return new _Vector3(v[0], v[1], v[2]);
-    };
-    _Vector3.prototype.dim = function () {
-        return 3;
-    };
-    _Vector3.prototype.x = function () {
-        return this.v[0];
-    };
-    _Vector3.prototype.y = function () {
-        return this.v[1];
-    };
-    _Vector3.prototype.z = function () {
-        return this.v[2];
-    };
-    _Vector3.prototype.add = function (dist) {
-        return _Vector3.FromArray(fn.add(this.v, dist.v));
-    };
-    _Vector3.prototype.sub = function (dist) {
-        return _Vector3.FromArray(fn.sub(this.v, dist.v));
-    };
-    _Vector3.prototype.hadamart = function (dist) {
-        return _Vector3.FromArray(fn.hadamart(this.v, dist.v));
-    };
-    _Vector3.prototype.scalar = function (n) {
-        return _Vector3.FromArray(fn.scalar(this.v, n));
-    };
-    /** Inner Product, Dot Product 内積 */
-    _Vector3.prototype.ip = function (dist) {
-        return _super.prototype.ip.call(this, dist);
-    };
-    /** Unit Vector 単位ベクトル */
-    _Vector3.prototype.normalize = function () {
-        return this.scalar(1 / this.length());
-    };
-    /** Cross Product 外積 */
-    _Vector3.prototype.cp = function (dist) {
-        return _Vector3.FromArray(fn.cp3(this.v, dist.v));
-    };
-    return _Vector3;
-}(_Vector));
-exports._Vector3 = _Vector3;
-var _Vector4 = (function (_super) {
-    __extends(_Vector4, _super);
-    function _Vector4(x, y, z, w) {
-        return _super.call(this, [x, y, z, w]) || this;
-    }
-    _Vector4.FromArray = function (v) {
-        return new _Vector4(v[0], v[1], v[2], v[3]);
-    };
-    _Vector4.prototype.dim = function () {
-        return 4;
-    };
-    _Vector4.prototype.x = function () {
-        return this.v[0];
-    };
-    _Vector4.prototype.y = function () {
-        return this.v[1];
-    };
-    _Vector4.prototype.z = function () {
-        return this.v[2];
-    };
-    _Vector4.prototype.w = function () {
-        return this.v[3];
-    };
-    _Vector4.prototype.add = function (dist) {
-        return _Vector4.FromArray(fn.add(this.v, dist.v));
-    };
-    _Vector4.prototype.sub = function (dist) {
-        return _Vector4.FromArray(fn.sub(this.v, dist.v));
-    };
-    _Vector4.prototype.hadamart = function (dist) {
-        return _Vector4.FromArray(fn.hadamart(this.v, dist.v));
-    };
-    _Vector4.prototype.scalar = function (n) {
-        return _Vector4.FromArray(fn.scalar(this.v, n));
-    };
-    /** Inner Product, Dot Product 内積 */
-    _Vector4.prototype.ip = function (dist) {
-        return _super.prototype.ip.call(this, dist);
-    };
-    /** Unit Vector 単位ベクトル */
-    _Vector4.prototype.normalize = function () {
-        return this.scalar(1 / this.length());
-    };
-    return _Vector4;
-}(_Vector));
-exports._Vector4 = _Vector4;
+/** 2次元ゼロベクトル v2(0, 0) */
+exports.v2_zero = exports.v2(0, 0);
+/** 3次元ゼロベクトル v3(0, 0, 0 */
+exports.v3_zero = exports.v3(0, 0, 0);
+/** x軸と平行な3次元単位ベクトル v3(1, 0, 0) */
+exports.v3_unit_x = exports.v3(1, 0, 0);
+/** y軸と平行な3次元単位ベクトル v3(0, 1, 0) */
+exports.v3_unit_y = exports.v3(0, 1, 0);
+/** z軸と平行な3次元単位ベクトル v3(0, 0, 1) */
+exports.v3_unit_z = exports.v3(0, 0, 1);
