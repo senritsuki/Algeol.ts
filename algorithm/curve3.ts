@@ -1,6 +1,6 @@
 ﻿/** Curve with Parametric Equation - 3次元空間におけるパラメトリック方程式による曲線 */
 
-import * as ut from "../math/utility";
+import * as ut from "./utility";
 import * as vc from "./vector";
 
 export let _E = 0.001;

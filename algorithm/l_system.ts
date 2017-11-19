@@ -42,14 +42,14 @@ export namespace presets {
 		return lines;
 	}
 	export function movedraw(r: number) {
-		return (turtlePrev: tt.Turtle2, lines: cv.Curve[], queue: tt.Turtle2[]) => {
+		return (turtlePrev: tt.Turtle2, lines: cv.Curve[], _queue: tt.Turtle2[]) => {
 			 const d = turtlePrev.moveDraw(r);
 			 lines.push(d.line);
 			 return d.turtle;
 		};
 	}
 	export function turn(degree: number) {
-		return (turtlePrev: tt.Turtle2, lines: cv.Curve[], queue: tt.Turtle2[]) => turtlePrev.turn(degree);
+		return (turtlePrev: tt.Turtle2, _lines: cv.Curve[], _queue: tt.Turtle2[]) => turtlePrev.turn(degree);
 	}
 
 	/** Algae - 藻
@@ -223,8 +223,8 @@ export namespace presets {
 			return turtle_common(vl, {
 				'A': movedraw(r),
 				'B': movedraw(r),
-				'[': (t, l, q) => { q.push(t); return t.turn(45); },
-				']': (t, l, q) => { const t2 = q.pop(); return (t2 != undefined ? t2 : t).turn(-45); },
+				'[': (t, _l, q) => { q.push(t); return t.turn(45); },
+				']': (t, _l, q) => { const t2 = q.pop(); return (t2 != undefined ? t2 : t).turn(-45); },
 			});
 		}
 	}

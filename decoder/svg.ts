@@ -1,9 +1,9 @@
 ﻿/** Scalable Vector Graphics .svg */
 
 //import * as al from "../algeo";
-import * as vc from "../math/vector";
-import * as ut from "../math/utility";
-import * as cv from "../math/curve2";
+import * as vc from "../algorithm/vector";
+import * as ut from "../algorithm/utility";
+import * as cv from "../algorithm/curve2";
 
 
 /** (内部要素, svg幅, svg高さ, viewbox幅, viewbox高さ) -> <svg> */

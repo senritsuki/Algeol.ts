@@ -1,10 +1,17 @@
+"use strict";
 /** Vector - ベクトル */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var ut = require("../math/utility");
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var ut = require("./utility");
 /** ベクトル演算 */
 var fn;
 (function (fn_1) {
@@ -89,7 +96,7 @@ var V2Impl = (function () {
     V2Impl.prototype.ip = function (dist) { return fn.ip(this.array(), dist._ref()); };
     V2Impl.prototype.cp = function (dist) { return fn.cp2(this._ref(), dist._ref()); };
     return V2Impl;
-})();
+}());
 var V3Impl = (function () {
     function V3Impl(x, y, z) {
         this._v = [x, y, z];
@@ -116,7 +123,7 @@ var V3Impl = (function () {
     V3Impl.prototype.ip = function (dist) { return fn.ip(this.array(), dist._ref()); };
     V3Impl.prototype.cp = function (dist) { return V3Impl.FromArray(fn.cp3(this._ref(), dist._ref())); };
     return V3Impl;
-})();
+}());
 var V4Impl = (function () {
     function V4Impl(x, y, z, w) {
         this._v = [x, y, z, w];
@@ -143,7 +150,7 @@ var V4Impl = (function () {
     V4Impl.prototype.scalar = function (n) { return V4Impl.FromArray(fn.scalar(this._ref(), n)); };
     V4Impl.prototype.ip = function (dist) { return fn.ip(this.array(), dist._ref()); };
     return V4Impl;
-})();
+}());
 // 直交座標系による生成
 /** (x成分, y成分) -> 2次元ベクトル */
 function v2(x, y) { return new V2Impl(x, y); }
@@ -259,12 +266,12 @@ var _Vector = (function () {
         return ut.sqrt(this.length2());
     };
     return _Vector;
-})();
+}());
 exports._Vector = _Vector;
 var _Vector2 = (function (_super) {
     __extends(_Vector2, _super);
     function _Vector2(x, y) {
-        _super.call(this, [x, y]);
+        return _super.call(this, [x, y]) || this;
     }
     _Vector2.FromArray = function (v) {
         return new _Vector2(v[0], v[1]);
@@ -303,12 +310,12 @@ var _Vector2 = (function (_super) {
         return fn.cp2(this.v, dist.v);
     };
     return _Vector2;
-})(_Vector);
+}(_Vector));
 exports._Vector2 = _Vector2;
 var _Vector3 = (function (_super) {
     __extends(_Vector3, _super);
     function _Vector3(x, y, z) {
-        _super.call(this, [x, y, z]);
+        return _super.call(this, [x, y, z]) || this;
     }
     _Vector3.FromArray = function (v) {
         return new _Vector3(v[0], v[1], v[2]);
@@ -350,12 +357,12 @@ var _Vector3 = (function (_super) {
         return _Vector3.FromArray(fn.cp3(this.v, dist.v));
     };
     return _Vector3;
-})(_Vector);
+}(_Vector));
 exports._Vector3 = _Vector3;
 var _Vector4 = (function (_super) {
     __extends(_Vector4, _super);
     function _Vector4(x, y, z, w) {
-        _super.call(this, [x, y, z, w]);
+        return _super.call(this, [x, y, z, w]) || this;
     }
     _Vector4.FromArray = function (v) {
         return new _Vector4(v[0], v[1], v[2], v[3]);
@@ -396,6 +403,5 @@ var _Vector4 = (function (_super) {
         return this.scalar(1 / this.length());
     };
     return _Vector4;
-})(_Vector);
+}(_Vector));
 exports._Vector4 = _Vector4;
-//# sourceMappingURL=vector.js.map

@@ -1,8 +1,8 @@
 ﻿/** 複合オブジェクト */
 
-import * as al from "../algeol";
-import * as ut from "../math/utility";
-import * as vc from "../math/vector";
+import * as al from "./geo";
+import * as ut from "../algorithm/utility";
+import * as vc from "../algorithm/vector";
 
 
 function verts_flat(polygons: vc.V3[][], n_gonal: number): vc.V3[] {

@@ -1,5 +1,7 @@
+"use strict";
 /** Scalable Vector Graphics .svg */
-var ut = require("../math/utility");
+Object.defineProperty(exports, "__esModule", { value: true });
+var ut = require("../algorithm/utility");
 /** (内部要素, svg幅, svg高さ, viewbox幅, viewbox高さ) -> <svg> */
 function svg(inner, width, height, viewbox_width, viewbox_height) {
     var viewbox = [-viewbox_width / 2, -viewbox_height / 2, viewbox_width, viewbox_height].join(' ');
@@ -29,4 +31,3 @@ function v_circle(v) {
     return "<circle cx=\"" + v.x() + "\" cy=\"" + v.y() + "\" r=\"" + v.z() + "\" />";
 }
 exports.v_circle = v_circle;
-//# sourceMappingURL=format_svg.js.map

@@ -1,10 +1,17 @@
+"use strict";
 /** Curve with Parametric Equation - 3次元空間におけるパラメトリック方程式による曲線 */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var ut = require("../math/utility");
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var ut = require("./utility");
 exports._E = 0.001;
 var CDImpl = (function () {
     function CDImpl(_c, _d) {
@@ -14,7 +21,7 @@ var CDImpl = (function () {
     CDImpl.prototype.c = function () { return this._c; };
     CDImpl.prototype.d = function () { return this._d; };
     return CDImpl;
-})();
+}());
 /** 位置ベクトルと方向ベクトルのペア */
 function cd(c, d) {
     return new CDImpl(c, d);
@@ -48,7 +55,7 @@ var CurveArrayImpl = (function () {
         return this._curves[j].coord(k);
     };
     return CurveArrayImpl;
-})();
+}());
 var CurveBase = (function () {
     function CurveBase(_v) {
         this._v = _v;
@@ -64,22 +71,23 @@ var CurveBase = (function () {
         return cd(c, d2.sub(d1));
     };
     return CurveBase;
-})();
+}());
 /** (3次元ベクトル配列, 媒介変数) -> 3次元ベクトル を満たす任意の関数で定義される曲線 */
 var LambdaCurve = (function (_super) {
     __extends(LambdaCurve, _super);
     function LambdaCurve(v, _lambda) {
-        _super.call(this, v);
-        this._lambda = _lambda;
+        var _this = _super.call(this, v) || this;
+        _this._lambda = _lambda;
+        return _this;
     }
     LambdaCurve.prototype.coord = function (i) { return this._lambda(this._v, i); };
     return LambdaCurve;
-})(CurveBase);
+}(CurveBase));
 /** 直線・一次曲線 */
 var Line = (function (_super) {
     __extends(Line, _super);
     function Line(start, end) {
-        _super.call(this, [start, end]);
+        return _super.call(this, [start, end]) || this;
     }
     Line.prototype.coord = function (i) {
         var c0 = this._v[0].scalar(1 - i);
@@ -87,12 +95,12 @@ var Line = (function (_super) {
         return c0.add(c1);
     };
     return Line;
-})(CurveBase);
+}(CurveBase));
 /** 2次ベジェ曲線 */
 var BezierCurve2 = (function (_super) {
     __extends(BezierCurve2, _super);
     function BezierCurve2(start, mid, end) {
-        _super.call(this, [start, mid, end]);
+        return _super.call(this, [start, mid, end]) || this;
     }
     BezierCurve2.prototype.coord = function (i) {
         var _this = this;
@@ -101,12 +109,12 @@ var BezierCurve2 = (function (_super) {
             .reduce(function (a, b) { return a.add(b); });
     };
     return BezierCurve2;
-})(CurveBase);
+}(CurveBase));
 /** 3次ベジェ曲線 */
 var BezierCurve3 = (function (_super) {
     __extends(BezierCurve3, _super);
     function BezierCurve3(start, mid1, mid2, end) {
-        _super.call(this, [start, mid1, mid2, end]);
+        return _super.call(this, [start, mid1, mid2, end]) || this;
     }
     BezierCurve3.prototype.coord = function (i) {
         var _this = this;
@@ -115,12 +123,12 @@ var BezierCurve3 = (function (_super) {
             .reduce(function (a, b) { return a.add(b); });
     };
     return BezierCurve3;
-})(CurveBase);
+}(CurveBase));
 /** 楕円 */
 var Ellipse = (function (_super) {
     __extends(Ellipse, _super);
     function Ellipse(o, x, y) {
-        _super.call(this, [o, x, y]);
+        return _super.call(this, [o, x, y]) || this;
     }
     Ellipse.prototype.coord = function (i) {
         var rad = i * ut.deg360;
@@ -130,12 +138,12 @@ var Ellipse = (function (_super) {
         return o.add(dx).add(dy);
     };
     return Ellipse;
-})(CurveBase);
+}(CurveBase));
 /** 螺旋 */
 var Spiral = (function (_super) {
     __extends(Spiral, _super);
     function Spiral(o, x, y, z) {
-        _super.call(this, [o, x, y, z]);
+        return _super.call(this, [o, x, y, z]) || this;
     }
     Spiral.prototype.coord = function (i) {
         var rad = i * ut.deg360;
@@ -146,7 +154,7 @@ var Spiral = (function (_super) {
         return o.add(dx).add(dy).add(dz);
     };
     return Spiral;
-})(CurveBase);
+}(CurveBase));
 /** (始点, 終点) -> 直線 */
 function line(start, end) {
     return new Line(start, end);
@@ -202,4 +210,3 @@ function lines(verts) {
     return curves(ut.seq.arith(verts.length - 1, 1).map(function (i) { return line(verts[i - 1], verts[i]); }));
 }
 exports.lines = lines;
-//# sourceMappingURL=curve3.js.map

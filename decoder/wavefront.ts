@@ -1,7 +1,7 @@
 ﻿/** Wavefront .obj */
 
-import * as al from "../algeol";
-import * as vc from "../math/vector";
+import * as vc from "../algorithm/vector";
+import * as al from "../geometry/geo";
 
 /** 頂点vを文字列化する方法
 	デフォルトでは3次元ベクトルを x z -y と並べていますが、変えたい場合は上書きしてください */
@@ -58,7 +58,7 @@ export function geoGroupArray_str(geoGroupArray: al.GeoGroup[], offset: number =
 }
 
 /** ジオメトリ辞書を文字列化 */
-export function geoDict_str(geoDict: al.GeoDict, offset: number = 1): string {
+export function geoDict_str(geoDict: al.GeoDict, _offset: number = 1): string {
 	return geoGroupArray_str(geoDict.geogroups());
 }
 

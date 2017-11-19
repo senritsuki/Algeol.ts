@@ -1,7 +1,9 @@
+"use strict";
 /** プリミティブオブジェクト */
-var al = require("../algeol");
-var ut = require("../math/utility");
-var vc = require("../math/vector");
+Object.defineProperty(exports, "__esModule", { value: true });
+var al = require("./geo");
+var ut = require("../algorithm/utility");
+var vc = require("../algorithm/vector");
 /** プリミティブオブジェクト生成用関数群 */
 var fn;
 (function (fn) {
@@ -389,4 +391,3 @@ function bipyramid(n_gonal, r, h, d) {
     return al.geo(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
 }
 exports.bipyramid = bipyramid;
-//# sourceMappingURL=geo_primitive.js.map

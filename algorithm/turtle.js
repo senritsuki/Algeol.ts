@@ -1,8 +1,10 @@
+"use strict";
 /** Turtle graphics - タートルグラフィックス */
-var ut = require('./utility');
-var vc = require('./vector');
-var cv2 = require('./curve2');
-var cv3 = require('./curve3');
+Object.defineProperty(exports, "__esModule", { value: true });
+var ut = require("./utility");
+var vc = require("./vector");
+var cv2 = require("./curve2");
+var cv3 = require("./curve3");
 var Turtle2Impl = (function () {
     function Turtle2Impl(_coord, _degree) {
         this._coord = _coord;
@@ -26,7 +28,7 @@ var Turtle2Impl = (function () {
         return new Turtle2Impl(this._coord, this._degree + degree);
     };
     return Turtle2Impl;
-})();
+}());
 var Turtle3Impl = (function () {
     function Turtle3Impl(_coord, _degreeH, _degreeV) {
         this._coord = _coord;
@@ -54,7 +56,7 @@ var Turtle3Impl = (function () {
         return new Turtle3Impl(this._coord, this._degreeH, this._degreeV + degree);
     };
     return Turtle3Impl;
-})();
+}());
 function turtle2(coord, degree) {
     if (coord === void 0) { coord = vc.zero_v2; }
     if (degree === void 0) { degree = 0; }
@@ -68,4 +70,3 @@ function turtle3(coord, degreeH, degreeV) {
     return new Turtle3Impl(coord, degreeH, degreeV);
 }
 exports.turtle3 = turtle3;
-//# sourceMappingURL=turtle.js.map

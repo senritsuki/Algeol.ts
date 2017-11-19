@@ -1,8 +1,8 @@
 ﻿/** プリミティブオブジェクト */
 
-import * as al from "../algeol";
-import * as ut from "../math/utility";
-import * as vc from "../math/vector";
+import * as al from "./geo";
+import * as ut from "../algorithm/utility";
+import * as vc from "../algorithm/vector";
 
 /** プリミティブオブジェクト生成用関数群 */
 export namespace fn {

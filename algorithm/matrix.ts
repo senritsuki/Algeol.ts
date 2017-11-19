@@ -1,6 +1,6 @@
 ﻿// Square Matrix 正方行列
 
-import * as ut from "../math/utility";
+import * as ut from "./utility";
 import * as vc from "./vector";
 
 export namespace fn {

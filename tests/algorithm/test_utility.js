@@ -1,5 +1,7 @@
-var ut = require("../../algeol/math/utility");
-var dummy = ut.r2;
+"use strict";
+//import * as ut from "../../algeol/math/utility";
+Object.defineProperty(exports, "__esModule", { value: true });
+//const dummy = ut.r2;
 // 簡易目視テスト
 function test() {
     var printEval = function (s) { return console.log(s + ' = ', eval(s)); };
@@ -18,5 +20,5 @@ function test() {
         printEval('ut.seq(5, 1, 2)');
     }
 }
+exports.test = test;
 test();
-//# sourceMappingURL=test_utility.js.map
