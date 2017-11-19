@@ -1,19 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require('fs');
-var al = require("../../geometry/geo");
 var ut = require("../../algorithm/utility");
+var seq = require("../../algorithm/sequence");
 var vc = require("../../algorithm/vector");
 var mx = require("../../algorithm/matrix");
-var wo = require("../../decoder/wavefront");
+var al = require("../../geometry/geo");
 var prim = require("../../geometry/primitive");
 var multi = require("../../geometry/group");
+var wo = require("../../decoder/wavefront");
 function save(name, geo) {
     var path = "test_geo_multi/" + name + ".obj";
-    fs.writeFile(path, wo.geo_str(geo));
+    fs.writeFile(path, wo.geoUnit_to_objstr(geo));
     console.log('save: ' + path);
 }
-exports.save = save;
 function test_al() {
     al.duplicateVertsAffine([vc.v3(0, 0, 0), vc.v3(1, 0, 0)], [mx.trans_m4(1, 0, 0), mx.trans_m4(2, 0, 0)]).forEach(function (vv) { return vv.forEach(function (v) { return console.log(v); }); });
     al.compositeMap([0, 1], [
@@ -35,10 +35,10 @@ function test() {
         prim.fn.circle.verts_i(4, 1, ut.deg1 * 0, 0),
         prim.fn.circle.verts_i(4, 1, ut.deg1 * 45, 1),
     ]));
-    save('antiprismArray-1', multi.antiprismArray(ut.seq.arith(5).map(function (i) {
+    save('antiprismArray-1', multi.antiprismArray(seq.arith(5).map(function (i) {
         return prim.fn.circle.verts_i(6, 1, ut.deg30 * i, i);
     })));
-    save('antiprismArray-2', multi.antiprismArray(ut.seq.arith(5).map(function (i) {
+    save('antiprismArray-2', multi.antiprismArray(seq.arith(5).map(function (i) {
         return prim.fn.circle.verts_i(6, 1, ut.deg30 * i * 3, i);
     })));
     save('prismArray_pyramid', multi.prismArray_pyramid([
@@ -54,19 +54,18 @@ function test() {
         prim.fn.circle.verts_c(4, 1.0, ut.deg90, 1.8),
         prim.fn.circle.verts_i(4, 0.5, ut.deg90 * 2, 4.2),
     ], vc.v3(0, 0, 9.0)));
-    save('prismArray_bipyramid', multi.prismArray_bipyramid(ut.seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * ut.sin(rad), 0, 2 * -ut.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
-    save('antiprismArray_bipyramid', multi.antiprismArray_bipyramid(ut.seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * ut.sin(rad), rad / 2, 2 * -ut.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
-    save('prismRing', multi.prismRing(al.duplicateVertsAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(ut.seq.arith(4), [
+    save('prismArray_bipyramid', multi.prismArray_bipyramid(seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * ut.sin(rad), 0, 2 * -ut.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
+    save('antiprismArray_bipyramid', multi.antiprismArray_bipyramid(seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * ut.sin(rad), rad / 2, 2 * -ut.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
+    save('prismRing', multi.prismRing(al.duplicateVertsAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(seq.arith(4), [
         function (_d) { return mx.rotX_m4(ut.deg90); },
         function (_d) { return mx.trans_m4(3, 0, 0); },
         function (d) { return mx.rotZ_m4(ut.deg90 * d); },
     ]))));
-    save('antiprismRing', multi.antiprismRing(al.duplicateVertsAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(ut.seq.arith(8), [
+    save('antiprismRing', multi.antiprismRing(al.duplicateVertsAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(seq.arith(8), [
         function (d) { return mx.rotZ_m4(ut.deg45 * d); },
         function (_d) { return mx.rotX_m4(ut.deg90); },
         function (_d) { return mx.trans_m4(3, 0, 0); },
         function (d) { return mx.rotZ_m4(ut.deg45 * d); },
     ]))));
 }
-exports.test = test;
 test();

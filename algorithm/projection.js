@@ -14,8 +14,7 @@ var ProjectionImpl = (function () {
 }());
 /** Parallel Projection - 平行投影 */
 function parallel(m, scale) {
-    var hadamart = vc.v3(scale, scale, 1);
-    return new ProjectionImpl(m, function (v) { return v.hadamart(hadamart); });
+    return new ProjectionImpl(m, function (v) { return v.hadamart([scale, scale, 1]); });
 }
 exports.parallel = parallel;
 /** Perspective Projection - 透視投影 */
@@ -27,7 +26,7 @@ function perspective(m, scale, tan, near) {
 exports.perspective = perspective;
 /** x軸方向のプロジェクタをxy平面、奥行きzに変換 */
 function viewport_x() {
-    return mx.rows_m3([
+    return mx.rows_to_m3([
         [0, 0, 1],
         [-1, 0, 0],
         [0, -1, 0],

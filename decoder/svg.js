@@ -1,7 +1,8 @@
 "use strict";
 /** Scalable Vector Graphics .svg */
 Object.defineProperty(exports, "__esModule", { value: true });
-var ut = require("../algorithm/utility");
+//import * as al from "../algeo";
+var seq = require("../algorithm/sequence");
 /** (内部要素, svg幅, svg高さ, viewbox幅, viewbox高さ) -> <svg> */
 function svg(inner, width, height, viewbox_width, viewbox_height) {
     var viewbox = [-viewbox_width / 2, -viewbox_height / 2, viewbox_width, viewbox_height].join(' ');
@@ -10,17 +11,17 @@ function svg(inner, width, height, viewbox_width, viewbox_height) {
 exports.svg = svg;
 /** (直線) -> <line> */
 function curve_line(line, stroke, strokeWidth) {
-    var c1 = line.start();
-    var c2 = line.end();
+    var c1 = line.startPoint();
+    var c2 = line.endPoint();
     return "<line stroke=\"" + stroke + "\" stroke-width=\"" + strokeWidth + "\" x1=\"" + c1.x() + "\" y1=\"" + c1.y() + "\" x2=\"" + c2.x() + "\" y2=\"" + c2.y() + "\" />";
 }
 exports.curve_line = curve_line;
 /** (連続直線) -> <path> */
 function curveArray_path(lines, fill, stroke, strokeWidth, z) {
     var strs = [];
-    var c0 = lines.start();
+    var c0 = lines.startPoint();
     strs.push("M " + c0.x() + " " + c0.y());
-    ut.seq.arith(lines.curveNum(), 1)
+    seq.arith(lines.curveNum(), 1)
         .map(function (i) { return lines.coord(i); })
         .forEach(function (v) { return strs.push("L " + v.x() + " " + v.y()); });
     return "<path fill=\"" + fill + "\" stroke=\"" + stroke + "\" stroke-width=\"" + strokeWidth + "\" d=\"" + (strs.join(' ') + (z ? ' z' : '')) + "\" />";

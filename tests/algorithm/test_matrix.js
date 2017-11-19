@@ -1,55 +1,42 @@
 "use strict";
-//import * as vc from "../../algeol/math/vector";
-//import * as mx from "../../algeol/math/matrix";
 Object.defineProperty(exports, "__esModule", { value: true });
-//const dummy_vc = vc.fn;
-//const dummy_mx = mx.fn;
-// 簡易目視テスト
+var t = require("../test_common");
+var vc = require("../../algorithm/vector");
+var mx = require("../../algorithm/matrix");
 function test() {
-    var printEval = function (s) { return console.log(s + ' = ', eval(s)); };
-    {
-        console.log('testFn');
-        printEval('mx.m2_m3(mx.rows_m2([[1, 2], [3, 4]]))');
-        printEval('mx.m2_m3(mx.cols_m2([[1, 2], [3, 4]]))');
-        printEval('mx.m3_m4(mx.rows_m3([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))');
-        printEval('mx.m3_m4(mx.cols_m3([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))');
-        printEval('mx.m3_m2(mx.rows_m3([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))');
-        printEval('mx.m4_m3(mx.rows_m4([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]))');
-    }
-    {
-        console.log('testAffine');
-        printEval('mx.trans_m4(1, 2, 3)');
-        printEval('mx.trans_v3_m4(vc.v3(1, 2, 3))');
-        printEval('mx.scale_m4(1, 2, 3)');
-        printEval('mx.scale_v3_m4(vc.v3(1, 2, 3))');
-        printEval('mx.rotX_m4(Math.PI / 2)');
-        printEval('mx.rotY_m4(Math.PI / 2)');
-        printEval('mx.rotZ_m4(Math.PI / 2)');
-    }
-    {
-        console.log('testMap');
-        //let v = vc.v4(1, 0, 0, 1);
-        printEval('mx.trans_m4(1, 2, 3).map(v)');
-        printEval('mx.rotY_m4(Math.PI/2).map(v)');
-        printEval('mx.rotY_m4(Math.PI/2).map(v)');
-    }
-    {
-        console.log('testRot');
-        //let x3 = vc.v3(1, 0, 0);
-        //let y3 = vc.v3(0, 1, 0);
-        //let z3 = vc.v3(0, 0, 1);
-        //let v3 = vc.v3(1, 1, 1);
-        //let x4 = vc.v4(1, 0, 0, 0);
-        //let z4 = vc.v4(0, 0, 1, 0);
-        printEval('mx.rotYZ_x_m4(x3).map(x4)');
-        printEval('mx.rotYZ_z_m4(x3).map(z4)');
-        printEval('mx.rotYZ_x_m4(y3).map(x4)');
-        printEval('mx.rotYZ_z_m4(y3).map(z4)');
-        printEval('mx.rotYZ_x_m4(z3).map(x4)');
-        printEval('mx.rotYZ_z_m4(z3).map(z4)');
-        printEval('mx.rotYZ_x_m4(v3).map(x4)');
-        printEval('mx.rotYZ_z_m4(v3).map(z4)');
-    }
+    var m2 = mx.rows_to_m2([[1, 2], [3, 4]]);
+    var m3 = mx.rows_to_m3([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+    var m4 = mx.rows_to_m4([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]);
+    return t.printModule('algeol/math/matrix', [
+        { group: 'generate', results: t.tests([
+                t.dataNumArray2('m2', m2.array_rows(), [[1, 2], [3, 4]]),
+                t.dataNumArray2('m3', m3.array_rows(), [[1, 2, 3], [4, 5, 6], [7, 8, 9]]),
+                t.dataNumArray2('m4', m4.array_rows(), [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]),
+                t.dataNumArray2('trans_m4(3,4,5)', mx.trans_m4(3, 4, 5).array_rows(), [[1, 0, 0, 3], [0, 1, 0, 4], [0, 0, 1, 5], [0, 0, 0, 1]]),
+                t.dataNumArray2('scale_m3(3,4,5)', mx.scale_m3(3, 4, 5).array_rows(), [[3, 0, 0], [0, 4, 0], [0, 0, 5]]),
+                t.dataNumArray2('rotX_m3(PI/2)', mx.rotX_m3(Math.PI / 2).array_rows(), [[1, 0, 0], [0, 0, -1], [0, 1, 0]]),
+                t.dataNumArray2('rotY_m3(PI/2)', mx.rotY_m3(Math.PI / 2).array_rows(), [[0, 0, 1], [0, 1, 0], [-1, 0, 0]]),
+                t.dataNumArray2('rotZ_m3(PI/2)', mx.rotZ_m3(Math.PI / 2).array_rows(), [[0, -1, 0], [1, 0, 0], [0, 0, 1]]),
+            ], t.evalNumArray2, 1e-6) },
+        { group: 'convert', results: t.tests([
+                t.dataNumArray2('m2_m3(m2)', mx.m2_m3(m2).array_rows(), [[1, 2, 0], [3, 4, 0], [0, 0, 1]]),
+                t.dataNumArray2('m3_m4(m3)', mx.m3_m4(m3).array_rows(), [[1, 2, 3, 0], [4, 5, 6, 0], [7, 8, 9, 0], [0, 0, 0, 1]]),
+                t.dataNumArray2('m3_m2(m3)', mx.m3_m2(m3).array_rows(), [[1, 2], [4, 5]]),
+                t.dataNumArray2('m4_m3(m4)', mx.m4_m3(m4).array_rows(), [[1, 2, 3], [5, 6, 7], [9, 10, 11]]),
+            ], t.evalNumArray2, 1e-6) },
+        { group: 'map', results: t.tests([
+                t.dataNumArray('m2.map(v2(1,1))', m2.map_v2(vc.v2(1, 1)).array(), [1 + 2, 3 + 4]),
+                t.dataNumArray('m3.map(v3(1,1,1))', m3.map_v3(vc.v3(1, 1, 1)).array(), [1 + 2 + 3, 4 + 5 + 6, 7 + 8 + 9]),
+                t.dataNumArray('m4.map(v4(1,1,1,1))', m4.map_v4(vc.v4(1, 1, 1, 1)).array(), [1 + 2 + 3 + 4, 5 + 6 + 7 + 8, 9 + 10 + 11 + 12, 13 + 14 + 15 + 16]),
+                t.dataNumArray('trans_m4(3,4,5).map_v4(v4(0,0,0,0))', mx.trans_m4(3, 4, 5).map_v4(vc.v4(0, 0, 0, 0)).array(), [0, 0, 0, 0]),
+                t.dataNumArray('trans_m4(3,4,5).map_v4(v4(0,0,0,1))', mx.trans_m4(3, 4, 5).map_v4(vc.v4(0, 0, 0, 1)).array(), [3, 4, 5, 1]),
+                t.dataNumArray('scale_m3(3,4,5).map_v3(v3(1,2,3))', mx.scale_m3(3, 4, 5).map_v3(vc.v3(1, 2, 3)).array(), [3, 8, 15]),
+                t.dataNumArray('rotX_m3(PI/2).map_v3(v3(1,2,3))', mx.rotX_m3(Math.PI / 2).map_v3(vc.v3(1, 2, 3)).array(), [1, -3, 2]),
+                t.dataNumArray('rotY_m3(PI/2).map_v3(v3(1,2,3))', mx.rotY_m3(Math.PI / 2).map_v3(vc.v3(1, 2, 3)).array(), [3, 2, -1]),
+                t.dataNumArray('rotZ_m3(PI/2).map_v3(v3(1,2,3))', mx.rotZ_m3(Math.PI / 2).map_v3(vc.v3(1, 2, 3)).array(), [-2, 1, 3]),
+            ], t.evalNumArray, 1e-6) },
+    ]);
 }
 exports.test = test;
-test();
+if (module != null && !module.parent)
+    test();

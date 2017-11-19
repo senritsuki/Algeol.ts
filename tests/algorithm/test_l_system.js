@@ -7,7 +7,7 @@ function writeText(name, start, rec) {
     var strs = [];
     for (var i = 0; i <= rec; i++) {
         var values = ls.l_system(start, i);
-        var s = values.map(function (v) { return v.v(); }).join('');
+        var s = values.map(function (v) { return v.variable(); }).join('');
         strs.push(s);
     }
     var path = "test_l_system/" + name + ".txt";
@@ -28,7 +28,6 @@ function writeSvg(name, start, rec, turtle) {
 function test() {
     writeText('SierpinskiArrowheadCurve', ls.presets.SierpinskiArrowheadCurve.start, 6);
     writeSvg('SierpinskiArrowheadCurve', ls.presets.SierpinskiArrowheadCurve.start, 6, function (vl, _rec) { return ls.presets.SierpinskiArrowheadCurve.turtle(vl, 10); });
-    //return;
     writeText('Algae', ls.presets.Algae.start, 4);
     writeText('FibonacciSequence', ls.presets.FibonacciSequence.start, 4);
     writeText('CantorSet', ls.presets.CantorSet.start, 4);

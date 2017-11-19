@@ -3,9 +3,72 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var al = require("./geo");
 var ut = require("../algorithm/utility");
+var sq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
-/** プリミティブオブジェクト生成用関数群 */
 var fn;
+(function (fn) {
+    /** Polygon - 多角形 */
+    var polygon;
+    (function (polygon) {
+        /**
+         * 円に内接するn角形
+         * @param   n_gonal     多角形の頂点数
+         * @param   r           多角形の外接円の半径
+         * @param   t           多角形の1つ目の頂点の偏角
+         */
+        function verts_i(n_gonal, r, t) {
+            if (t === void 0) { t = 0; }
+            return sq.arith(n_gonal, t, ut.deg360 / n_gonal)
+                .map(function (rad) { return vc.polar_to_v2(r, rad); });
+        }
+        polygon.verts_i = verts_i;
+        /**
+         * 円に外接するn角形
+         * @param   n_gonal     多角形の頂点数
+         * @param   r           多角形の内接円の半径
+         * @param   t           多角形の1つ目の頂点の偏角
+         */
+        function verts_c(n_gonal, r, t) {
+            if (t === void 0) { t = 0; }
+            var theta = ut.deg360 / (n_gonal * 2);
+            var r2 = r / ut.cos(theta);
+            var p2 = t + theta;
+            return verts_i(n_gonal, r2, p2);
+        }
+        polygon.verts_c = verts_c;
+    })(polygon = fn.polygon || (fn.polygon = {}));
+    function arc(n, r, t1, t2) {
+        var step = n >= 2 ? (t2 - t1) / (n - 1) : 0;
+        return sq.arith(n, t1, step).map(function (t) { return vc.polar_to_v2(r, t); });
+    }
+    fn.arc = arc;
+})(fn = exports.fn || (exports.fn = {}));
+function pie(n, r, t1, t2) {
+    return [vc.v2_zero].concat(fn.arc(n, r, t1, t2));
+}
+exports.pie = pie;
+function doughnut(n, r1, r2, t1, t2) {
+    var arc1 = fn.arc(n, r1, t1, t2);
+    var arc2 = fn.arc(n, r2, t2, t1);
+    return arc1.concat(arc2);
+}
+exports.doughnut = doughnut;
+function extrude(verts, z) {
+    var len = verts.length;
+    var new_verts_1 = verts.map(function (v) { return vc.v2_to_v3(v, 0); });
+    var new_verts_2 = verts.map(function (v) { return vc.v2_to_v3(v, z); });
+    var new_verts = new_verts_1.concat(new_verts_2);
+    var new_face_1 = sq.arith(len);
+    var new_face_2 = sq.arith(len, len);
+    var new_side_faces = sq.arith(len).map(function (n) { return [n, (n + 1) % len, len + (n + 1) % len, len + n]; });
+    var new_faces = [];
+    new_faces.push(new_face_1);
+    new_faces.push(new_face_2);
+    new_side_faces.forEach(function (f) { return new_faces.push(f); });
+    return al.geoUnit(new_verts, new_faces);
+}
+exports.extrude = extrude;
+/** プリミティブオブジェクト生成用関数群 */
 (function (fn) {
     var deg120_c = ut.cos(120 * ut.pi / 180);
     var deg120_s = ut.sin(120 * ut.pi / 180);
@@ -149,11 +212,11 @@ var fn;
         /** 正12面体の面12個
             面は全て合同の正五角形である */
         function faces() {
-            var xy = ut.seq.arith(4, 0);
-            var yz = ut.seq.arith(4, 4);
-            var zx = ut.seq.arith(4, 8);
-            var ct = ut.seq.arith(4, 12);
-            var cb = ut.seq.arith(4, 16);
+            var xy = sq.arith(4, 0);
+            var yz = sq.arith(4, 4);
+            var zx = sq.arith(4, 8);
+            var ct = sq.arith(4, 12);
+            var cb = sq.arith(4, 16);
             return [
                 [xy[0], ct[0], zx[0], ct[3], xy[3]],
                 [xy[3], cb[3], zx[1], cb[0], xy[0]],
@@ -185,9 +248,9 @@ var fn;
         /** 正20面体の面20個
             面は全て合同の正三角形である */
         function faces() {
-            var xy = ut.seq.arith(4, 0);
-            var yz = ut.seq.arith(4, 4);
-            var zx = ut.seq.arith(4, 8);
+            var xy = sq.arith(4, 0);
+            var yz = sq.arith(4, 4);
+            var zx = sq.arith(4, 8);
             return [
                 [xy[0], zx[0], xy[3]],
                 [xy[3], zx[1], xy[0]],
@@ -217,20 +280,20 @@ var fn;
     var circle;
     (function (circle) {
         /** 円に内接するn角形 */
-        function verts_i(n_gonal, r, p, z) {
-            if (p === void 0) { p = 0; }
+        function verts_i(n_gonal, r, t, z) {
+            if (t === void 0) { t = 0; }
             if (z === void 0) { z = 0; }
-            return ut.seq.arith(n_gonal, p, ut.deg360 / n_gonal)
-                .map(function (rad) { return vc.polar_v3(r, rad, z); });
+            return fn.polygon.verts_i(n_gonal, r, t)
+                .map(function (v) { return vc.v2_to_v3(v, z); });
         }
         circle.verts_i = verts_i;
         /** 円に外接するn角形 */
-        function verts_c(n_gonal, r, p, z) {
-            if (p === void 0) { p = 0; }
+        function verts_c(n_gonal, r, t, z) {
+            if (t === void 0) { t = 0; }
             if (z === void 0) { z = 0; }
             var theta = ut.deg360 / (n_gonal * 2);
             var r2 = r / ut.cos(theta);
-            var p2 = p + theta;
+            var p2 = t + theta;
             return verts_i(n_gonal, r2, p2, z);
         }
         circle.verts_c = verts_c;
@@ -257,13 +320,13 @@ var fn;
         function faces(n_gonal) {
             var faces = [];
             // 側面
-            ut.seq.arith(n_gonal)
+            sq.arith(n_gonal)
                 .map(function (i) { return [i, (i + 1) % n_gonal]; })
                 .map(function (v) { return [v[0], v[0] + n_gonal, v[1] + n_gonal, v[1]]; })
                 .forEach(function (v) { return faces.push(v); });
             // 上面と底面
-            faces.push(ut.seq.arith(n_gonal));
-            faces.push(ut.seq.arith(n_gonal).map(function (i) { return i + n_gonal; }));
+            faces.push(sq.arith(n_gonal));
+            faces.push(sq.arith(n_gonal).map(function (i) { return i + n_gonal; }));
             return faces;
         }
         prism.faces = faces;
@@ -291,11 +354,11 @@ var fn;
         function faces(n_gonal) {
             var faces = [];
             // 側面
-            ut.seq.arith(n_gonal)
+            sq.arith(n_gonal)
                 .map(function (i) { return [0, i + 1, (i + 1) % n_gonal + 1]; })
                 .forEach(function (v) { return faces.push(v); });
             // 底面
-            faces.push(ut.seq.arith(n_gonal).map(function (i) { return i + 1; }));
+            faces.push(sq.arith(n_gonal).map(function (i) { return i + 1; }));
             return faces;
         }
         pyramid.faces = faces;
@@ -324,11 +387,11 @@ var fn;
         function faces(n_gonal) {
             var faces = [];
             // 上側面
-            ut.seq.arith(n_gonal)
+            sq.arith(n_gonal)
                 .map(function (i) { return [0, i + 2, (i + 1) % n_gonal + 2]; })
                 .forEach(function (v) { return faces.push(v); });
             // 下側面
-            ut.seq.arith(n_gonal)
+            sq.arith(n_gonal)
                 .map(function (i) { return [1, (i + 1) % n_gonal + 2, i + 2]; })
                 .forEach(function (v) { return faces.push(v); });
             return faces;
@@ -336,58 +399,74 @@ var fn;
         bipyramid.faces = faces;
     })(bipyramid = fn.bipyramid || (fn.bipyramid = {}));
 })(fn = exports.fn || (exports.fn = {}));
-/** Tetrahedron - 正4面体 */
+/**
+ * Tetrahedron - 正4面体
+ * @param   r   radius of circumscribed sphere - 外接球の半径
+ */
 function tetrahedron(r) {
-    if (r === void 0) { r = 1; }
-    return al.geo(fn.tetrahedron.verts(r), fn.tetrahedron.faces());
+    return al.geoUnit(fn.tetrahedron.verts(r), fn.tetrahedron.faces());
 }
 exports.tetrahedron = tetrahedron;
-/** Octahedron - 正8面体 */
+/**
+ * Octahedron - 正8面体
+ * @param   r   radius of circumscribed sphere - 外接球の半径
+ */
 function octahedron(r) {
-    if (r === void 0) { r = 1; }
-    return al.geo(fn.octahedron.verts(r), fn.octahedron.faces());
+    return al.geoUnit(fn.octahedron.verts(r), fn.octahedron.faces());
 }
 exports.octahedron = octahedron;
-/** Cube - 正6面体・立方体 */
+/**
+ * Cube - 正6面体・立方体
+ * @param   r   radius of inscribed sphere - 内接球の半径
+ */
 function cube(r) {
-    if (r === void 0) { r = 1; }
-    return al.geo(fn.cube.verts(r), fn.cube.faces());
+    return al.geoUnit(fn.cube.verts(r), fn.cube.faces());
 }
 exports.cube = cube;
-/** Dodecahedron - 正12面体 */
+/**
+ * Dodecahedron - 正12面体
+ * @param   r   radius of circumscribed sphere - 外接球の半径
+ */
 function dodecahedron(r) {
-    if (r === void 0) { r = 1; }
-    return al.geo(fn.dodecahedron.verts(r), fn.dodecahedron.faces());
+    return al.geoUnit(fn.dodecahedron.verts(r), fn.dodecahedron.faces());
 }
 exports.dodecahedron = dodecahedron;
-/** Icosahedron - 正20面体 */
+/**
+ * Icosahedron - 正20面体
+ * @param   r   radius of circumscribed sphere - 外接球の半径
+ */
 function icosahedron(r) {
-    if (r === void 0) { r = 1; }
-    return al.geo(fn.icosahedron.verts(r), fn.icosahedron.faces());
+    return al.geoUnit(fn.icosahedron.verts(r), fn.icosahedron.faces());
 }
 exports.icosahedron = icosahedron;
-/** Prism - 角柱
-    (底面の頂点数, 底面の外接円の半径, 高さ) -> ジオメトリ */
+/**
+ * Prism - 角柱
+ * @param   n_gonal     角柱底面の頂点数
+ * @param   r           角柱底面の外接円の半径（xy平面）
+ * @param   h           角柱の高さ（+z方向）
+ */
 function prism(n_gonal, r, h) {
-    if (r === void 0) { r = 1; }
-    if (h === void 0) { h = 1; }
-    return al.geo(fn.prism.verts_i(n_gonal, r, h), fn.prism.faces(n_gonal));
+    return al.geoUnit(fn.prism.verts_i(n_gonal, r, h), fn.prism.faces(n_gonal));
 }
 exports.prism = prism;
-/** Pyramid - 角錐
-    (底面の頂点数, 底面の外接円の半径, 高さ) -> ジオメトリ */
+/**
+ * Pyramid - 角錐
+ * @param   n_gonal     角錐底面の頂点数
+ * @param   r           角錐底面の外接円の半径（xy平面）
+ * @param   h           角錐の高さ（+z方向）
+ */
 function pyramid(n_gonal, r, h) {
-    if (r === void 0) { r = 1; }
-    if (h === void 0) { h = 1; }
-    return al.geo(fn.pyramid.verts_i(n_gonal, r, h), fn.pyramid.faces(n_gonal));
+    return al.geoUnit(fn.pyramid.verts_i(n_gonal, r, h), fn.pyramid.faces(n_gonal));
 }
 exports.pyramid = pyramid;
-/** Bipyramid - 双角錐
-    (底面の頂点数, 底面の外接円の半径, 高さ, 深さ) -> ジオメトリ */
+/**
+ * Bipyramid - 双角錐
+ * @param   n_gonal     角錐底面の頂点数
+ * @param   r           角錐底面の外接円の半径（xy平面）
+ * @param   h           上向き角錐の高さ（+z方向）
+ * @param   d           下向き角錐の深さ（-z方向）
+ */
 function bipyramid(n_gonal, r, h, d) {
-    if (r === void 0) { r = 1; }
-    if (h === void 0) { h = 1; }
-    if (d === void 0) { d = 1; }
-    return al.geo(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
+    return al.geoUnit(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
 }
 exports.bipyramid = bipyramid;

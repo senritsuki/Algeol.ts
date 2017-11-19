@@ -18,8 +18,7 @@ class ProjectionImpl implements Projection {
 
 /** Parallel Projection - 平行投影 */
 export function parallel(m: mx.M4, scale: number): Projection {
-    const hadamart = vc.v3(scale, scale, 1);
-    return new ProjectionImpl(m, v => v.hadamart(hadamart));
+    return new ProjectionImpl(m, v => v.hadamart([scale, scale, 1]));
 }
 /** Perspective Projection - 透視投影 */
 export function perspective(m: mx.M4, scale: number, tan: number, near: number = 1): Projection {
@@ -30,7 +29,7 @@ export function perspective(m: mx.M4, scale: number, tan: number, near: number =
 
 /** x軸方向のプロジェクタをxy平面、奥行きzに変換 */
 export function viewport_x(): mx.M3 {
-    return mx.rows_m3([
+    return mx.rows_to_m3([
         [0, 0, 1],
         [-1, 0, 0],
         [0, -1, 0],
