@@ -1,5 +1,7 @@
-var vc = require("../math/vector");
-var mx = require("../math/matrix");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var vc = require("./vector");
+var mx = require("./matrix");
 var ProjectionImpl = (function () {
     function ProjectionImpl(_mx, _lambda) {
         this._mx = _mx;
@@ -9,7 +11,7 @@ var ProjectionImpl = (function () {
         return this._lambda(this._mx.map_v3(dist, 1));
     };
     return ProjectionImpl;
-})();
+}());
 /** Parallel Projection - 平行投影 */
 function parallel(m, scale) {
     var hadamart = vc.v3(scale, scale, 1);
@@ -32,4 +34,3 @@ function viewport_x() {
     ]);
 }
 exports.viewport_x = viewport_x;
-//# sourceMappingURL=projection.js.map

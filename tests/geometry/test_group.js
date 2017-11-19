@@ -1,24 +1,28 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require('fs');
-var al = require("../../algeol/algeol");
-var ut = require("../../algeol/math/utility");
-var vc = require("../../algeol/math/vector");
-var mx = require("../../algeol/math/matrix");
-var wo = require("../../algeol/presets/format_wavefrontobj");
-var prim = require("../../algeol/presets/geo_primitive");
-var multi = require("../../algeol/presets/geo_multi");
+var al = require("../../geometry/geo");
+var ut = require("../../algorithm/utility");
+var vc = require("../../algorithm/vector");
+var mx = require("../../algorithm/matrix");
+var wo = require("../../decoder/wavefront");
+var prim = require("../../geometry/primitive");
+var multi = require("../../geometry/group");
 function save(name, geo) {
     var path = "test_geo_multi/" + name + ".obj";
     fs.writeFile(path, wo.geo_str(geo));
     console.log('save: ' + path);
 }
+exports.save = save;
 function test_al() {
     al.duplicateVertsAffine([vc.v3(0, 0, 0), vc.v3(1, 0, 0)], [mx.trans_m4(1, 0, 0), mx.trans_m4(2, 0, 0)]).forEach(function (vv) { return vv.forEach(function (v) { return console.log(v); }); });
     al.compositeMap([0, 1], [
         function (d) { return mx.trans_m4(d + 1, 0, 0); },
-        function (d) { return mx.scale_m4(2, 2, 2); },
+        function (_d) { return mx.scale_m4(2, 2, 2); },
         function (d) { return mx.trans_m4(0, d + 1, 0); },
     ]).forEach(function (m) { return console.log(m); });
 }
+exports.test_al = test_al;
 function test() {
     save('prismArray', multi.prismArray([
         prim.fn.circle.verts_i(8, 1, 0, 0),
@@ -53,16 +57,16 @@ function test() {
     save('prismArray_bipyramid', multi.prismArray_bipyramid(ut.seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * ut.sin(rad), 0, 2 * -ut.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('antiprismArray_bipyramid', multi.antiprismArray_bipyramid(ut.seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * ut.sin(rad), rad / 2, 2 * -ut.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('prismRing', multi.prismRing(al.duplicateVertsAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(ut.seq.arith(4), [
-        function (d) { return mx.rotX_m4(ut.deg90); },
-        function (d) { return mx.trans_m4(3, 0, 0); },
+        function (_d) { return mx.rotX_m4(ut.deg90); },
+        function (_d) { return mx.trans_m4(3, 0, 0); },
         function (d) { return mx.rotZ_m4(ut.deg90 * d); },
     ]))));
     save('antiprismRing', multi.antiprismRing(al.duplicateVertsAffine(prim.fn.circle.verts_i(4, 1), al.compositeMap(ut.seq.arith(8), [
         function (d) { return mx.rotZ_m4(ut.deg45 * d); },
-        function (d) { return mx.rotX_m4(ut.deg90); },
-        function (d) { return mx.trans_m4(3, 0, 0); },
+        function (_d) { return mx.rotX_m4(ut.deg90); },
+        function (_d) { return mx.trans_m4(3, 0, 0); },
         function (d) { return mx.rotZ_m4(ut.deg45 * d); },
     ]))));
 }
+exports.test = test;
 test();
-//# sourceMappingURL=test_geo_multi.js.map

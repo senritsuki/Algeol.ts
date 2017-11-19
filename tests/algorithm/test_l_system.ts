@@ -1,9 +1,9 @@
 ﻿declare const require: any;
 const fs = require('fs');
 
-import * as ls from "../../algeol/math/l_system";
-import * as cv from "../../algeol/math/curve2";
-import * as svg from "../../algeol/presets/format_svg";
+import * as ls from "../../algorithm/l_system";
+import * as cv from "../../algorithm/curve2";
+import * as svg from "../../decoder/svg";
 
 
 function writeText(name: string, start: ls.V[], rec: number): void {
@@ -34,8 +34,8 @@ function test() {
 		ls.presets.SierpinskiArrowheadCurve.start, 6);
 	writeSvg('SierpinskiArrowheadCurve',
 		ls.presets.SierpinskiArrowheadCurve.start, 6,
-		(vl, rec) => ls.presets.SierpinskiArrowheadCurve.turtle(vl, 10));
-	return;
+		(vl, _rec) => ls.presets.SierpinskiArrowheadCurve.turtle(vl, 10));
+	//return;
 	writeText('Algae',
 		ls.presets.Algae.start, 4);
 	writeText('FibonacciSequence',
@@ -46,47 +46,47 @@ function test() {
 		ls.presets.KochCurve60.start, 4);
 	writeSvg('KochCurve60',
 		ls.presets.KochCurve60.start, 4,
-		(vl, rec) => ls.presets.KochCurve60.turtle(vl, 10));
+		(vl, _rec) => ls.presets.KochCurve60.turtle(vl, 10));
 	writeText('KochCurve90',
 		ls.presets.KochCurve90.start, 4);
 	writeSvg('KochCurve90',
 		ls.presets.KochCurve90.start, 4,
-		(vl, rec) => ls.presets.KochCurve90.turtle(vl, 10));
+		(vl, _rec) => ls.presets.KochCurve90.turtle(vl, 10));
 	writeText('KochIsland',
 		ls.presets.KochIsland.start, 4);
 	writeSvg('KochIsland',
 		ls.presets.KochIsland.start, 4,
-		(vl, rec) => ls.presets.KochIsland.turtle(vl, 10));
+		(vl, _rec) => ls.presets.KochIsland.turtle(vl, 10));
 	writeText('PeanoCurve',
 		ls.presets.PeanoCurve.start, 4);
 	writeSvg('PeanoCurve',
 		ls.presets.PeanoCurve.start, 4,
-		(vl, rec) => ls.presets.PeanoCurve.turtle(vl, 10));
+		(vl, _rec) => ls.presets.PeanoCurve.turtle(vl, 10));
 	writeText('PeanoGosperCurve',
 		ls.presets.PeanoGosperCurve.start, 4);
 	writeSvg('PeanoGosperCurve',
 		ls.presets.PeanoGosperCurve.start, 4,
-		(vl, rec) => ls.presets.PeanoGosperCurve.turtle(vl, 10));
+		(vl, _rec) => ls.presets.PeanoGosperCurve.turtle(vl, 10));
 	writeText('SierpinskiArrowheadCurve',
 		ls.presets.SierpinskiArrowheadCurve.start, 4);
 	writeSvg('SierpinskiArrowheadCurve',
 		ls.presets.SierpinskiArrowheadCurve.start, 4,
-		(vl, rec) => ls.presets.SierpinskiArrowheadCurve.turtle(vl, 10));
+		(vl, _rec) => ls.presets.SierpinskiArrowheadCurve.turtle(vl, 10));
 	writeText('SierpinskiTriangle',
 		ls.presets.SierpinskiTriangle.start, 4);
 	writeSvg('SierpinskiTriangle',
 		ls.presets.SierpinskiTriangle.start, 4,
-		(vl, rec) => ls.presets.SierpinskiTriangle.turtle(vl, 10));
+		(vl, _rec) => ls.presets.SierpinskiTriangle.turtle(vl, 10));
 	writeText('SquareCurve',
 		ls.presets.SquareCurve.start, 4);
 	writeSvg('SquareCurve',
 		ls.presets.SquareCurve.start, 4,
-		(vl, rec) => ls.presets.SquareCurve.turtle(vl, 10));
+		(vl, _rec) => ls.presets.SquareCurve.turtle(vl, 10));
 	writeText('DragonCurve',
 		ls.presets.DragonCurve.start, 12);
 	writeSvg('DragonCurve',
 		ls.presets.DragonCurve.start, 12,
-		(vl, rec) => ls.presets.DragonCurve.turtle(vl, 10));
+		(vl, _rec) => ls.presets.DragonCurve.turtle(vl, 10));
 }
 test();
 

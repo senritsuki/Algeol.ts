@@ -1,7 +1,7 @@
 ﻿/** Algorithm and Geometry - ジオメトリと複製アルゴリズム */
 
-import * as vc from "./math/vector";
-import * as mx from "./math/matrix";
+import * as vc from "../algorithm/vector";
+import * as mx from "../algorithm/matrix";
 
 export interface GeoRoot {
 	/** () -> 頂点座標の配列 */

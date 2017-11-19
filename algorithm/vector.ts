@@ -1,6 +1,6 @@
 ﻿/** Vector - ベクトル */
 
-import * as ut from "../math/utility";
+import * as ut from "./utility";
 
 /** ベクトル演算 */
 export namespace fn {

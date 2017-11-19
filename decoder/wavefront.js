@@ -1,4 +1,6 @@
+"use strict";
 /** Wavefront .obj */
+Object.defineProperty(exports, "__esModule", { value: true });
 /** 頂点vを文字列化する方法
     デフォルトでは3次元ベクトルを x z -y と並べていますが、変えたい場合は上書きしてください */
 exports._vert_str = function (v) {
@@ -23,7 +25,7 @@ var GO = (function () {
         this.offset = offset;
     }
     return GO;
-})();
+}());
 function array_vfo(array, offset) {
     if (offset === void 0) { offset = 1; }
     var vo = [];
@@ -48,7 +50,7 @@ exports.geoArray_str = geoArray_str;
 /** ジオメトリグループを文字列化 */
 function geoGroup_str(geoGroup, offset) {
     if (offset === void 0) { offset = 1; }
-    return ("g " + geoGroup.name() + "\n") + geo_str(geoGroup, offset);
+    return "g " + geoGroup.name() + "\n" + geo_str(geoGroup, offset);
 }
 exports.geoGroup_str = geoGroup_str;
 /** ジオメトリグループ配列を文字列化 */
@@ -58,9 +60,8 @@ function geoGroupArray_str(geoGroupArray, offset) {
 }
 exports.geoGroupArray_str = geoGroupArray_str;
 /** ジオメトリ辞書を文字列化 */
-function geoDict_str(geoDict, offset) {
-    if (offset === void 0) { offset = 1; }
+function geoDict_str(geoDict, _offset) {
+    if (_offset === void 0) { _offset = 1; }
     return geoGroupArray_str(geoDict.geogroups());
 }
 exports.geoDict_str = geoDict_str;
-//# sourceMappingURL=format_wavefrontobj.js.map

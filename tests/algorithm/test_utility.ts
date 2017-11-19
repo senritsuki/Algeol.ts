@@ -1,9 +1,9 @@
-﻿import * as ut from "../../algeol/math/utility";
+﻿//import * as ut from "../../algeol/math/utility";
 
-const dummy = ut.r2;
+//const dummy = ut.r2;
 
 // 簡易目視テスト
-function test() {
+export function test() {
 	const printEval = (s: string) => console.log(s + ' = ', eval(s));
 	{
 		console.log('testFn');

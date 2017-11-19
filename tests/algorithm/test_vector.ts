@@ -1,16 +1,16 @@
-﻿import * as vc from "../../algeol/math/vector";
+﻿//import * as vc from "../../algorithm/vector";
 
-const dummy = vc.fn;
+//const dummy = vc.fn;
 
 // 簡易目視テスト
-function test() {
+export function test() {
 	const printEval = (s: string) => console.log(s + ' = ', eval(s));
 	{
 		console.log('testNsFn');
-		const v1 = [1, 0, 0];
-		const v2 = [1, 1, 0];
-		const dim = 3;
-		const n = 2;
+		//const v1 = [1, 0, 0];
+		//const v2 = [1, 1, 0];
+		//const dim = 3;
+		//const n = 2;
 		printEval('v1');
 		printEval('v2');
 		printEval('n');

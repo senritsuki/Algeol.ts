@@ -1,6 +1,8 @@
+"use strict";
 /** 複合オブジェクト */
-var al = require("../algeol");
-var ut = require("../math/utility");
+Object.defineProperty(exports, "__esModule", { value: true });
+var al = require("./geo");
+var ut = require("../algorithm/utility");
 function verts_flat(polygons, n_gonal) {
     var seq = ut.seq.arith(n_gonal);
     return polygons
@@ -126,4 +128,3 @@ function extrude(polygon, v1, v2) {
     return prismArray([p1, p2]);
 }
 exports.extrude = extrude;
-//# sourceMappingURL=geo_multi.js.map

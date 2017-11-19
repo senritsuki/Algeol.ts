@@ -1,6 +1,6 @@
 ﻿// Complex Number - 複素数・二元数
 
-import * as ut from "../math/utility";
+import * as ut from "./utility";
 import * as vc from "./vector";
 
 

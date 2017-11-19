@@ -1,6 +1,6 @@
 ﻿
-import * as vc from "../math/vector";
-import * as mx from "../math/matrix";
+import * as vc from "./vector";
+import * as mx from "./matrix";
 
 
 export interface Projection {

@@ -1,5 +1,7 @@
+"use strict";
 /** Quaternion - クォータニオン・四元数 */
-var ut = require("../math/utility");
+Object.defineProperty(exports, "__esModule", { value: true });
+var ut = require("./utility");
 var vc = require("./vector");
 var mx = require("./matrix");
 var QuaternionImpl = (function () {
@@ -113,7 +115,7 @@ var QuaternionImpl = (function () {
             .map(function (q) { return vc.ar_v3(q.i()); });
     };
     return QuaternionImpl;
-})();
+}());
 /** (実部, 虚部[0],[1],[2]からなる配列) -> クォータニオン */
 function qt(real, imag) {
     return new QuaternionImpl(real, imag);
@@ -129,4 +131,3 @@ function ar_qt(v) {
     return new QuaternionImpl(v[0], v.slice(1));
 }
 exports.ar_qt = ar_qt;
-//# sourceMappingURL=quaternion.js.map

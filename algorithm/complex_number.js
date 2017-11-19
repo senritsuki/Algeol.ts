@@ -1,5 +1,7 @@
+"use strict";
 // Complex Number - 複素数・二元数
-var ut = require("../math/utility");
+Object.defineProperty(exports, "__esModule", { value: true });
+var ut = require("./utility");
 var vc = require("./vector");
 var ComplexNumberImpl = (function () {
     function ComplexNumberImpl(real, imag) {
@@ -77,7 +79,7 @@ var ComplexNumberImpl = (function () {
         return vl.map(function (v) { return _this.map_v2(v); });
     };
     return ComplexNumberImpl;
-})();
+}());
 /** (実部, 虚部) -> 複素数 */
 function ri_cn(real, imag) {
     return new ComplexNumberImpl(real, imag);
@@ -98,4 +100,3 @@ function polar_cn(r, rad) {
     return new ComplexNumberImpl(r * ut.cos(rad), r * ut.sin(rad));
 }
 exports.polar_cn = polar_cn;
-//# sourceMappingURL=complex_number.js.map

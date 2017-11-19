@@ -1,5 +1,7 @@
+"use strict";
 /** Algorithm and Geometry - ジオメトリと複製アルゴリズム */
-var mx = require("./math/matrix");
+Object.defineProperty(exports, "__esModule", { value: true });
+var mx = require("../algorithm/matrix");
 var GeoImpl = (function () {
     function GeoImpl(_verts, _faces) {
         this._verts = _verts;
@@ -15,7 +17,7 @@ var GeoImpl = (function () {
         return new GeoImpl(this._verts.map(lambda), this._faces);
     };
     return GeoImpl;
-})();
+}());
 var GeoGroupImpl = (function () {
     function GeoGroupImpl(_name, _geos) {
         this._name = _name;
@@ -47,7 +49,7 @@ var GeoGroupImpl = (function () {
         return new GeoGroupImpl(this._name, this._geos.map(function (g) { return g.clone(lambda); }));
     };
     return GeoGroupImpl;
-})();
+}());
 var GeoDictImpl = (function () {
     function GeoDictImpl(geogroups) {
         var _this = this;
@@ -94,7 +96,7 @@ var GeoDictImpl = (function () {
         return new GeoDictImpl(this.geogroups().map(function (geogroup) { return geogroup.clone(lambda); }));
     };
     return GeoDictImpl;
-})();
+}());
 /** (頂点(3次元ベクトル)の配列, 面(頂点インデックス配列)の配列) -> ジオメトリ */
 function geo(verts, faces) {
     return new GeoImpl(verts, faces);
@@ -169,4 +171,3 @@ function compositeMap(data, lambdas) {
     return data.map(function (d) { return lambdas.reduce(function (m, lambda) { return lambda(d).mul(m); }, mx.unit_m4); });
 }
 exports.compositeMap = compositeMap;
-//# sourceMappingURL=algeol.js.map

@@ -1,5 +1,7 @@
+"use strict";
 // Square Matrix 正方行列
-var ut = require("../math/utility");
+Object.defineProperty(exports, "__esModule", { value: true });
+var ut = require("./utility");
 var vc = require("./vector");
 var fn;
 (function (fn) {
@@ -97,7 +99,7 @@ var M2Impl = (function () {
     };
     M2Impl.Dim = 2;
     return M2Impl;
-})();
+}());
 var M3Impl = (function () {
     function M3Impl(rows) {
         this._rows = fn.clone(rows, M3Impl.Dim, M3Impl.Dim);
@@ -121,7 +123,7 @@ var M3Impl = (function () {
     };
     M3Impl.Dim = 3;
     return M3Impl;
-})();
+}());
 var M4Impl = (function () {
     function M4Impl(rows) {
         this._rows = fn.clone(rows, M4Impl.Dim, M4Impl.Dim);
@@ -148,7 +150,7 @@ var M4Impl = (function () {
     };
     M4Impl.Dim = 4;
     return M4Impl;
-})();
+}());
 /** ([列番号][行番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
 function cols_m2(cols) { return M2Impl.FromCols(cols); }
 exports.cols_m2 = cols_m2;
@@ -379,4 +381,3 @@ function compositeLeft_m4(mm) {
     return mm.reduce(function (a, b) { return b.mul(a); });
 }
 exports.compositeLeft_m4 = compositeLeft_m4;
-//# sourceMappingURL=matrix.js.map

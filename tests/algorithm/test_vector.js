@@ -1,14 +1,16 @@
-var vc = require("../../algeol/math/vector");
-var dummy = vc.fn;
+"use strict";
+//import * as vc from "../../algorithm/vector";
+Object.defineProperty(exports, "__esModule", { value: true });
+//const dummy = vc.fn;
 // 簡易目視テスト
 function test() {
     var printEval = function (s) { return console.log(s + ' = ', eval(s)); };
     {
         console.log('testNsFn');
-        var v1 = [1, 0, 0];
-        var v2 = [1, 1, 0];
-        var dim = 3;
-        var n = 2;
+        //const v1 = [1, 0, 0];
+        //const v2 = [1, 1, 0];
+        //const dim = 3;
+        //const n = 2;
         printEval('v1');
         printEval('v2');
         printEval('n');
@@ -33,5 +35,5 @@ function test() {
         printEval('vc.v4_v3(vc.v4(1, 2, 3, 4))');
     }
 }
+exports.test = test;
 test();
-//# sourceMappingURL=test_vector.js.map

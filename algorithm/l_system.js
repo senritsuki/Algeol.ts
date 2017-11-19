@@ -1,5 +1,7 @@
+"use strict";
 /** L-system, Lindenmayer system */
-var tt = require('./turtle');
+Object.defineProperty(exports, "__esModule", { value: true });
+var tt = require("./turtle");
 function l_system(start, rec) {
     if (rec <= 0) {
         return start;
@@ -30,7 +32,7 @@ var presets;
     }
     presets.turtle_common = turtle_common;
     function movedraw(r) {
-        return function (turtlePrev, lines, queue) {
+        return function (turtlePrev, lines, _queue) {
             var d = turtlePrev.moveDraw(r);
             lines.push(d.line);
             return d.turtle;
@@ -38,7 +40,7 @@ var presets;
     }
     presets.movedraw = movedraw;
     function turn(degree) {
-        return function (turtlePrev, lines, queue) { return turtlePrev.turn(degree); };
+        return function (turtlePrev, _lines, _queue) { return turtlePrev.turn(degree); };
     }
     presets.turn = turn;
     /** Algae - 藻
@@ -231,8 +233,8 @@ var presets;
             return turtle_common(vl, {
                 'A': movedraw(r),
                 'B': movedraw(r),
-                '[': function (t, l, q) { q.push(t); return t.turn(45); },
-                ']': function (t, l, q) { var t2 = q.pop(); return (t2 != undefined ? t2 : t).turn(-45); },
+                '[': function (t, _l, q) { q.push(t); return t.turn(45); },
+                ']': function (t, _l, q) { var t2 = q.pop(); return (t2 != undefined ? t2 : t).turn(-45); },
             });
         }
         PythagorasTree.turtle2 = turtle2;
@@ -246,4 +248,3 @@ LShowColor@LSystem["X", (* Hilbert curve II *)
     {"X" -> "XFYFX+F+YFXFY-F-XFYFX",
      "Y" -> "YFXFY-F-XFYFX+F+YFXFY"}, 3];
  */ 
-//# sourceMappingURL=l_system.js.map

@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // MathのProxy
 exports.sqrt = Math.sqrt;
 exports.pow = Math.pow;
@@ -133,4 +135,3 @@ function transpose(m1) {
     return m;
 }
 exports.transpose = transpose;
-//# sourceMappingURL=utility.js.map

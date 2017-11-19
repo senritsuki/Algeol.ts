@@ -1,7 +1,9 @@
-var vc = require("../../algeol/math/vector");
-var mx = require("../../algeol/math/matrix");
-var dummy_vc = vc.fn;
-var dummy_mx = mx.fn;
+"use strict";
+//import * as vc from "../../algeol/math/vector";
+//import * as mx from "../../algeol/math/matrix";
+Object.defineProperty(exports, "__esModule", { value: true });
+//const dummy_vc = vc.fn;
+//const dummy_mx = mx.fn;
 // 簡易目視テスト
 function test() {
     var printEval = function (s) { return console.log(s + ' = ', eval(s)); };
@@ -26,19 +28,19 @@ function test() {
     }
     {
         console.log('testMap');
-        var v = vc.v4(1, 0, 0, 1);
+        //let v = vc.v4(1, 0, 0, 1);
         printEval('mx.trans_m4(1, 2, 3).map(v)');
         printEval('mx.rotY_m4(Math.PI/2).map(v)');
         printEval('mx.rotY_m4(Math.PI/2).map(v)');
     }
     {
         console.log('testRot');
-        var x3 = vc.v3(1, 0, 0);
-        var y3 = vc.v3(0, 1, 0);
-        var z3 = vc.v3(0, 0, 1);
-        var v3 = vc.v3(1, 1, 1);
-        var x4 = vc.v4(1, 0, 0, 0);
-        var z4 = vc.v4(0, 0, 1, 0);
+        //let x3 = vc.v3(1, 0, 0);
+        //let y3 = vc.v3(0, 1, 0);
+        //let z3 = vc.v3(0, 0, 1);
+        //let v3 = vc.v3(1, 1, 1);
+        //let x4 = vc.v4(1, 0, 0, 0);
+        //let z4 = vc.v4(0, 0, 1, 0);
         printEval('mx.rotYZ_x_m4(x3).map(x4)');
         printEval('mx.rotYZ_z_m4(x3).map(z4)');
         printEval('mx.rotYZ_x_m4(y3).map(x4)');
@@ -49,5 +51,5 @@ function test() {
         printEval('mx.rotYZ_z_m4(v3).map(z4)');
     }
 }
+exports.test = test;
 test();
-//# sourceMappingURL=test_matrix.js.map
