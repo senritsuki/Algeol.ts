@@ -4,8 +4,10 @@ var fs = require('fs');
 var prim = require("../../geometry/primitive");
 var wo = require("../../decoder/wavefront");
 function save(name, geo) {
-    var path = "test_geo_primitive/" + name + ".obj";
-    fs.writeFile(path, wo.geoUnit_to_objstr(geo));
+    var dir = 'test_geo_primitive/';
+    var data = wo.geos_to_strings(name, [geo]);
+    var path = dir + data.objfile;
+    fs.writeFile(path, data.objstrs);
     console.log('save: ' + path);
 }
 function test() {

@@ -11,9 +11,11 @@ import * as multi from "../../geometry/group";
 import * as wo from "../../decoder/wavefront";
 
 
-function save(name: string, geo: al.GeoUnit): void {
-    const path = `test_geo_multi/${name}.obj`;
-    fs.writeFile(path, wo.geoUnit_to_objstr(geo));
+function save(name: string, geo: al.Geometry): void {
+    const dir = 'test_geo_multi/';
+    const data = wo.geos_to_strings(name, [geo]);
+    const path = dir + data.objfile;
+    fs.writeFile(path, data.objstrs.join('\n'));
     console.log('save: ' + path);
 }
 

@@ -10,8 +10,10 @@ var prim = require("../../geometry/primitive");
 var multi = require("../../geometry/group");
 var wo = require("../../decoder/wavefront");
 function save(name, geo) {
-    var path = "test_geo_multi/" + name + ".obj";
-    fs.writeFile(path, wo.geoUnit_to_objstr(geo));
+    var dir = 'test_geo_multi/';
+    var data = wo.geos_to_strings(name, [geo]);
+    var path = dir + data.objfile;
+    fs.writeFile(path, data.objstrs.join('\n'));
     console.log('save: ' + path);
 }
 function test_al() {

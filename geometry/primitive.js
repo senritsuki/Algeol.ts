@@ -5,6 +5,8 @@ var al = require("./geo");
 var ut = require("../algorithm/utility");
 var sq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
+var v2_polar = vc.polar_to_v2;
+var geometry = function (verts, faces) { return new al.Geometry(verts, faces); };
 var fn;
 (function (fn) {
     /** Polygon - 多角形 */
@@ -19,7 +21,7 @@ var fn;
         function verts_i(n_gonal, r, t) {
             if (t === void 0) { t = 0; }
             return sq.arith(n_gonal, t, ut.deg360 / n_gonal)
-                .map(function (rad) { return vc.polar_to_v2(r, rad); });
+                .map(function (rad) { return v2_polar(r, rad); });
         }
         polygon.verts_i = verts_i;
         /**
@@ -39,7 +41,7 @@ var fn;
     })(polygon = fn.polygon || (fn.polygon = {}));
     function arc(n, r, t1, t2) {
         var step = n >= 2 ? (t2 - t1) / (n - 1) : 0;
-        return sq.arith(n, t1, step).map(function (t) { return vc.polar_to_v2(r, t); });
+        return sq.arith(n, t1, step).map(function (t) { return v2_polar(r, t); });
     }
     fn.arc = arc;
 })(fn = exports.fn || (exports.fn = {}));
@@ -65,7 +67,7 @@ function extrude(verts, z) {
     new_faces.push(new_face_1);
     new_faces.push(new_face_2);
     new_side_faces.forEach(function (f) { return new_faces.push(f); });
-    return al.geoUnit(new_verts, new_faces);
+    return geometry(new_verts, new_faces);
 }
 exports.extrude = extrude;
 /** プリミティブオブジェクト生成用関数群 */
@@ -404,7 +406,7 @@ exports.extrude = extrude;
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
 function tetrahedron(r) {
-    return al.geoUnit(fn.tetrahedron.verts(r), fn.tetrahedron.faces());
+    return geometry(fn.tetrahedron.verts(r), fn.tetrahedron.faces());
 }
 exports.tetrahedron = tetrahedron;
 /**
@@ -412,7 +414,7 @@ exports.tetrahedron = tetrahedron;
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
 function octahedron(r) {
-    return al.geoUnit(fn.octahedron.verts(r), fn.octahedron.faces());
+    return geometry(fn.octahedron.verts(r), fn.octahedron.faces());
 }
 exports.octahedron = octahedron;
 /**
@@ -420,7 +422,7 @@ exports.octahedron = octahedron;
  * @param   r   radius of inscribed sphere - 内接球の半径
  */
 function cube(r) {
-    return al.geoUnit(fn.cube.verts(r), fn.cube.faces());
+    return geometry(fn.cube.verts(r), fn.cube.faces());
 }
 exports.cube = cube;
 /**
@@ -428,7 +430,7 @@ exports.cube = cube;
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
 function dodecahedron(r) {
-    return al.geoUnit(fn.dodecahedron.verts(r), fn.dodecahedron.faces());
+    return geometry(fn.dodecahedron.verts(r), fn.dodecahedron.faces());
 }
 exports.dodecahedron = dodecahedron;
 /**
@@ -436,7 +438,7 @@ exports.dodecahedron = dodecahedron;
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
 function icosahedron(r) {
-    return al.geoUnit(fn.icosahedron.verts(r), fn.icosahedron.faces());
+    return geometry(fn.icosahedron.verts(r), fn.icosahedron.faces());
 }
 exports.icosahedron = icosahedron;
 /**
@@ -446,7 +448,7 @@ exports.icosahedron = icosahedron;
  * @param   h           角柱の高さ（+z方向）
  */
 function prism(n_gonal, r, h) {
-    return al.geoUnit(fn.prism.verts_i(n_gonal, r, h), fn.prism.faces(n_gonal));
+    return geometry(fn.prism.verts_i(n_gonal, r, h), fn.prism.faces(n_gonal));
 }
 exports.prism = prism;
 /**
@@ -456,7 +458,7 @@ exports.prism = prism;
  * @param   h           角錐の高さ（+z方向）
  */
 function pyramid(n_gonal, r, h) {
-    return al.geoUnit(fn.pyramid.verts_i(n_gonal, r, h), fn.pyramid.faces(n_gonal));
+    return geometry(fn.pyramid.verts_i(n_gonal, r, h), fn.pyramid.faces(n_gonal));
 }
 exports.pyramid = pyramid;
 /**
@@ -467,6 +469,6 @@ exports.pyramid = pyramid;
  * @param   d           下向き角錐の深さ（-z方向）
  */
 function bipyramid(n_gonal, r, h, d) {
-    return al.geoUnit(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
+    return geometry(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
 }
 exports.bipyramid = bipyramid;

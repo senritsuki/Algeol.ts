@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var al = require("./geo");
 var seq = require("../algorithm/sequence");
+var geometry = function (verts, faces) { return new al.Geometry(verts, faces); };
 function verts_flat(polygons, n_gonal) {
     var sq = seq.arith(n_gonal);
     return polygons
@@ -38,7 +39,7 @@ function common_prismArray(polygons, faces_side) {
     var faces = faces_side(seq_i2, seq_j2);
     faces.push(seq_j); // 底面
     faces.push(seq_j.map(function (j) { return (count - 1) * n_gonal + j; })); // 上面
-    return al.geoUnit(verts, faces);
+    return geometry(verts, faces);
 }
 /** 連続角柱 */
 function prismArray(polygons) {
@@ -63,7 +64,7 @@ function common_prismArray_pyramid(polygons, v1, faces_side) {
     var faces = faces_side(seq_i2, seq_j2);
     seq_j2.forEach(function (j2) { return faces.push([i1 + j2[0], i1 + j2[1], v1i]); }); // 角錐 上
     faces.push(seq_j); // 底面
-    return al.geoUnit(verts, faces);
+    return geometry(verts, faces);
 }
 /** 連続角柱 + 上に角錐 */
 function prismArray_pyramid(polygons, v1) {
@@ -90,7 +91,7 @@ function common_prismArray_bipyramid(polygons, v1, v2, faces_side) {
     var faces = faces_side(seq_i2, seq_j2);
     seq_j2.forEach(function (j2) { return faces.push([i1 + j2[0], i1 + j2[1], v1i]); }); // 双角錐 下
     seq_j2.forEach(function (j2) { return faces.push([i2 + j2[0], i2 + j2[1], v2i]); }); // 双角錐 上
-    return al.geoUnit(verts, faces);
+    return geometry(verts, faces);
 }
 /** 連続角柱 + 上下に角錐 */
 function prismArray_bipyramid(polygons, v1, v2) {
@@ -109,7 +110,7 @@ function common_prismRing(polygons, faces_side) {
     var seq_j2 = seq.arith(n_gonal).map(function (j) { return [j, (j + 1) % n_gonal]; });
     var verts = verts_flat(polygons, n_gonal);
     var faces = faces_side(seq_i2, seq_j2);
-    return al.geoUnit(verts, faces);
+    return geometry(verts, faces);
 }
 /** 角柱の輪 */
 function prismRing(polygons) {
