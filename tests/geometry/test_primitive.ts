@@ -6,7 +6,7 @@ import * as prim from "../../geometry/primitive";
 import * as wo from "../../decoder/wavefront";
 
 
-function save(name: string, geo: al.Geometry): void {
+function save(name: string, geo: al.Geo): void {
     const dir = 'test_geo_primitive/'
     const data = wo.geos_to_strings(name, [geo]);
     const path = dir + data.objfile;

@@ -11,7 +11,7 @@ import * as multi from "../../geometry/group";
 import * as wo from "../../decoder/wavefront";
 
 
-function save(name: string, geo: al.Geometry): void {
+function save(name: string, geo: al.Geo): void {
     const dir = 'test_geo_multi/';
     const data = wo.geos_to_strings(name, [geo]);
     const path = dir + data.objfile;
@@ -22,11 +22,11 @@ function save(name: string, geo: al.Geometry): void {
 export function test_al() {
     al.duplicateVertsAffine(
         [vc.v3(0, 0, 0), vc.v3(1, 0, 0)],
-        [mx.trans_m4(1, 0, 0), mx.trans_m4(2, 0, 0)]).forEach(vv => vv.forEach(v => console.log(v)));
+        [mx.trans_m4([1, 0, 0]), mx.trans_m4([2, 0, 0])]).forEach(vv => vv.forEach(v => console.log(v)));
     al.compositeMap<number>([0, 1], [
-        d => mx.trans_m4(d + 1, 0, 0),
-        _d => mx.scale_m4(2, 2, 2),
-        d => mx.trans_m4(0, d + 1, 0),
+        d => mx.trans_m4([d + 1, 0, 0]),
+        _d => mx.scale_m4([2, 2, 2]),
+        d => mx.trans_m4([0, d + 1, 0]),
     ]).forEach(m => console.log(m));
 }
 
@@ -76,7 +76,7 @@ function test() {
             prim.fn.circle.verts_i(4, 1),
             al.compositeMap<number>(seq.arith(4), [
                 _d => mx.rotX_m4(ut.deg90),
-                _d => mx.trans_m4(3, 0, 0),
+                _d => mx.trans_m4([3, 0, 0]),
                 d => mx.rotZ_m4(ut.deg90 * d),
             ]))));
     save('antiprismRing',
@@ -85,7 +85,7 @@ function test() {
             al.compositeMap<number>(seq.arith(8), [
                 d => mx.rotZ_m4(ut.deg45 * d),
                 _d => mx.rotX_m4(ut.deg90),
-                _d => mx.trans_m4(3, 0, 0),
+                _d => mx.trans_m4([3, 0, 0]),
                 d => mx.rotZ_m4(ut.deg45 * d),
             ]))));
 }

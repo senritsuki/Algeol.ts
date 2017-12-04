@@ -1,15 +1,15 @@
 "use strict";
 /** Geometry */
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var mx = require("../algorithm/matrix");
-var Geometry = (function () {
-    function Geometry(verts, faces) {
+var Geo = (function () {
+    function Geo(verts, faces) {
         this.verts = verts;
         this.faces = faces;
     }
-    return Geometry;
+    return Geo;
 }());
-exports.Geometry = Geometry;
+exports.Geo = Geo;
 var Material = (function () {
     function Material(name, diffuse) {
         if (diffuse === void 0) { diffuse = null; }
@@ -33,19 +33,19 @@ var FaceGroup = (function () {
     return FaceGroup;
 }());
 exports.FaceGroup = FaceGroup;
-var Object = (function () {
-    function Object(name, verts, faces) {
+var Obj = (function () {
+    function Obj(name, verts, faces) {
         this.name = name;
         this.verts = verts;
         this.faces = faces;
     }
-    return Object;
+    return Obj;
 }());
-exports.Object = Object;
+exports.Obj = Obj;
 function geo_to_obj(geo, name, material) {
     if (name === void 0) { name = null; }
     if (material === void 0) { material = null; }
-    return new Object(name, geo.verts, [new FaceGroup(name, geo.faces, material)]);
+    return new Obj(name, geo.verts, [new FaceGroup(name, geo.faces, material)]);
 }
 exports.geo_to_obj = geo_to_obj;
 function merge(geos, name) {
@@ -58,7 +58,7 @@ function merge(geos, name) {
         merged_faces = merged_faces.concat(geo.faces.map(function (f) { return f.clone_offset(index); }));
         index += geo.verts.length;
     });
-    return new Object(name, merged_verts, merged_faces);
+    return new Obj(name, merged_verts, merged_faces);
 }
 exports.merge = merge;
 var map_mm4 = function (mm) { return mm.map(function (m) { return function (v) { return m.map_v3(v, 1); }; }); };

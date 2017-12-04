@@ -70,7 +70,7 @@ export interface Vector<T extends Vector<T>> {
     /** 単項演算: 単位ベクトル化. clone() / length() と同値 */
     unit(): T;
     /** 単項演算: ベクトルの長さの2乗 */
-    lenght2(): number;
+    length2(): number;
     /** 単項演算: ベクトルの長さ */
     length(): number;
 
@@ -148,8 +148,8 @@ namespace priv {
         // 単項演算
 
         unit = (): V2 => this.scalar(1 / this.length());
-        lenght2 = (): number => this.ip(this);
-        length = (): number => ut.sqrt(this.lenght2());
+        length2 = (): number => this.ip(this);
+        length = (): number => ut.sqrt(this.length2());
 
         // 二項演算
 
@@ -177,8 +177,8 @@ namespace priv {
 
         // 単項演算
 
-        lenght2 = (): number => this.ip(this);
-        length = (): number => ut.sqrt(this.lenght2());
+        length2 = (): number => this.ip(this);
+        length = (): number => ut.sqrt(this.length2());
         unit = (): V3 => this.scalar(1 / this.length());
 
         // 取得
@@ -226,8 +226,8 @@ namespace priv {
         // 単項演算
 
         unit = (): V4 => this.scalar(1 / this.length());
-        lenght2 = (): number => this.ip(this);
-        length = (): number => ut.sqrt(this.lenght2());
+        length2 = (): number => this.ip(this);
+        length = (): number => ut.sqrt(this.length2());
 
         // 二項演算
 

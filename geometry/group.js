@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var al = require("./geo");
 var seq = require("../algorithm/sequence");
-var geometry = function (verts, faces) { return new al.Geometry(verts, faces); };
+var geometry = function (verts, faces) { return new al.Geo(verts, faces); };
 function verts_flat(polygons, n_gonal) {
     var sq = seq.arith(n_gonal);
     return polygons

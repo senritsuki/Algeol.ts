@@ -33,7 +33,7 @@ export interface ObjMtlString extends ObjString {
     mtlstrs: string[];
 }
 
-export function geos_to_strings(name: string, geos: al.Geometry[]): ObjString {
+export function geos_to_strings(name: string, geos: al.Geo[]): ObjString {
     const objfile = name + '.obj';
 
     let objstrs: string[] = [];
@@ -52,7 +52,7 @@ export function geos_to_strings(name: string, geos: al.Geometry[]): ObjString {
     return {objstrs, objfile};
 }
 
-export function objs_to_strings(name: string, objs: al.Object[]): ObjMtlString {
+export function objs_to_strings(name: string, objs: al.Obj[]): ObjMtlString {
     const objfile = name + '.obj';
     const mtlfile = name + '.mtl';
 

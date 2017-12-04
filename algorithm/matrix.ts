@@ -287,38 +287,32 @@ export function map_m4_v3(vl: vc.V3[], m4: M4, w: number = 1): vc.V3[] {
 }
 
 /** 平行移動写像 */
-export function trans_m4(x: number, y: number, z: number): M4 {
+export function trans_m4(v: number[]|vc.V3): M4 {
+    v = v instanceof Array ? v : v._v;
     return priv.M4Impl.FromRows([
-        [1, 0, 0, x],
-        [0, 1, 0, y],
-        [0, 0, 1, z],
+        [1, 0, 0, v[0]],
+        [0, 1, 0, v[1]],
+        [0, 0, 1, v[2]],
         [0, 0, 0, 1],
     ]);
 }
 /** 平行移動写像 */
 export function trans_v3_m4(v3: vc.V3): M4 {
-    return trans_m4(v3.x(), v3.y(), v3.z());
+    return trans_m4(v3);
 }
 
 /** 拡大縮小写像 */
-export function scale_m3(x: number, y: number, z: number): M3 {
+export function scale_m3(v: number[]|vc.V3): M3 {
+    v = v instanceof Array ? v : v._v;
     return priv.M3Impl.FromRows([
-        [x, 0, 0],
-        [0, y, 0],
-        [0, 0, z],
+        [v[0], 0, 0],
+        [0, v[1], 0],
+        [0, 0, v[2]],
     ]);
 }
 /** 拡大縮小写像 */
-export function scale_m4(x: number, y: number, z: number): M4 {
-    return m3_m4(scale_m3(x, y, z));
-}
-/** 拡大縮小写像 */
-export function scale_v3_m3(v3: vc.V3): M3 {
-    return scale_m3(v3.x(), v3.y(), v3.z());
-}
-/** 拡大縮小写像 */
-export function scale_v3_m4(v3: vc.V3): M4 {
-    return m3_m4(scale_v3_m3(v3));
+export function scale_m4(v: number[]|vc.V3): M4 {
+    return m3_m4(scale_m3(v));
 }
 
 /** x軸回転写像 */

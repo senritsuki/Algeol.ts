@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("./utility");
 var vc = require("./vector");
-var ComplexNumberImpl = (function () {
+var ComplexNumberImpl = /** @class */ (function () {
     function ComplexNumberImpl(real, imag) {
         this._v = [real, imag];
     }

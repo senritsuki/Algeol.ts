@@ -129,6 +129,97 @@ export function transpose<T>(m1: T[][]): T[][] {
     return m;
 }
 
+type int = number;
+type float = number;
+
+/**
+ * Bernstein basis - バーンスタイン基底関数
+ * @param n     次数. 0以上の整数（3次ベジェ曲線では3）
+ * @param i     0以上n以下の整数（3次ベジェ曲線では0, 1, 2, 3）
+ * @param t
+ */
+export function bernstein_basis(n: int, i: int, t: float): float {
+    return combination(n, i) * pow(1 - t, n - i) * pow(t, i);
+}
+
+/**
+ * B-spline basis - Bスプライン基底関数
+ * @param knot      ノットベクトル（数は制御点数+次数+1）
+ * @param i         i = 0; i < 制御点数; i++
+ * @param degree    次数（基本は2）（n+1は階数）
+ * @param t 
+ */
+export function b_spline_basis(knot: float[], i: int, degree: int, t: float): float {
+    if (degree <= 0) {
+        return knot[i] <= t && t < knot[i+1] ? 1.0 : 0.0;
+    } else {
+        const n1 = (t - knot[i]) / (knot[i+degree] - knot[i]);
+        const n2 = (knot[i+degree+1] - t) / (knot[i+degree+1] - knot[i+1]);
+        return n1 * b_spline_basis(knot, i, degree-1, t) + n2 * b_spline_basis(knot, i+1, degree-1, t);
+    }
+}
+
+/*
+# バーンスタイン基底関数
+def bernstein_basis(n: int, i: int, t: float) -> float:
+    return combination(n, i) * np.power(t, i) * np.power(1-t, n-i)
+
+# B-スプライン基底関数
+# @param n: 次数+1  3次曲線の場合は4
+def b_spline_basis(T: list, i: int, n: int, t: float) -> float:
+    if n <= 0:
+        if T[i] <= t and t < T[i+1]:
+            return 1.0
+        else:
+            return 0.0
+    else:
+        n1 = (t - T[i]) / (T[i+n] - T[i])
+        n2 = (T[i+n+1] - t) / (T[i+n+1] - T[i+1])
+        return n1 * b_spline_basis(T, i, n-1, t) + n2 * b_spline_basis(T, i+1, n-1, t)
+
+# ベジェ曲線
+# @param B: 制御点vのリスト  vはnp.arrayのベクトルとする
+# @param t: 時刻  値域は 0.0 .. 1.0
+# @return tに対応する位置v
+def besier(B: list, t: float) -> np.array:
+    N = len(B) - 1  # ベジェ曲線の次元 制御点が4つの場合、3次ベジェ曲線となる
+    p = np.array([0. for i in range(len(B[0]))])  # zero vector
+    for i in range(len(B)):
+        p += B[i] * bernstein_basis(N, i, t)
+    return p
+
+# B-スプライン曲線
+# @param P: 制御点vのリスト  vはnp.arrayのベクトルとする
+# @param T: ノットtのリスト  tは実数であり昇順であること T[i]<=T[i+1]
+# @param t: 時刻   値域は T[n] .. T[-n-1]  3次の場合、先頭と末尾の3つずつを除外するイメージ
+# @return tに対応する位置v
+def b_spline(P: list, T: list, t: float) -> np.array:
+    N = len(T) - len(P) - 1  # degree, ノット数T=制御点数P+次元数N+1
+    p = np.array([0. for i in range(len(P[0]))])  # zero vector
+    for i in range(len(P)):
+        p += P[i] * b_spline_basis(T, i, N, t)
+    return p
+*/
+
+/** 2関数の合成 */
+export const composite_2f = <R, S, T>(a: (r: R) => S, b: (s: S) => T): (r: R) => T => (r: R) => b(a(r));
+/** 3関数の合成 */
+export const composite_3f = <R, S, T, U>(a: (r: R) => S, b: (s: S) => T, c: (t: T) => U): (r: R) => U => (r: R) => c(b(a(r)));
+
+/** 0 -> '00', 255 -> 'ff' */
+export const format_02x = (n: number): string => ('00' + Math.round(clamp(n, 0, 255)).toString(16)).slice(-2);
+
+export function clamp(n: number, min: number, max: number): number {
+    return n < min ? min : n > max ? max : n;
+}
+export function format_n(n: number, f: (n: number) => string): string {
+    let b = '';
+    if (n < 0) { b = '-'; n = -n; }
+    return b + f(n);
+}
+export const format_02d = (n: number): string => format_n(n, n => ('00' + n).slice(-2));
+export const format_01f = (n: number): string => format_n(n, n => `${Math.floor(n)}.${Math.floor(n*10)%10}`);
+export const format_02f = (n: number): string => format_n(n, n => `${Math.floor(n)}.${format_02d(Math.floor(n*100)%100)}`);
 
 /** 非公開関数 */
 namespace priv {

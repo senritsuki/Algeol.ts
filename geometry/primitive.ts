@@ -8,7 +8,7 @@ import * as vc from "../algorithm/vector";
 type V2 = vc.V2;
 type V3 = vc.V3;
 const v2_polar = vc.polar_to_v2;
-const geometry = (verts: V3[], faces: number[][]) => new al.Geometry(verts, faces);
+const geometry = (verts: V3[], faces: number[][]) => new al.Geo(verts, faces);
 
 export namespace fn {
     /** Polygon - 多角形 */
@@ -53,7 +53,7 @@ export function doughnut(n: number, r1: number, r2: number, t1: number, t2: numb
     return arc1.concat(arc2);
 }
 
-export function extrude(verts: V2[], z: number): al.Geometry {
+export function extrude(verts: V2[], z: number): al.Geo {
     const len = verts.length;
     const new_verts_1 = verts.map(v => vc.v2_to_v3(v, 0))
     const new_verts_2 = verts.map(v => vc.v2_to_v3(v, z))
@@ -371,35 +371,35 @@ export namespace fn {
  * Tetrahedron - 正4面体
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
-export function tetrahedron(r: number): al.Geometry {
+export function tetrahedron(r: number): al.Geo {
     return geometry(fn.tetrahedron.verts(r), fn.tetrahedron.faces());
 }
 /**
  * Octahedron - 正8面体
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
-export function octahedron(r: number): al.Geometry {
+export function octahedron(r: number): al.Geo {
     return geometry(fn.octahedron.verts(r), fn.octahedron.faces());
 }
 /**
  * Cube - 正6面体・立方体
  * @param   r   radius of inscribed sphere - 内接球の半径
  */
-export function cube(r: number): al.Geometry {
+export function cube(r: number): al.Geo {
     return geometry(fn.cube.verts(r), fn.cube.faces());
 }
 /**
  * Dodecahedron - 正12面体
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
-export function dodecahedron(r: number): al.Geometry {
+export function dodecahedron(r: number): al.Geo {
     return geometry(fn.dodecahedron.verts(r), fn.dodecahedron.faces());
 }
 /**
  * Icosahedron - 正20面体
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
-export function icosahedron(r: number): al.Geometry {
+export function icosahedron(r: number): al.Geo {
     return geometry(fn.icosahedron.verts(r), fn.icosahedron.faces());
 }
 
@@ -409,7 +409,7 @@ export function icosahedron(r: number): al.Geometry {
  * @param   r           角柱底面の外接円の半径（xy平面）
  * @param   h           角柱の高さ（+z方向）
  */
-export function prism(n_gonal: number, r: number, h: number): al.Geometry {
+export function prism(n_gonal: number, r: number, h: number): al.Geo {
     return geometry(fn.prism.verts_i(n_gonal, r, h), fn.prism.faces(n_gonal));
 }
 /**
@@ -418,7 +418,7 @@ export function prism(n_gonal: number, r: number, h: number): al.Geometry {
  * @param   r           角錐底面の外接円の半径（xy平面）
  * @param   h           角錐の高さ（+z方向）
  */
-export function pyramid(n_gonal: number, r: number, h: number): al.Geometry {
+export function pyramid(n_gonal: number, r: number, h: number): al.Geo {
     return geometry(fn.pyramid.verts_i(n_gonal, r, h), fn.pyramid.faces(n_gonal));
 }
 /**
@@ -428,6 +428,6 @@ export function pyramid(n_gonal: number, r: number, h: number): al.Geometry {
  * @param   h           上向き角錐の高さ（+z方向）
  * @param   d           下向き角錐の深さ（-z方向）
  */
-export function bipyramid(n_gonal: number, r: number, h: number, d: number): al.Geometry {
+export function bipyramid(n_gonal: number, r: number, h: number, d: number): al.Geo {
     return geometry(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
 }

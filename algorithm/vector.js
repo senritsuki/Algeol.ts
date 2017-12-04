@@ -1,6 +1,6 @@
 "use strict";
 /** Vector - ベクトル */
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var ut = require("./utility");
 /** 関数 */
 var fn;
@@ -77,8 +77,8 @@ var priv;
             this.y = function () { return _this._v[1]; };
             // 単項演算
             this.unit = function () { return _this.scalar(1 / _this.length()); };
-            this.lenght2 = function () { return _this.ip(_this); };
-            this.length = function () { return ut.sqrt(_this.lenght2()); };
+            this.length2 = function () { return _this.ip(_this); };
+            this.length = function () { return ut.sqrt(_this.length2()); };
             // 二項演算
             this.add = function (dist) { return V2Impl.FromArray(fn.add(_this._v, toArray(dist))); };
             this.sub = function (dist) { return V2Impl.FromArray(fn.sub(_this._v, toArray(dist))); };
@@ -98,8 +98,8 @@ var priv;
         function V3Impl(x, y, z) {
             var _this = this;
             // 単項演算
-            this.lenght2 = function () { return _this.ip(_this); };
-            this.length = function () { return ut.sqrt(_this.lenght2()); };
+            this.length2 = function () { return _this.ip(_this); };
+            this.length = function () { return ut.sqrt(_this.length2()); };
             this.unit = function () { return _this.scalar(1 / _this.length()); };
             // 取得
             this.array = function () { return _this._v.slice(0); };
@@ -134,8 +134,8 @@ var priv;
             this.w = function () { return _this._v[3]; };
             // 単項演算
             this.unit = function () { return _this.scalar(1 / _this.length()); };
-            this.lenght2 = function () { return _this.ip(_this); };
-            this.length = function () { return ut.sqrt(_this.lenght2()); };
+            this.length2 = function () { return _this.ip(_this); };
+            this.length = function () { return ut.sqrt(_this.length2()); };
             // 二項演算
             this.add = function (dist) { return V4Impl.FromArray(fn.add(_this._v, toArray(dist))); };
             this.sub = function (dist) { return V4Impl.FromArray(fn.sub(_this._v, toArray(dist))); };

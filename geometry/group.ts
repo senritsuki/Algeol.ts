@@ -5,7 +5,7 @@ import * as seq from "../algorithm/sequence";
 import * as vc from "../algorithm/vector";
 
 type V3 = vc.V3;
-const geometry = (verts: V3[], faces: number[][]) => new al.Geometry(verts, faces);
+const geometry = (verts: V3[], faces: number[][]) => new al.Geo(verts, faces);
 
 
 function verts_flat(polygons: V3[][], n_gonal: number): V3[] {
@@ -36,7 +36,7 @@ function faces_antiprismSide(array_i: number[][], array_j: number[][]): number[]
 }
 
 
-function common_prismArray(polygons: V3[][], faces_side: (i: number[][], j: number[][]) => number[][]): al.Geometry {
+function common_prismArray(polygons: V3[][], faces_side: (i: number[][], j: number[][]) => number[][]): al.Geo {
     const count = polygons.length;
     const n_gonal = polygons[0].length;
     const seq_i2 = seq.arith(count - 1).map(i => [i * n_gonal, (i + 1) * n_gonal]);
@@ -53,15 +53,15 @@ function common_prismArray(polygons: V3[][], faces_side: (i: number[][], j: numb
 }
 
 /** 連続角柱 */
-export function prismArray(polygons: V3[][]): al.Geometry {
+export function prismArray(polygons: V3[][]): al.Geo {
     return common_prismArray(polygons, faces_prismSide);
 }
 /** 連続反角柱 */
-export function antiprismArray(polygons: V3[][]): al.Geometry {
+export function antiprismArray(polygons: V3[][]): al.Geo {
     return common_prismArray(polygons, faces_antiprismSide);
 }
 
-function common_prismArray_pyramid(polygons: V3[][], v1: V3, faces_side: (i: number[][], j: number[][]) => number[][]): al.Geometry {
+function common_prismArray_pyramid(polygons: V3[][], v1: V3, faces_side: (i: number[][], j: number[][]) => number[][]): al.Geo {
     const count = polygons.length;
     const n_gonal = polygons[0].length;
     const seq_i2 = seq.arith(count - 1).map(i => [i * n_gonal, (i + 1) * n_gonal]);
@@ -82,15 +82,15 @@ function common_prismArray_pyramid(polygons: V3[][], v1: V3, faces_side: (i: num
 }
 
 /** 連続角柱 + 上に角錐 */
-export function prismArray_pyramid(polygons: V3[][], v1: V3): al.Geometry {
+export function prismArray_pyramid(polygons: V3[][], v1: V3): al.Geo {
     return common_prismArray_pyramid(polygons, v1, faces_prismSide);
 }
 /** 連続反角柱 + 上に角錐 */
-export function antiprismArray_pyramid(polygons: V3[][], v1: V3): al.Geometry {
+export function antiprismArray_pyramid(polygons: V3[][], v1: V3): al.Geo {
     return common_prismArray_pyramid(polygons, v1, faces_antiprismSide);
 }
 
-function common_prismArray_bipyramid(polygons: V3[][], v1: V3, v2: V3, faces_side: (i: number[][], j: number[][]) => number[][]): al.Geometry {
+function common_prismArray_bipyramid(polygons: V3[][], v1: V3, v2: V3, faces_side: (i: number[][], j: number[][]) => number[][]): al.Geo {
     const count = polygons.length;
     const n_gonal = polygons[0].length;
     const seq_i2 = seq.arith(count - 1).map(i => [i * n_gonal, (i + 1) * n_gonal]);
@@ -113,15 +113,15 @@ function common_prismArray_bipyramid(polygons: V3[][], v1: V3, v2: V3, faces_sid
 }
 
 /** 連続角柱 + 上下に角錐 */
-export function prismArray_bipyramid(polygons: V3[][], v1: V3, v2: V3): al.Geometry {
+export function prismArray_bipyramid(polygons: V3[][], v1: V3, v2: V3): al.Geo {
     return common_prismArray_bipyramid(polygons, v1, v2, faces_prismSide);
 }
 /** 連続反角柱 + 上下に角錐 */
-export function antiprismArray_bipyramid(polygons: V3[][], v1: V3, v2: V3): al.Geometry {
+export function antiprismArray_bipyramid(polygons: V3[][], v1: V3, v2: V3): al.Geo {
     return common_prismArray_bipyramid(polygons, v1, v2, faces_antiprismSide);
 }
 
-function common_prismRing(polygons: V3[][], faces_side: (i: number[][], j: number[][]) => number[][]): al.Geometry {
+function common_prismRing(polygons: V3[][], faces_side: (i: number[][], j: number[][]) => number[][]): al.Geo {
     const count = polygons.length;
     const n_gonal = polygons[0].length;
     const seq_i2 = seq.arith(count).map(i => [i * n_gonal, ((i + 1) % count) * n_gonal]);
@@ -133,16 +133,16 @@ function common_prismRing(polygons: V3[][], faces_side: (i: number[][], j: numbe
 }
 
 /** 角柱の輪 */
-export function prismRing(polygons: V3[][]): al.Geometry {
+export function prismRing(polygons: V3[][]): al.Geo {
     return common_prismRing(polygons, faces_prismSide);
 }
 /** 反角柱の輪 */
-export function antiprismRing(polygons: V3[][]): al.Geometry {
+export function antiprismRing(polygons: V3[][]): al.Geo {
     return common_prismRing(polygons, faces_antiprismSide);
 }
 
 /** 押し出し */
-export function extrude(polygon: V3[], v1: V3, v2: V3): al.Geometry {
+export function extrude(polygon: V3[], v1: V3, v2: V3): al.Geo {
     const p1 = polygon.map(v => v.add(v1));
     const p2 = polygon.map(v => v.add(v2));
     return prismArray([p1, p2]);

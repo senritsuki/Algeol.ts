@@ -1,12 +1,12 @@
 "use strict";
 /** プリミティブオブジェクト */
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var al = require("./geo");
 var ut = require("../algorithm/utility");
 var sq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
 var v2_polar = vc.polar_to_v2;
-var geometry = function (verts, faces) { return new al.Geometry(verts, faces); };
+var geometry = function (verts, faces) { return new al.Geo(verts, faces); };
 var fn;
 (function (fn) {
     /** Polygon - 多角形 */

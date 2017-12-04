@@ -293,26 +293,29 @@ export function hsl_to_rgb01(hsl: number[]): number[] {
 }
 
 
-export const rgb255_to_hsl = etc.composite_2f(rgb255_to_rgb01, rgb01_to_hsl)
-export const hsl_to_rgb255 = etc.composite_2f(hsl_to_rgb01, rgb01_to_rgb255)
+export const rgb255_to_hsl = etc.composite_2f(rgb255_to_rgb01, rgb01_to_hsl);
+export const hsl_to_rgb255 = etc.composite_2f(hsl_to_rgb01, rgb01_to_rgb255);
 
-export const rgbhex_to_hsl = etc.composite_2f(rgbhex_to_rgb255, rgb255_to_hsl)
-export const hsl_to_rgbhex = etc.composite_2f(hsl_to_rgb255, rgb255_to_rgbhex)
+export const rgbhex_to_hsl = etc.composite_2f(rgbhex_to_rgb255, rgb255_to_hsl);
+export const hsl_to_rgbhex = etc.composite_2f(hsl_to_rgb255, rgb255_to_rgbhex);
 
-export const rgb01_to_lab = etc.composite_3f(srgb_to_lrgb, lrgb_to_xyz, xyz_to_lab)
-export const lab_to_rgb01 = etc.composite_3f(lab_to_xyz, xyz_to_lrgb, lrgb_to_srgb)
+export const rgb01_to_lab = etc.composite_3f(srgb_to_lrgb, lrgb_to_xyz, xyz_to_lab);
+export const lab_to_rgb01 = etc.composite_3f(lab_to_xyz, xyz_to_lrgb, lrgb_to_srgb);
 
-export const rgbhex_to_rgb01 = etc.composite_2f(rgbhex_to_rgb255, rgb255_to_rgb01)
-export const rgb01_to_rgbhex = etc.composite_2f(rgb01_to_rgb255, rgb255_to_rgbhex)
+export const rgbhex_to_rgb01 = etc.composite_2f(rgbhex_to_rgb255, rgb255_to_rgb01);
+export const rgb01_to_rgbhex = etc.composite_2f(rgb01_to_rgb255, rgb255_to_rgbhex);
 
-export const rgbhex_to_lab = etc.composite_2f(rgbhex_to_rgb01, rgb01_to_lab)
-export const lab_to_rgbhex = etc.composite_2f(lab_to_rgb01, rgb01_to_rgbhex)
+export const rgbhex_to_lab = etc.composite_2f(rgbhex_to_rgb01, rgb01_to_lab);
+export const lab_to_rgbhex = etc.composite_2f(lab_to_rgb01, rgb01_to_rgbhex);
 
-export const rgbhex_to_lch = etc.composite_2f(rgbhex_to_lab, lab_to_lch)
-export const lch_to_rgbhex = etc.composite_2f(lch_to_lab, lab_to_rgbhex)
+export const rgbhex_to_lch = etc.composite_2f(rgbhex_to_lab, lab_to_lch);
+export const lch_to_rgbhex = etc.composite_2f(lch_to_lab, lab_to_rgbhex);
 
-export const rgb255_to_lab = etc.composite_2f(rgb255_to_rgb01, rgb01_to_lab)
-export const lab_to_rgb255 = etc.composite_2f(lab_to_rgb01, rgb01_to_rgb255)
+export const rgb255_to_lab = etc.composite_2f(rgb255_to_rgb01, rgb01_to_lab);
+export const lab_to_rgb255 = etc.composite_2f(lab_to_rgb01, rgb01_to_rgb255);
 
-export const rgb255_to_lch = etc.composite_2f(rgb255_to_lab, lab_to_lch)
-export const lch_to_rgb255 = etc.composite_2f(lch_to_lab, lab_to_rgb255)
+export const rgb255_to_lch = etc.composite_2f(rgb255_to_lab, lab_to_lch);
+export const lch_to_rgb255 = etc.composite_2f(lch_to_lab, lab_to_rgb255);
+
+export const rgb01_to_lch = etc.composite_2f(rgb01_to_lab, lab_to_lch);
+export const lch_to_rgb01 = etc.composite_2f(lch_to_lab, lab_to_rgb01);

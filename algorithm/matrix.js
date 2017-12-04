@@ -1,6 +1,6 @@
 "use strict";
 // Square Matrix 正方行列
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var ut = require("./utility");
 var vc = require("./vector");
 var fn;
@@ -218,44 +218,36 @@ function map_m4_v3(vl, m4, w) {
 }
 exports.map_m4_v3 = map_m4_v3;
 /** 平行移動写像 */
-function trans_m4(x, y, z) {
+function trans_m4(v) {
+    v = v instanceof Array ? v : v._v;
     return priv.M4Impl.FromRows([
-        [1, 0, 0, x],
-        [0, 1, 0, y],
-        [0, 0, 1, z],
+        [1, 0, 0, v[0]],
+        [0, 1, 0, v[1]],
+        [0, 0, 1, v[2]],
         [0, 0, 0, 1],
     ]);
 }
 exports.trans_m4 = trans_m4;
 /** 平行移動写像 */
 function trans_v3_m4(v3) {
-    return trans_m4(v3.x(), v3.y(), v3.z());
+    return trans_m4(v3);
 }
 exports.trans_v3_m4 = trans_v3_m4;
 /** 拡大縮小写像 */
-function scale_m3(x, y, z) {
+function scale_m3(v) {
+    v = v instanceof Array ? v : v._v;
     return priv.M3Impl.FromRows([
-        [x, 0, 0],
-        [0, y, 0],
-        [0, 0, z],
+        [v[0], 0, 0],
+        [0, v[1], 0],
+        [0, 0, v[2]],
     ]);
 }
 exports.scale_m3 = scale_m3;
 /** 拡大縮小写像 */
-function scale_m4(x, y, z) {
-    return m3_m4(scale_m3(x, y, z));
+function scale_m4(v) {
+    return m3_m4(scale_m3(v));
 }
 exports.scale_m4 = scale_m4;
-/** 拡大縮小写像 */
-function scale_v3_m3(v3) {
-    return scale_m3(v3.x(), v3.y(), v3.z());
-}
-exports.scale_v3_m3 = scale_v3_m3;
-/** 拡大縮小写像 */
-function scale_v3_m4(v3) {
-    return m3_m4(scale_v3_m3(v3));
-}
-exports.scale_v3_m4 = scale_v3_m4;
 /** x軸回転写像 */
 function rotX_m3(rad) {
     var c = ut.cos(rad);

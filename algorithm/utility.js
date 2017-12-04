@@ -3,7 +3,7 @@
 // 基本演算
 // ※自作に挑戦しようとも考えたが、組み込みMathオブジェクトを使う
 // https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Math
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 /** = Math.sqrt */
 exports.sqrt = Math.sqrt;
 /** = Math.pow */
@@ -117,6 +117,75 @@ function transpose(m1) {
     return m;
 }
 exports.transpose = transpose;
+/**
+ * Bernstein basis - バーンスタイン基底関数
+ * @param n     次数. 0以上の整数（3次ベジェ曲線では3）
+ * @param i     0以上n以下の整数（3次ベジェ曲線では0, 1, 2, 3）
+ * @param t
+ */
+function bernstein_basis(n, i, t) {
+    return combination(n, i) * exports.pow(1 - t, n - i) * exports.pow(t, i);
+}
+exports.bernstein_basis = bernstein_basis;
+/**
+ * B-spline basis - Bスプライン基底関数
+ * @param knot      ノットベクトル（数は制御点数+次数+1）
+ * @param i         i = 0; i < 制御点数; i++
+ * @param degree    次数（基本は2）（n+1は階数）
+ * @param t
+ */
+function b_spline_basis(knot, i, degree, t) {
+    if (degree <= 0) {
+        return knot[i] <= t && t < knot[i + 1] ? 1.0 : 0.0;
+    }
+    else {
+        var n1 = (t - knot[i]) / (knot[i + degree] - knot[i]);
+        var n2 = (knot[i + degree + 1] - t) / (knot[i + degree + 1] - knot[i + 1]);
+        return n1 * b_spline_basis(knot, i, degree - 1, t) + n2 * b_spline_basis(knot, i + 1, degree - 1, t);
+    }
+}
+exports.b_spline_basis = b_spline_basis;
+/*
+# バーンスタイン基底関数
+def bernstein_basis(n: int, i: int, t: float) -> float:
+    return combination(n, i) * np.power(t, i) * np.power(1-t, n-i)
+
+# B-スプライン基底関数
+# @param n: 次数+1  3次曲線の場合は4
+def b_spline_basis(T: list, i: int, n: int, t: float) -> float:
+    if n <= 0:
+        if T[i] <= t and t < T[i+1]:
+            return 1.0
+        else:
+            return 0.0
+    else:
+        n1 = (t - T[i]) / (T[i+n] - T[i])
+        n2 = (T[i+n+1] - t) / (T[i+n+1] - T[i+1])
+        return n1 * b_spline_basis(T, i, n-1, t) + n2 * b_spline_basis(T, i+1, n-1, t)
+
+# ベジェ曲線
+# @param B: 制御点vのリスト  vはnp.arrayのベクトルとする
+# @param t: 時刻  値域は 0.0 .. 1.0
+# @return tに対応する位置v
+def besier(B: list, t: float) -> np.array:
+    N = len(B) - 1  # ベジェ曲線の次元 制御点が4つの場合、3次ベジェ曲線となる
+    p = np.array([0. for i in range(len(B[0]))])  # zero vector
+    for i in range(len(B)):
+        p += B[i] * bernstein_basis(N, i, t)
+    return p
+
+# B-スプライン曲線
+# @param P: 制御点vのリスト  vはnp.arrayのベクトルとする
+# @param T: ノットtのリスト  tは実数であり昇順であること T[i]<=T[i+1]
+# @param t: 時刻   値域は T[n] .. T[-n-1]  3次の場合、先頭と末尾の3つずつを除外するイメージ
+# @return tに対応する位置v
+def b_spline(P: list, T: list, t: float) -> np.array:
+    N = len(T) - len(P) - 1  # degree, ノット数T=制御点数P+次元数N+1
+    p = np.array([0. for i in range(len(P[0]))])  # zero vector
+    for i in range(len(P)):
+        p += P[i] * b_spline_basis(T, i, N, t)
+    return p
+*/
 /** 非公開関数 */
 var priv;
 (function (priv) {

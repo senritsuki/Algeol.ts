@@ -9,7 +9,11 @@ type V3 = vc.V3;
 type IndexList = number[];
 type RGB01 = number[];
 
-export class Geometry {
+function shift_offset(face: IndexList, index_offset: number): IndexList {
+    return face.map(n => n + index_offset);
+}
+
+export class Geo {
     constructor(
         public verts: V3[],
         public faces: IndexList[],
@@ -29,11 +33,11 @@ export class FaceGroup {
     ){}
 
     clone_offset(index_offset: number): FaceGroup {
-        const new_faces = this.faces.map(nn => nn.map(n => n + index_offset));
+        const new_faces = this.faces.map(f => shift_offset(f, index_offset));
         return new FaceGroup(this.name, new_faces, this.material);
     }
 }
-export class Object {
+export class Obj {
     constructor(
         public name: string|null,
         public verts: V3[],
@@ -41,20 +45,31 @@ export class Object {
     ){}
 }
 
-export function geo_to_obj(geo: Geometry, name: string|null=null, material: Material|null=null): Object {
-    return new Object(name, geo.verts, [new FaceGroup(name, geo.faces, material)]);
+export function geo_to_obj(geo: Geo, name: string|null=null, material: Material|null=null): Obj {
+    return new Obj(name, geo.verts, [new FaceGroup(name, geo.faces, material)]);
 }
 
-export function merge(geos: Object[], name: string|null=null): Object {
-    let merged_verts: V3[] = [];
-    let merged_faces: FaceGroup[] = [];
+export function merge_geos_materials(geos: Geo[], materials: Material[]=[], name: string|null=null): Obj {
+    let verts: V3[] = [];
+    let faces: FaceGroup[] = [];
     let index = 0;
-    geos.forEach(geo => {
-        merged_verts = merged_verts.concat(geo.verts);
-        merged_faces = merged_faces.concat(geo.faces.map(f => f.clone_offset(index)));
-        index += geo.verts.length;
+    geos.forEach((geo, i) => {
+        verts = verts.concat(geo.verts);
+        const f = geo.faces.map(f => shift_offset(f, index));
+        const fg = new FaceGroup();
     });
-    return new Object(name, merged_verts, merged_faces);
+}
+
+export function merge_objs(objs: Obj[], name: string|null=null): Obj {
+    let verts: V3[] = [];
+    let faces: FaceGroup[] = [];
+    let index = 0;
+    objs.forEach(obj => {
+        verts = verts.concat(obj.verts);
+        faces = faces.concat(obj.faces.map(f => f.clone_offset(index)));
+        index += obj.verts.length;
+    });
+    return new Obj(name, verts, faces);
 }
 
 
