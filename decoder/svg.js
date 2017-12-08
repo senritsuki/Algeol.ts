@@ -11,15 +11,15 @@ function svg(inner, width, height, viewbox_width, viewbox_height) {
 exports.svg = svg;
 /** (直線) -> <line> */
 function curve_line(line, stroke, strokeWidth) {
-    var c1 = line.startPoint();
-    var c2 = line.endPoint();
+    var c1 = line.start();
+    var c2 = line.end();
     return "<line stroke=\"" + stroke + "\" stroke-width=\"" + strokeWidth + "\" x1=\"" + c1.x() + "\" y1=\"" + c1.y() + "\" x2=\"" + c2.x() + "\" y2=\"" + c2.y() + "\" />";
 }
 exports.curve_line = curve_line;
 /** (連続直線) -> <path> */
 function curveArray_path(lines, fill, stroke, strokeWidth, z) {
     var strs = [];
-    var c0 = lines.startPoint();
+    var c0 = lines.start();
     strs.push("M " + c0.x() + " " + c0.y());
     seq.arith(lines.curveNum(), 1)
         .map(function (i) { return lines.coord(i); })

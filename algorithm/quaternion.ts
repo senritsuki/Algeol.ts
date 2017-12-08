@@ -1,6 +1,5 @@
 ﻿/** Quaternion - クォータニオン・四元数 */
 
-import * as ut from "./utility";
 import * as vc from "./vector";
 import * as mx from "./matrix";
 
@@ -80,13 +79,13 @@ class QuaternionImpl implements Quaternion {
     // 単項演算
 
     conjugate(): Quaternion {
-        return new QuaternionImpl(this.r(), vc.fn.scalar(this.i(), -1));
+        return new QuaternionImpl(this.r(), vc.scalar(this.i(), -1));
     }
     abs2(): number {
-        return vc.fn.ip(this._v, this._v);
+        return vc.ip(this._v, this._v);
     }
     abs(): number {
-        return ut.sqrt(this.abs2());
+        return Math.sqrt(this.abs2());
     }
     invAdd(): Quaternion {
         return this.scalar(-1);
@@ -128,12 +127,12 @@ class QuaternionImpl implements Quaternion {
 
     add(dist: Quaternion): Quaternion {
         const r = this.r() + dist.r();
-        const i = vc.fn.add(this.i(), dist.i());
+        const i = vc.add(this.i(), dist.i());
         return new QuaternionImpl(r, i);
     }
     sub(dist: Quaternion): Quaternion {
         const r = this.r() + dist.r();
-        const i = vc.fn.sub(this.i(), dist.i());
+        const i = vc.sub(this.i(), dist.i());
         return new QuaternionImpl(r, i);
     }
     mul(dist: Quaternion): Quaternion {
@@ -141,16 +140,16 @@ class QuaternionImpl implements Quaternion {
         const r2 = dist.r();
         const i1 = this.i();
         const i2 = dist.i();
-        const r = r1 * r2 - vc.fn.ip(i1, i2);
-        const i_1 = vc.fn.scalar(i2, r1);
-        const i_2 = vc.fn.scalar(i1, r2);
-        const i_3 = vc.fn.cp3(i1, i2);
-        const i = vc.fn.add(vc.fn.add(i_1, i_2), i_3);
+        const r = r1 * r2 - vc.ip(i1, i2);
+        const i_1 = vc.scalar(i2, r1);
+        const i_2 = vc.scalar(i1, r2);
+        const i_3 = vc.cp3(i1, i2);
+        const i = vc.add(vc.add(i_1, i_2), i_3);
         return new QuaternionImpl(r, i);
     }
     scalar(n: number): Quaternion {
         const r = this.r() * n;
-        const i = vc.fn.scalar(this.i(), n);
+        const i = vc.scalar(this.i(), n);
         return new QuaternionImpl(r, i);
     }
 

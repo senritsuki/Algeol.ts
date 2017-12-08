@@ -1,41 +1,13 @@
 "use strict";
 // --------------------------------------------------------
-// 基本演算
-// ※自作に挑戦しようとも考えたが、組み込みMathオブジェクトを使う
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Math
-exports.__esModule = true;
-/** = Math.sqrt */
-exports.sqrt = Math.sqrt;
-/** = Math.pow */
-exports.pow = Math.pow;
-/** = Math.cos */
-exports.cos = Math.cos;
-/** = Math.sin */
-exports.sin = Math.sin;
-/** = Math.acos */
-exports.acos = Math.acos;
-/** = Math.atan2 */
-exports.atan2 = Math.atan2;
-/** = Math.min */
-exports.min = Math.min;
-/** = Math.max */
-exports.max = Math.max;
-/** = Math.floor */
-exports.floor = Math.floor;
-/** = Math.ceil */
-exports.ceil = Math.ceil;
-/** = Math.round */
-exports.round = Math.round;
-/** = Math.abs */
-exports.abs = Math.abs;
-// --------------------------------------------------------
 // 定数
+Object.defineProperty(exports, "__esModule", { value: true });
 /** Square Root of 2 - 2の平方根 (≒ 1.414) */
-exports.r2 = exports.sqrt(2);
+exports.r2 = Math.sqrt(2);
 /** Square Root of 3 - 3の平方根 (≒ 1.732) */
-exports.r3 = exports.sqrt(3);
+exports.r3 = Math.sqrt(3);
 /** Square Root of 5 - 5の平方根 (≒ 2.236) */
-exports.r5 = exports.sqrt(5);
+exports.r5 = Math.sqrt(5);
 /** 円周率 (≒ 3.14) */
 exports.pi = Math.PI;
 /** 円周率の2倍 (≒ 6.28) */
@@ -96,7 +68,7 @@ exports.factorial = function (n) { return priv.reduce_mul(priv.sequence(n, 1)); 
  * (5, 5) -> 1
  */
 function combination(n, k) {
-    var k2 = exports.min(k, n - k);
+    var k2 = Math.min(k, n - k);
     return priv.reduce_mul(priv.sequence(k2, n, -1)) / exports.factorial(k2);
 }
 exports.combination = combination;
@@ -124,7 +96,7 @@ exports.transpose = transpose;
  * @param t
  */
 function bernstein_basis(n, i, t) {
-    return combination(n, i) * exports.pow(1 - t, n - i) * exports.pow(t, i);
+    return combination(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
 }
 exports.bernstein_basis = bernstein_basis;
 /**
@@ -186,6 +158,28 @@ def b_spline(P: list, T: list, t: float) -> np.array:
         p += P[i] * b_spline_basis(T, i, N, t)
     return p
 */
+/** 2関数の合成 */
+exports.composite_2f = function (a, b) { return function (r) { return b(a(r)); }; };
+/** 3関数の合成 */
+exports.composite_3f = function (a, b, c) { return function (r) { return c(b(a(r))); }; };
+/** 0 -> '00', 255 -> 'ff' */
+exports.format_02x = function (n) { return ('00' + Math.round(clamp(n, 0, 255)).toString(16)).slice(-2); };
+function clamp(n, min, max) {
+    return n < min ? min : n > max ? max : n;
+}
+exports.clamp = clamp;
+function format_n(n, f) {
+    var b = '';
+    if (n < 0) {
+        b = '-';
+        n = -n;
+    }
+    return b + f(n);
+}
+exports.format_n = format_n;
+exports.format_02d = function (n) { return format_n(n, function (n) { return ('00' + n).slice(-2); }); };
+exports.format_01f = function (n) { return format_n(n, function (n) { return Math.floor(n) + "." + Math.floor(n * 10) % 10; }); };
+exports.format_02f = function (n) { return format_n(n, function (n) { return Math.floor(n) + "." + exports.format_02d(Math.floor(n * 100) % 100); }); };
 /** 非公開関数 */
 var priv;
 (function (priv) {

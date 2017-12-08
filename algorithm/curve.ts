@@ -10,17 +10,9 @@ export let E = 0.001;
 /** 位置ベクトルと方向ベクトルのペア */
 export class CD<T extends vc.Vector<T>> {
     constructor(
-        public _c: T,
-        public _d: T) { }
-
-    /** Coordinate Vector - 位置ベクトル */
-    c(): T {
-        return this._c;
-    }
-    /** Direction Vector - 方向ベクトル */
-    d(): T {
-        return this._d;
-    }
+        public c: T,
+        public d: T,
+    ) { }
 }
 
 /** 2次元の位置ベクトルと方向ベクトルのペア */
@@ -31,37 +23,49 @@ export interface CD3 extends CD<vc.V3> {}
 export interface CD4 extends CD<vc.V4> {}
 
 
-/** Curve with Parametric Equation - パラメトリック方程式による曲線 */
+/** Parametric Equation - パラメトリック方程式による曲線 */
 export interface Curve<T extends vc.Vector<T>> {
+    /** 制御点の配列（生の参照） */
+    v: T[];
+
     /** パラメータiに対応する座標 */
     coord(t: number): T;
     /** パラメータiに対応する位置と方向 */
     cd(t: number, delta?: number): CD<T>;
 
-    /** coord(0) と同値 */
-    startPoint(): T;
-    /** coord(1) と同値 */
-    endPoint(): T;
+    /** coord(0.0) と同値 */
+    start(): T;
+    /** coord(1.0) と同値 */
+    end(): T;
     /** 制御点の配列 */
-    controlPoints(): T[];
+    controls(): T[];
+
+    /** 線形変換・非線形変換 */
+    translate(fn: (v: T) => T): Curve<T>;
+}
+
+interface CurveC<T extends vc.Vector<T>, U extends Curve<T>> extends Curve<T> {
+    /** 複製 */
+    clone(): U;
 }
 
 export interface Curve2 extends Curve<vc.V2> {}
 export interface Curve3 extends Curve<vc.V3> {}
 export interface Curve4 extends Curve<vc.V4> {}
 
-abstract class CurveBase<T extends vc.Vector<T>> implements Curve<T> {
+abstract class CurveBase<T extends vc.Vector<T>, U extends CurveC<T, U>> implements CurveC<T, U> {
     constructor(
-        public _v: T[]) { }
+        public v: T[],
+    ) { }
 
-    startPoint(): T {
+    start(): T {
         return this.coord(0);
     }
-    endPoint(): T {
+    end(): T {
         return this.coord(1);
     }
-    controlPoints(): T[] {
-        return this._v.slice(0);
+    controls(): T[] {
+        return this.v.slice(0);
     }
 
     cd(t: number, delta: number = E): CD<T> {
@@ -70,75 +74,97 @@ abstract class CurveBase<T extends vc.Vector<T>> implements Curve<T> {
         const d2 = this.coord(t + delta);
         return cd(c, d2.sub(d1));
     }
+    translate(fn: (v: T) => T): U {
+        const new_curve = this.clone();
+        new_curve.v = this.v.map(d => fn(d));
+        return new_curve;
+    }
+
+    abstract clone(): U;
     abstract coord(i: number): T;
 }
 
 /** (2次元ベクトル配列, 媒介変数) -> 2次元ベクトル を満たす任意の関数で定義される曲線 */
-export class LambdaCurve<T extends vc.Vector<T>> extends CurveBase<T> {
+class LambdaCurve<T extends vc.Vector<T>> extends CurveBase<T, LambdaCurve<T>> {
     constructor(
         v: T[],
         public _lambda: (v: T[], i: number) => T) {
         super(v);
     }
+    clone(): LambdaCurve<T> {
+        return new LambdaCurve(this.v, this._lambda);
+    }
     coord(t: number): T {
-        return this._lambda(this._v, t);
+        return this._lambda(this.v, t);
     }
 }
 
 /** 直線（一次曲線） */
-export class Line<T extends vc.Vector<T>> extends CurveBase<T> {
+class Line<T extends vc.Vector<T>> extends CurveBase<T, Line<T>> {
     constructor(start: T, end: T) {
         super([start, end]);
     }
+    clone(): Line<T> {
+        return new Line(this.v[0], this.v[1]);
+    }
     coord(t: number): T {
-        const c0 = this._v[0].scalar(1 - t);
-        const c1 = this._v[1].scalar(t);
+        const c0 = this.v[0].scalar(1 - t);
+        const c1 = this.v[1].scalar(t);
         return c0.add(c1);
     }
 }
 
 /** Bezier Curve - ベジェ曲線 */
-export class BezierCurve<T extends vc.Vector<T>> extends CurveBase<T> {
-    constructor(controlPoints: T[]) {
-        super(controlPoints);
+class BezierCurve<T extends vc.Vector<T>> extends CurveBase<T, BezierCurve<T>> {
+    constructor(controls: T[]) {
+        super(controls);
+    }
+    clone(): BezierCurve<T> {
+        return new BezierCurve(this.v);
     }
     coord(t: number): T {
-        const n = this._v.length - 1;   // 制御点4つなら3次
-        return this._v 
+        const n = this.v.length - 1;   // 制御点4つなら3次
+        return this.v 
             .map((v, i) => v.scalar(ut.bernstein_basis(n, i, t)))
             .reduce((a, b) => a.add(b));
     }
 }
 
 /** B-Spline Curve - Bスプライン曲線 */
-export class BSplineCurve<T extends vc.Vector<T>> extends CurveBase<T> {
+class BSplineCurve<T extends vc.Vector<T>> extends CurveBase<T, BSplineCurve<T>> {
     constructor(
-        controlPoints: T[], 
+        controls: T[], 
         public degree: number,
     ) {
-        super(controlPoints);
+        super(controls);
+    }
+    clone(): BSplineCurve<T> {
+        return new BSplineCurve(this.v, this.degree);
     }
     coord(t: number): T {
         const degree = this.degree;
-        const knots = seq.arith(this._v.length + degree + 1);
-        return this._v
+        const knots = seq.arith(this.v.length + degree + 1);
+        return this.v
             .map((v, i) => v.scalar(ut.b_spline_basis(knots, i, degree, t)))
             .reduce((a, b) => a.add(b));
     }
 }
 
 /** NURBS: Non-Uniform Rational B-Spline Curve */
-export class NURBS<T extends vc.Vector<T>> extends CurveBase<T> {
+class NURBS<T extends vc.Vector<T>> extends CurveBase<T, NURBS<T>> {
     constructor(
-        controlPoints: T[], 
+        controls: T[], 
         public degree: number,
         public knots: number[],
         public weights: number[],
     ) {
-        super(controlPoints);
+        super(controls);
+    }
+    clone(): NURBS<T> {
+        return new NURBS(this.v, this.degree, this.knots, this.weights);
     }
     coord(t: number): T {
-        const controls = this._v;
+        const controls = this.v;
         const degree = this.degree;
         const knots = this.knots;
         const weights = this.weights;
@@ -154,37 +180,43 @@ export class NURBS<T extends vc.Vector<T>> extends CurveBase<T> {
     }
 }
 
-/** 楕円 */
-export class Ellipse<T extends vc.Vector<T>> extends CurveBase<T> {
+/** 円・楕円 */
+class Circle<T extends vc.Vector<T>> extends CurveBase<T, Circle<T>> {
     constructor(o: T, x: T, y: T) {
         super([o, x, y]);
     }
+    clone(): Circle<T> {
+        return new Circle(this.v[0], this.v[1], this.v[2]);
+    }
     coord(t: number): T {
         const rad = t * ut.deg360;
-        const o = this._v[0];
-        const dx = this._v[1].sub(o).scalar(ut.cos(rad));
-        const dy = this._v[2].sub(o).scalar(ut.sin(rad));
+        const o = this.v[0];
+        const dx = this.v[1].sub(o).scalar(Math.cos(rad));
+        const dy = this.v[2].sub(o).scalar(Math.sin(rad));
         return o.add(dx).add(dy);
     }
 }
 
 /** 螺旋 */
-export class Spiral<T extends vc.Vector<T>> extends CurveBase<T> {
+class Spiral<T extends vc.Vector<T>> extends CurveBase<T, Spiral<T>> {
     constructor(o: T, x: T, y: T, z: T) {
         super([o, x, y, z]);
     }
+    clone(): Spiral<T> {
+        return new Spiral(this.v[0], this.v[1], this.v[2], this.v[3]);
+    }
     coord(i: number): T {
         const rad = i * ut.deg360;
-        const o = this._v[0];
-        const dx = this._v[1].sub(o).scalar(ut.cos(rad));
-        const dy = this._v[2].sub(o).scalar(ut.sin(rad));
-        const dz = this._v[3].sub(o).scalar(i);
+        const o = this.v[0];
+        const dx = this.v[1].sub(o).scalar(Math.cos(rad));
+        const dy = this.v[2].sub(o).scalar(Math.sin(rad));
+        const dz = this.v[3].sub(o).scalar(i);
         return o.add(dx).add(dy).add(dz);
     }
 }
 
 /** 連続曲線 */
-export class CurveArray<T extends vc.Vector<T>> implements Curve<T> {
+export class CurveArray<T extends vc.Vector<T>> {
     constructor(
         public _curves: Curve<T>[]){}
 
@@ -193,7 +225,7 @@ export class CurveArray<T extends vc.Vector<T>> implements Curve<T> {
             0 :
             t >= this._curves.length - 1 ?
                 this._curves.length - 1 :
-                ut.floor(t);
+                Math.floor(t);
         const k = t - j;
         return this._curves[j].coord(k);
     }
@@ -204,14 +236,14 @@ export class CurveArray<T extends vc.Vector<T>> implements Curve<T> {
         return cd<T>(c, d2.sub(d1));
     }
 
-    startPoint(): T {
+    start(): T {
         return this.coord(0);
     }
-    endPoint(): T {
+    end(): T {
         return this.coord(1);
     }
-    controlPoints(): T[] {
-        return this._curves.map(c => c.controlPoints()).reduce((a, b) => a.concat(b), <T[]>[]);
+    controls(): T[] {
+        return this._curves.map(c => c.controls()).reduce((a, b) => a.concat(b), <T[]>[]);
     }
 
     /** 曲線の配列 */
@@ -231,80 +263,71 @@ export interface CurveArray4 extends CurveArray<vc.V4> {}
 
 
 /** 位置ベクトルと方向ベクトルのペア */
-export const cd = <T extends vc.Vector<T>>(c: T, d: T): CD<T> => new CD<T>(c, d);
-/** 2次元の位置ベクトルと方向ベクトルのペア */
-export const cd2 = (c: vc.V2, d: vc.V2): CD2 => cd(c, d);
-/** 3次元の位置ベクトルと方向ベクトルのペア */
-export const cd3 = (c: vc.V3, d: vc.V3): CD3 => cd(c, d);
-/** 4次元の位置ベクトルと方向ベクトルのペア */
-export const cd4 = (c: vc.V4, d: vc.V4): CD4 => cd(c, d);
+export function cd<T extends vc.Vector<T>>(c: T, d: T): CD<T> {
+    return new CD(c, d);
+}
 
-
-/** (始点, 終点) -> 直線 */
-export const line = <T extends vc.Vector<T>>(start: T, end: T): Curve<T> => new Line<T>(start, end);
-/** (始点, 終点) -> 直線 */
-export const line2 = (start: vc.V2, end: vc.V2): Curve2 => line(start, end);
-/** (始点, 終点) -> 直線 */
-export const line3 = (start: vc.V3, end: vc.V3): Curve3 => line(start, end);
-/** (始点, 終点) -> 直線 */
-export const line4 = (start: vc.V4, end: vc.V4): Curve4 => line(start, end);
-
+/** 直線 */
+export function line<T extends vc.Vector<T>>(start: T, end: T): Curve<T> {
+    return new Line<T>(start, end);
+}
 
 /** (ベクトル配列, 媒介変数) -> ベクトル を満たす任意の関数で定義される曲線 */
-export const lambda = <T extends vc.Vector<T>>(v: T[], la: (v: T[], i: number) => T): Curve<T> => new LambdaCurve<T>(v, la);
-/** (ベクトル配列, 媒介変数) -> ベクトル を満たす任意の関数で定義される曲線 */
-export const lambda2 = (v: vc.V2[], la: (v: vc.V2[], i: number) => vc.V2): Curve2 => lambda(v, la);
-/** (ベクトル配列, 媒介変数) -> ベクトル を満たす任意の関数で定義される曲線 */
-export const lambda3 = (v: vc.V3[], la: (v: vc.V3[], i: number) => vc.V3): Curve3 => lambda(v, la);
-/** (ベクトル配列, 媒介変数) -> ベクトル を満たす任意の関数で定義される曲線 */
-export const lambda4 = (v: vc.V4[], la: (v: vc.V4[], i: number) => vc.V4): Curve4 => lambda(v, la);
+export function lambda<T extends vc.Vector<T>>(v: T[], fn: (v: T[], i: number) => T): Curve<T> {
+    return new LambdaCurve<T>(v, fn);
+}
+
+/** ベジェ曲線. 制御点が3つなら2次、4つなら3次のベジェ曲線となる */
+export function bezier<T extends vc.Vector<T>>(controlPoints: T[]): Curve<T> {
+    return new BezierCurve<T>(controlPoints);
+}
+/** B-Spline曲線 */
+export function b_spline<T extends vc.Vector<T>>(controlPoints: T[], degree: number): Curve<T> {
+    return new BSplineCurve<T>(controlPoints, degree);
+}
+/** NURBS曲線 */
+export function nurbs<T extends vc.Vector<T>>(controlPoints: T[], degree: number, knots: number[], weights: number[]): Curve<T> {
+    return new NURBS<T>(controlPoints, degree, knots, weights);
+}
 
 
-/** (制御点配列) -> ベジェ曲線. 制御点が3つなら2次、4つなら3次のベジェ曲線となる */
-export const bezier = <T extends vc.Vector<T>>(controlPoints: T[]): Curve<T> => new BezierCurve<T>(controlPoints);
-/** (制御点配列) -> ベジェ曲線. 制御点が3つなら2次、4つなら3次のベジェ曲線となる */
-export const bezier2 = (controlPoints: vc.V2[]): Curve2 => bezier(controlPoints);
-/** (制御点配列) -> ベジェ曲線. 制御点が3つなら2次、4つなら3次のベジェ曲線となる */
-export const bezier3 = (controlPoints: vc.V3[]): Curve3 => bezier(controlPoints);
-/** (制御点配列) -> ベジェ曲線. 制御点が3つなら2次、4つなら3次のベジェ曲線となる */
-export const bezier4 = (controlPoints: vc.V4[]): Curve4 => bezier(controlPoints);
+/** 楕円 */
+export function circle<T extends vc.Vector<T>>(o: T, x: T, y: T): Curve<T> {
+    return new Circle<T>(o, x, y);
+}
 
-
-/** (中心, x, y) -> 楕円 */
-export const ellipse = <T extends vc.Vector<T>>(o: T, x: T, y: T): Curve<T> => new Ellipse<T>(o, x, y);
-/** (中心, x, y) -> 楕円 */
-export const ellipse2 = (o: vc.V2, x: vc.V2, y: vc.V2): Curve2 => ellipse(o, x, y);
-/** (中心, x, y) -> 楕円 */
-export const ellipse3 = (o: vc.V3, x: vc.V3, y: vc.V3): Curve3 => ellipse(o, x, y);
-/** (中心, x, y) -> 楕円 */
-export const ellipse4 = (o: vc.V4, x: vc.V4, y: vc.V4): Curve4 => ellipse(o, x, y);
-
-
-/** (中心, x, y, z) -> 螺旋 */
-export const spiral = <T extends vc.Vector<T>>(o: T, x: T, y: T, z: T): Curve<T> => new Spiral<T>(o, x, y, z);
-/** (中心, x, y, z) -> 螺旋 */
-export const spiral2 = (o: vc.V2, x: vc.V2, y: vc.V2, z: vc.V2): Curve2 => spiral(o, x, y, z);
-/** (中心, x, y, z) -> 螺旋 */
-export const spiral3 = (o: vc.V3, x: vc.V3, y: vc.V3, z: vc.V3): Curve3 => spiral(o, x, y, z);
-/** (中心, x, y, z) -> 螺旋 */
-export const spiral4 = (o: vc.V4, x: vc.V4, y: vc.V4, z: vc.V4): Curve4 => spiral(o, x, y, z);
-
+/** 螺旋 */
+export function spiral<T extends vc.Vector<T>>(o: T, x: T, y: T, z: T): Curve<T> {
+    return new Spiral<T>(o, x, y, z);
+}
 
 /** 連続曲線 */
-export const curves = <T extends vc.Vector<T>>(curveArray: Curve<T>[]): CurveArray<T> => new CurveArray<T>(curveArray);
-/** 連続曲線 */
-export const curves2 = (curveArray: Curve2[]): CurveArray2 => curves(curveArray);
-/** 連続曲線 */
-export const curves3 = (curveArray: Curve3[]): CurveArray3 => curves(curveArray);
-/** 連続曲線 */
-export const curves4 = (curveArray: Curve4[]): CurveArray4 => curves(curveArray);
-
+export function curves<T extends vc.Vector<T>>(curveArray: Curve<T>[]): CurveArray<T> {
+    return new CurveArray<T>(curveArray);
+}
 
 /** 折れ線 */
-export const lines = <T extends vc.Vector<T>>(verts: T[]): CurveArray<T> => curves(seq.arith(verts.length - 1, 1).map(i => line(verts[i - 1], verts[i])));
-/** 折れ線 */
-export const lines2 = (verts: vc.V2[]): CurveArray2 => lines(verts);
-/** 折れ線 */
-export const lines3 = (verts: vc.V3[]): CurveArray3 => lines(verts);
-/** 折れ線 */
-export const lines4 = (verts: vc.V4[]): CurveArray4 => lines(verts);
+export function lines<T extends vc.Vector<T>>(verts: T[]): CurveArray<T> {
+    return curves(seq.arith(verts.length - 1, 1).map(i => line(verts[i - 1], verts[i])));
+}
+
+
+/** ベジェ曲線で円弧を再現する際の制御点係数. 90度の場合: 0.5522847 */
+export const bezier_arc_p = (deg: number): number => 4 / 3 * Math.tan(ut.deg_to_rad(deg) / 4);
+
+/** 三次ベジェのS字カーブ */
+export function bezier3_interpolate_s<T extends vc.Vector<T>>(p0: T, p1: T, d: T): T[] {
+    const c0 = p0.scalar(2).add(p1).scalar(1/3).sub(d);
+    const c1 = p1.scalar(2).add(p0).scalar(1/3).add(d);
+    return [p0, c0, c1, p1];
+}
+/** 三次ベジェの楕円弧カーブ */
+export function bezier3_interpolate_arc<T extends vc.Vector<T>>(p0: T, p1: T, o: T): T[] {
+    const d0 = p0.sub(o);
+    const d1 = p1.sub(o);
+    const rad = d0.angle(d1);
+    const n = bezier_arc_p(rad);
+    const c0 = p0.add(d1.scalar(n));
+    const c1 = p1.add(d0.scalar(n));
+    return [p0, c0, c1, p1];
+}

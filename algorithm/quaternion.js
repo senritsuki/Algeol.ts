@@ -1,10 +1,9 @@
 "use strict";
 /** Quaternion - クォータニオン・四元数 */
 Object.defineProperty(exports, "__esModule", { value: true });
-var ut = require("./utility");
 var vc = require("./vector");
 var mx = require("./matrix");
-var QuaternionImpl = /** @class */ (function () {
+var QuaternionImpl = (function () {
     function QuaternionImpl(real, imag) {
         this._v = [real, imag[0], imag[1], imag[2]];
     }
@@ -23,13 +22,13 @@ var QuaternionImpl = /** @class */ (function () {
     };
     // 単項演算
     QuaternionImpl.prototype.conjugate = function () {
-        return new QuaternionImpl(this.r(), vc.fn.scalar(this.i(), -1));
+        return new QuaternionImpl(this.r(), vc.scalar(this.i(), -1));
     };
     QuaternionImpl.prototype.abs2 = function () {
-        return vc.fn.ip(this._v, this._v);
+        return vc.ip(this._v, this._v);
     };
     QuaternionImpl.prototype.abs = function () {
-        return ut.sqrt(this.abs2());
+        return Math.sqrt(this.abs2());
     };
     QuaternionImpl.prototype.invAdd = function () {
         return this.scalar(-1);
@@ -67,12 +66,12 @@ var QuaternionImpl = /** @class */ (function () {
     // 二項演算
     QuaternionImpl.prototype.add = function (dist) {
         var r = this.r() + dist.r();
-        var i = vc.fn.add(this.i(), dist.i());
+        var i = vc.add(this.i(), dist.i());
         return new QuaternionImpl(r, i);
     };
     QuaternionImpl.prototype.sub = function (dist) {
         var r = this.r() + dist.r();
-        var i = vc.fn.sub(this.i(), dist.i());
+        var i = vc.sub(this.i(), dist.i());
         return new QuaternionImpl(r, i);
     };
     QuaternionImpl.prototype.mul = function (dist) {
@@ -80,16 +79,16 @@ var QuaternionImpl = /** @class */ (function () {
         var r2 = dist.r();
         var i1 = this.i();
         var i2 = dist.i();
-        var r = r1 * r2 - vc.fn.ip(i1, i2);
-        var i_1 = vc.fn.scalar(i2, r1);
-        var i_2 = vc.fn.scalar(i1, r2);
-        var i_3 = vc.fn.cp3(i1, i2);
-        var i = vc.fn.add(vc.fn.add(i_1, i_2), i_3);
+        var r = r1 * r2 - vc.ip(i1, i2);
+        var i_1 = vc.scalar(i2, r1);
+        var i_2 = vc.scalar(i1, r2);
+        var i_3 = vc.cp3(i1, i2);
+        var i = vc.add(vc.add(i_1, i_2), i_3);
         return new QuaternionImpl(r, i);
     };
     QuaternionImpl.prototype.scalar = function (n) {
         var r = this.r() * n;
-        var i = vc.fn.scalar(this.i(), n);
+        var i = vc.scalar(this.i(), n);
         return new QuaternionImpl(r, i);
     };
     // 写像

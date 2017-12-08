@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var seq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
 var mx = require("../algorithm/matrix");
@@ -25,13 +25,13 @@ seq.range(-radius, radius, 1).forEach(function (x) {
         });
     });
 });
-var duplicater = al.compositeMap(sq, [
+var duplicater = al.composite_m4(sq, [
     function (v) { return mx.trans_m4(v); },
 ]);
-var octahedrons = al.duplicateVertsAffine(octahedron.verts, duplicater)
+var octahedrons = al.duplicate_verts(octahedron.verts, duplicater)
     .map(function (v) { return new al.Geo(v, octahedron.faces); });
 wf.useBlenderCoordinateSystem();
-var data = wf.geos_to_strings('n001_octahedron', octahedrons);
+var data = wf.geos_to_strings('./_obj/n001_octahedron', octahedrons);
 var fs = require('fs');
 fs.writeFile(data.objfile, data.objstrs.join('\n'), function (err) {
     if (err)

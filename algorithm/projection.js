@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("./vector");
 var mx = require("./matrix");
-var ProjectionImpl = /** @class */ (function () {
+var ProjectionImpl = (function () {
     function ProjectionImpl(_mx, _lambda) {
         this._mx = _mx;
         this._lambda = _lambda;

@@ -301,3 +301,6 @@ exports.rgb255_to_lab = etc.composite_2f(rgb255_to_rgb01, exports.rgb01_to_lab);
 exports.lab_to_rgb255 = etc.composite_2f(exports.lab_to_rgb01, rgb01_to_rgb255);
 exports.rgb255_to_lch = etc.composite_2f(exports.rgb255_to_lab, lab_to_lch);
 exports.lch_to_rgb255 = etc.composite_2f(lch_to_lab, exports.lab_to_rgb255);
+exports.rgb01_to_lch = etc.composite_2f(exports.rgb01_to_lab, lab_to_lch);
+exports.lch_to_rgb01 = etc.composite_2f(lch_to_lab, exports.lab_to_rgb01);
+exports.clamp = function (nn, min, max) { return nn.map(function (n) { return n < min ? min : n > max ? max : n; }); };

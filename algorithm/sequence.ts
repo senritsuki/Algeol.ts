@@ -31,7 +31,7 @@ export function geo(count: number, start: number = 1, ratio: number = 2): number
 }
 
 export function range(first: number, last: number, step: number): number[] {
-    const seq: number[] = new Array(ut.floor((last - first) / step) + 1);
+    const seq: number[] = new Array(Math.floor((last - first) / step) + 1);
     for (let i = 0, n = first; n <= last; i++, n += step) {
         seq[i] = n;
     }
@@ -47,7 +47,7 @@ export function range(first: number, last: number, step: number): number[] {
 export function recurrence_relation_1(count: number, n0: number, lambda: (n0: number) => number): number[] {
     const ini: number[] = [n0];
     const seq: number[] = new Array(count);
-    const count2 = ut.min(count, ini.length);
+    const count2 = Math.min(count, ini.length);
     for (let i = 0; i < count2; i++) {
         seq[i] = ini[i];
     }
@@ -64,7 +64,7 @@ export function recurrence_relation_1(count: number, n0: number, lambda: (n0: nu
 export function recurrence_relation_2(count: number, n0: number, n1: number, lambda: (n0: number, n1: number) => number): number[] {
     const ini: number[] = [n0, n1];
     const seq: number[] = new Array(count);
-    const count2 = ut.min(count, ini.length);
+    const count2 = Math.min(count, ini.length);
     for (let i = 0; i < count2; i++) {
         seq[i] = ini[i];
     }

@@ -1,9 +1,8 @@
 "use strict";
 // Complex Number - 複素数・二元数
 Object.defineProperty(exports, "__esModule", { value: true });
-var ut = require("./utility");
 var vc = require("./vector");
-var ComplexNumberImpl = /** @class */ (function () {
+var ComplexNumberImpl = (function () {
     function ComplexNumberImpl(real, imag) {
         this._v = [real, imag];
     }
@@ -25,13 +24,13 @@ var ComplexNumberImpl = /** @class */ (function () {
         return new ComplexNumberImpl(this.r(), -this.i());
     };
     ComplexNumberImpl.prototype.abs2 = function () {
-        return vc.fn.ip(this._v, this._v);
+        return vc.ip(this._v, this._v);
     };
     ComplexNumberImpl.prototype.abs = function () {
-        return ut.sqrt(this.abs2());
+        return Math.sqrt(this.abs2());
     };
     ComplexNumberImpl.prototype.polarRad = function () {
-        return ut.atan2(this.i(), this.r());
+        return Math.atan2(this.i(), this.r());
     };
     ComplexNumberImpl.prototype.invAdd = function () {
         return this.scalar(-1);
@@ -48,11 +47,11 @@ var ComplexNumberImpl = /** @class */ (function () {
     };
     // 二項演算
     ComplexNumberImpl.prototype.add = function (dist) {
-        var v = vc.fn.add(this._v, dist._v);
+        var v = vc.add(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     ComplexNumberImpl.prototype.sub = function (dist) {
-        var v = vc.fn.sub(this._v, dist._v);
+        var v = vc.sub(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     ComplexNumberImpl.prototype.mul = function (dist) {
@@ -61,7 +60,7 @@ var ComplexNumberImpl = /** @class */ (function () {
         return new ComplexNumberImpl(r, i);
     };
     ComplexNumberImpl.prototype.scalar = function (n) {
-        var v = vc.fn.scalar(this._v, n);
+        var v = vc.scalar(this._v, n);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     // 写像
@@ -94,6 +93,6 @@ function v2_cn(v) {
 exports.v2_cn = v2_cn;
 /** (極形式の長さ, 極形式の偏角(radian)) -> 複素数 */
 function polar_cn(r, rad) {
-    return new ComplexNumberImpl(r * ut.cos(rad), r * ut.sin(rad));
+    return new ComplexNumberImpl(r * Math.cos(rad), r * Math.sin(rad));
 }
 exports.polar_cn = polar_cn;

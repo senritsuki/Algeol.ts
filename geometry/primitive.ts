@@ -31,7 +31,7 @@ export namespace fn {
          */
         export function verts_c(n_gonal: number, r: number, t: number = 0): V2[] {
             const theta = ut.deg360 / (n_gonal * 2);
-            const r2 = r / ut.cos(theta);
+            const r2 = r / Math.cos(theta);
             const p2 = t + theta;
             return verts_i(n_gonal, r2, p2);
         }
@@ -71,14 +71,14 @@ export function extrude(verts: V2[], z: number): al.Geo {
 
 /** プリミティブオブジェクト生成用関数群 */
 export namespace fn {
-    const deg120_c = ut.cos(120 * ut.pi / 180);
-    const deg120_s = ut.sin(120 * ut.pi / 180);
-    const deg240_c = ut.cos(240 * ut.pi / 180);
-    const deg240_s = ut.sin(240 * ut.pi / 180);
+    const deg120_c = Math.cos(120 * ut.pi / 180);
+    const deg120_s = Math.sin(120 * ut.pi / 180);
+    const deg240_c = Math.cos(240 * ut.pi / 180);
+    const deg240_s = Math.sin(240 * ut.pi / 180);
 
-    const tetrahedron_rad = ut.acos(-1 / 3); // 正4面体の半径:高さ = 3:4
-    const tetrahedron_c = ut.cos(tetrahedron_rad);
-    const tetrahedron_s = ut.sin(tetrahedron_rad);
+    const tetrahedron_rad = Math.acos(-1 / 3); // 正4面体の半径:高さ = 3:4
+    const tetrahedron_c = Math.cos(tetrahedron_rad);
+    const tetrahedron_s = Math.sin(tetrahedron_rad);
 
     // +xを右、+yを奥、+zを上、と考える（Blender）
     
@@ -134,16 +134,11 @@ export namespace fn {
             ];
         }
     }
-    /** Cube - 正6面体・立方体 */
-    export namespace cube {
-        /** 原点中心の半径rの球に外接する立方体の頂点8つ
-            (+-1, +-1, +-1)の組み合わせで8点とする */
-        export function verts(r: number): V3[] {
-            return verts_xyz(r, r, r);
-        }
+    /** Cuboid - 直方体 */
+    export namespace cuboid {
         /** 直方体の頂点8つ
             頂点の順序は立方体と同じであり、同じface配列を流用可能 */
-        export function verts_xyz(x: number, y: number, z: number): V3[] {
+        export function verts(x: number, y: number, z: number): V3[] {
             return [
                 vc.v3(x, y, z),    // 上 右奥
                 vc.v3(-x, y, z),   // 上 左奥
@@ -155,8 +150,7 @@ export namespace fn {
                 vc.v3(x, -y, -z),  // 下 右前
             ];
         }
-        /** 立方体の面6つ
-            面は全て合同の正方形である */
+        /** 直方体の面6つ */
         export function faces(): number[][] {
             return [
                 [0, 1, 2, 3], // 上
@@ -166,6 +160,19 @@ export namespace fn {
                 [6, 7, 3, 2], // 前
                 [7, 4, 0, 3], // 右
             ];
+        }
+    }
+    /** Cube - 正6面体・立方体 */
+    export namespace cube {
+        /** 原点中心の半径rの球に外接する立方体の頂点8つ
+            (+-1, +-1, +-1)の組み合わせで8点とする */
+        export function verts(r: number): V3[] {
+            return cuboid.verts(r, r, r);
+        }
+        /** 立方体の面6つ
+            面は全て合同の正方形である */
+        export function faces(): number[][] {
+            return cuboid.faces();
         }
     }
     /** 原点を含みxy平面・yz平面・zx平面に平行で合同な長方形3枚 */
@@ -228,7 +235,7 @@ export namespace fn {
         /** 原点中心の半径rの球に内接する正20面体の頂点12個
             球に内接する長方形3枚の頂点を流用する */
         export function verts(r: number): V3[] {
-            const s = r / ut.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
+            const s = r / Math.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
             const l = s * ut.phi;
             return fn.trirect.verts(l, s);
         }
@@ -272,7 +279,7 @@ export namespace fn {
         /** 円に外接するn角形 */
         export function verts_c(n_gonal: number, r: number, t: number = 0, z: number = 0): V3[] {
             const theta = ut.deg360 / (n_gonal * 2);
-            const r2 = r / ut.cos(theta);
+            const r2 = r / Math.cos(theta);
             const p2 = t + theta;
             return verts_i(n_gonal, r2, p2, z);
         }
@@ -389,6 +396,15 @@ export function cube(r: number): al.Geo {
     return geometry(fn.cube.verts(r), fn.cube.faces());
 }
 /**
+ * Cuboid - 直方体
+ * @param x 
+ * @param y 
+ * @param z 
+ */
+export function cuboid(x: number, y: number, z: number): al.Geo {
+    return geometry(fn.cuboid.verts(x, y, z), fn.cuboid.faces());
+}
+/**
  * Dodecahedron - 正12面体
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
@@ -430,4 +446,13 @@ export function pyramid(n_gonal: number, r: number, h: number): al.Geo {
  */
 export function bipyramid(n_gonal: number, r: number, h: number, d: number): al.Geo {
     return geometry(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
+}
+
+/** v1とv2を対角の頂点とした直方体 */
+export function cuboid_vv(v1: number[]|V3, v2: number[]|V3): al.Geo {
+    v1 = v1 instanceof Array ? vc.array_to_v3(v1) : v1;
+    v2 = v2 instanceof Array ? vc.array_to_v3(v2) : v2;
+    const center = v1.add(v2).scalar(0.5);
+    const d = v2.sub(center);
+    return cuboid(d.x(), d.y(), d.z()).clone_translate(center);
 }

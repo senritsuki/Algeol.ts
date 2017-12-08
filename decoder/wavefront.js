@@ -1,6 +1,6 @@
 "use strict";
 /** Wavefront .obj, .mtl */
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.vert_to_str = function (v) { return 'v ' + v._v.join(' '); };
 exports.face_to_str = function (f) { return 'f ' + f.join(' '); };
 exports.__face_to_str = function (f, offset) { return ['f'].concat(f.map(function (i) { return '' + (i + offset); })).join(' '); };

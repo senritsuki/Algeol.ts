@@ -24,15 +24,15 @@ seq.range(-radius, radius, 1).forEach(x => {
     });
 });
 
-const duplicater = al.compositeMap(sq, [
+const duplicater = al.composite_m4(sq, [
     v => mx.trans_m4(v),
 ]);
 
-const octahedrons = al.duplicateVertsAffine(octahedron.verts, duplicater)
+const octahedrons = al.duplicate_verts(octahedron.verts, duplicater)
     .map(v => new al.Geo(v, octahedron.faces));
 
 wf.useBlenderCoordinateSystem();
-const data = wf.geos_to_strings('n001_octahedron', octahedrons);
+const data = wf.geos_to_strings('./_obj/n001_octahedron', octahedrons);
 
 declare const require: any;
 const fs = require('fs');

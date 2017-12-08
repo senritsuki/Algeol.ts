@@ -1,6 +1,6 @@
 "use strict";
 /** プリミティブオブジェクト */
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var al = require("./geo");
 var ut = require("../algorithm/utility");
 var sq = require("../algorithm/sequence");
@@ -33,7 +33,7 @@ var fn;
         function verts_c(n_gonal, r, t) {
             if (t === void 0) { t = 0; }
             var theta = ut.deg360 / (n_gonal * 2);
-            var r2 = r / ut.cos(theta);
+            var r2 = r / Math.cos(theta);
             var p2 = t + theta;
             return verts_i(n_gonal, r2, p2);
         }
@@ -72,13 +72,13 @@ function extrude(verts, z) {
 exports.extrude = extrude;
 /** プリミティブオブジェクト生成用関数群 */
 (function (fn) {
-    var deg120_c = ut.cos(120 * ut.pi / 180);
-    var deg120_s = ut.sin(120 * ut.pi / 180);
-    var deg240_c = ut.cos(240 * ut.pi / 180);
-    var deg240_s = ut.sin(240 * ut.pi / 180);
-    var tetrahedron_rad = ut.acos(-1 / 3); // 正4面体の半径:高さ = 3:4
-    var tetrahedron_c = ut.cos(tetrahedron_rad);
-    var tetrahedron_s = ut.sin(tetrahedron_rad);
+    var deg120_c = Math.cos(120 * ut.pi / 180);
+    var deg120_s = Math.sin(120 * ut.pi / 180);
+    var deg240_c = Math.cos(240 * ut.pi / 180);
+    var deg240_s = Math.sin(240 * ut.pi / 180);
+    var tetrahedron_rad = Math.acos(-1 / 3); // 正4面体の半径:高さ = 3:4
+    var tetrahedron_c = Math.cos(tetrahedron_rad);
+    var tetrahedron_s = Math.sin(tetrahedron_rad);
     // +xを右、+yを奥、+zを上、と考える（Blender）
     /** Tetrahedron - 正4面体 */
     var tetrahedron;
@@ -138,18 +138,12 @@ exports.extrude = extrude;
         }
         octahedron.faces = faces;
     })(octahedron = fn.octahedron || (fn.octahedron = {}));
-    /** Cube - 正6面体・立方体 */
-    var cube;
-    (function (cube) {
-        /** 原点中心の半径rの球に外接する立方体の頂点8つ
-            (+-1, +-1, +-1)の組み合わせで8点とする */
-        function verts(r) {
-            return verts_xyz(r, r, r);
-        }
-        cube.verts = verts;
+    /** Cuboid - 直方体 */
+    var cuboid;
+    (function (cuboid) {
         /** 直方体の頂点8つ
             頂点の順序は立方体と同じであり、同じface配列を流用可能 */
-        function verts_xyz(x, y, z) {
+        function verts(x, y, z) {
             return [
                 vc.v3(x, y, z),
                 vc.v3(-x, y, z),
@@ -161,9 +155,8 @@ exports.extrude = extrude;
                 vc.v3(x, -y, -z),
             ];
         }
-        cube.verts_xyz = verts_xyz;
-        /** 立方体の面6つ
-            面は全て合同の正方形である */
+        cuboid.verts = verts;
+        /** 直方体の面6つ */
         function faces() {
             return [
                 [0, 1, 2, 3],
@@ -173,6 +166,22 @@ exports.extrude = extrude;
                 [6, 7, 3, 2],
                 [7, 4, 0, 3],
             ];
+        }
+        cuboid.faces = faces;
+    })(cuboid = fn.cuboid || (fn.cuboid = {}));
+    /** Cube - 正6面体・立方体 */
+    var cube;
+    (function (cube) {
+        /** 原点中心の半径rの球に外接する立方体の頂点8つ
+            (+-1, +-1, +-1)の組み合わせで8点とする */
+        function verts(r) {
+            return cuboid.verts(r, r, r);
+        }
+        cube.verts = verts;
+        /** 立方体の面6つ
+            面は全て合同の正方形である */
+        function faces() {
+            return cuboid.faces();
         }
         cube.faces = faces;
     })(cube = fn.cube || (fn.cube = {}));
@@ -242,7 +251,7 @@ exports.extrude = extrude;
         /** 原点中心の半径rの球に内接する正20面体の頂点12個
             球に内接する長方形3枚の頂点を流用する */
         function verts(r) {
-            var s = r / ut.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
+            var s = r / Math.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
             var l = s * ut.phi;
             return fn.trirect.verts(l, s);
         }
@@ -294,7 +303,7 @@ exports.extrude = extrude;
             if (t === void 0) { t = 0; }
             if (z === void 0) { z = 0; }
             var theta = ut.deg360 / (n_gonal * 2);
-            var r2 = r / ut.cos(theta);
+            var r2 = r / Math.cos(theta);
             var p2 = t + theta;
             return verts_i(n_gonal, r2, p2, z);
         }
@@ -426,6 +435,16 @@ function cube(r) {
 }
 exports.cube = cube;
 /**
+ * Cuboid - 直方体
+ * @param x
+ * @param y
+ * @param z
+ */
+function cuboid(x, y, z) {
+    return geometry(fn.cuboid.verts(x, y, z), fn.cuboid.faces());
+}
+exports.cuboid = cuboid;
+/**
  * Dodecahedron - 正12面体
  * @param   r   radius of circumscribed sphere - 外接球の半径
  */
@@ -472,3 +491,12 @@ function bipyramid(n_gonal, r, h, d) {
     return geometry(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
 }
 exports.bipyramid = bipyramid;
+/** v1とv2を対角の頂点とした直方体 */
+function cuboid_vv(v1, v2) {
+    v1 = v1 instanceof Array ? vc.array_to_v3(v1) : v1;
+    v2 = v2 instanceof Array ? vc.array_to_v3(v2) : v2;
+    var center = v1.add(v2).scalar(0.5);
+    var d = v2.sub(center);
+    return cuboid(d.x(), d.y(), d.z()).clone_translate(center);
+}
+exports.cuboid_vv = cuboid_vv;

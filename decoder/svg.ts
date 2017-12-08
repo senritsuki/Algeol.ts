@@ -14,15 +14,15 @@ export function svg(inner: string, width: number, height: number, viewbox_width:
 
 /** (直線) -> <line> */
 export function curve_line(line: cv.Curve2, stroke: string, strokeWidth: number): string {
-    const c1 = line.startPoint();
-    const c2 = line.endPoint();
+    const c1 = line.start();
+    const c2 = line.end();
     return `<line stroke="${stroke}" stroke-width="${strokeWidth}" x1="${c1.x()}" y1="${c1.y()}" x2="${c2.x()}" y2="${c2.y()}" />`;
 }
 
 /** (連続直線) -> <path> */
 export function curveArray_path(lines: cv.CurveArray2, fill: string, stroke: string, strokeWidth: number, z: boolean): string {
     const strs: string[] = [];
-    const c0 = lines.startPoint();
+    const c0 = lines.start();
     strs.push(`M ${c0.x()} ${c0.y()}`);
     seq.arith(lines.curveNum(), 1)
         .map(i => lines.coord(i))

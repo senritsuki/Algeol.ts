@@ -16,7 +16,7 @@ var vc = require("./vector");
 var cv = require("./curve");
 var priv;
 (function (priv) {
-    var TLTupleImpl = /** @class */ (function () {
+    var TLTupleImpl = (function () {
         function TLTupleImpl(turtle, line) {
             this.turtle = turtle;
             this.line = line;
@@ -24,7 +24,7 @@ var priv;
         return TLTupleImpl;
     }());
     priv.TLTupleImpl = TLTupleImpl;
-    var TurtleImpl = /** @class */ (function () {
+    var TurtleImpl = (function () {
         function TurtleImpl(_coord) {
             this._coord = _coord;
         }
@@ -34,7 +34,7 @@ var priv;
         return TurtleImpl;
     }());
     priv.TurtleImpl = TurtleImpl;
-    var TurtleDImpl = /** @class */ (function (_super) {
+    var TurtleDImpl = (function (_super) {
         __extends(TurtleDImpl, _super);
         function TurtleDImpl(_coord, _degree) {
             var _this = _super.call(this, _coord) || this;
@@ -46,7 +46,7 @@ var priv;
             var dir = vc.polar_to_v2(len, ut.deg_to_rad(this._degree));
             var dst = this._coord.add(dir);
             var newTurtle = new TurtleDImpl(dst, this._degree);
-            var line = cv.line2(src, dst);
+            var line = cv.line(src, dst);
             return new TLTupleImpl(newTurtle, line);
         };
         TurtleDImpl.prototype.degree = function () {
@@ -61,7 +61,7 @@ var priv;
         return TurtleDImpl;
     }(TurtleImpl));
     priv.TurtleDImpl = TurtleDImpl;
-    var TurtleVImpl = /** @class */ (function (_super) {
+    var TurtleVImpl = (function (_super) {
         __extends(TurtleVImpl, _super);
         function TurtleVImpl(_coord, _dir) {
             var _this = _super.call(this, _coord) || this;

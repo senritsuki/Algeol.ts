@@ -10,16 +10,16 @@ const cube = prim.cube(0.5);
 const sq = seq.arith(21, -10, 1).map(x => seq.arith(21, -10, 1).map(y => vc.v2(x, y)))
     .reduce((a, b) => a.concat(b));
 
-const duplicater = al.compositeMap(sq, [
+const duplicater = al.composite_m4(sq, [
     v => mx.trans_m4([v.x(), v.y(), 0.5]),
     v => mx.scale_m4([1, 1, 1 + Math.min(12, v.length())]),
 ]);
 
-const cubes = al.duplicateVertsAffine(cube.verts, duplicater)
+const cubes = al.duplicate_verts(cube.verts, duplicater)
     .map(v => new al.Geo(v, cube.faces));
 
 wf.useBlenderCoordinateSystem();
-const data = wf.geos_to_strings('w001_concave', cubes);
+const data = wf.geos_to_strings('./_obj/w001_concave', cubes);
 
 declare const require: any;
 const fs = require('fs');

@@ -1,6 +1,6 @@
 "use strict";
 /** Sequence - 数列 */
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("./utility");
 /**
  * Arithmetic Sequence - 等差数列
@@ -35,7 +35,7 @@ function geo(count, start, ratio) {
 }
 exports.geo = geo;
 function range(first, last, step) {
-    var seq = new Array(ut.floor((last - first) / step) + 1);
+    var seq = new Array(Math.floor((last - first) / step) + 1);
     for (var i = 0, n = first; n <= last; i++, n += step) {
         seq[i] = n;
     }
@@ -51,7 +51,7 @@ exports.range = range;
 function recurrence_relation_1(count, n0, lambda) {
     var ini = [n0];
     var seq = new Array(count);
-    var count2 = ut.min(count, ini.length);
+    var count2 = Math.min(count, ini.length);
     for (var i = 0; i < count2; i++) {
         seq[i] = ini[i];
     }
@@ -68,7 +68,7 @@ exports.recurrence_relation_1 = recurrence_relation_1;
 function recurrence_relation_2(count, n0, n1, lambda) {
     var ini = [n0, n1];
     var seq = new Array(count);
-    var count2 = ut.min(count, ini.length);
+    var count2 = Math.min(count, ini.length);
     for (var i = 0; i < count2; i++) {
         seq[i] = ini[i];
     }

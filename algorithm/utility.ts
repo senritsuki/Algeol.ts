@@ -1,44 +1,14 @@
 ﻿
-// --------------------------------------------------------
-// 基本演算
-// ※自作に挑戦しようとも考えたが、組み込みMathオブジェクトを使う
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Math
-
-/** = Math.sqrt */
-export const sqrt = Math.sqrt;
-/** = Math.pow */
-export const pow = Math.pow;
-/** = Math.cos */
-export const cos = Math.cos;
-/** = Math.sin */
-export const sin = Math.sin;
-/** = Math.acos */
-export const acos = Math.acos;
-/** = Math.atan2 */
-export const atan2 = Math.atan2;
-/** = Math.min */
-export const min = Math.min;
-/** = Math.max */
-export const max = Math.max;
-/** = Math.floor */
-export const floor = Math.floor;
-/** = Math.ceil */
-export const ceil = Math.ceil;
-/** = Math.round */
-export const round = Math.round;
-/** = Math.abs */
-export const abs = Math.abs;
-
 
 // --------------------------------------------------------
 // 定数
 
 /** Square Root of 2 - 2の平方根 (≒ 1.414) */
-export const r2 = sqrt(2);
+export const r2 = Math.sqrt(2);
 /** Square Root of 3 - 3の平方根 (≒ 1.732) */
-export const r3 = sqrt(3);
+export const r3 = Math.sqrt(3);
 /** Square Root of 5 - 5の平方根 (≒ 2.236) */
-export const r5 = sqrt(5);
+export const r5 = Math.sqrt(5);
 
 /** 円周率 (≒ 3.14) */
 export const pi = Math.PI;
@@ -108,7 +78,7 @@ export const factorial = (n: number): number => priv.reduce_mul(priv.sequence(n,
  * (5, 5) -> 1
  */
 export function combination(n: number, k: number): number {
-    const k2 = min(k, n - k);
+    const k2 = Math.min(k, n - k);
     return priv.reduce_mul(priv.sequence(k2, n, -1)) / factorial(k2);
 }
 
@@ -139,7 +109,7 @@ type float = number;
  * @param t
  */
 export function bernstein_basis(n: int, i: int, t: float): float {
-    return combination(n, i) * pow(1 - t, n - i) * pow(t, i);
+    return combination(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
 }
 
 /**
@@ -233,3 +203,4 @@ namespace priv {
         return seq;
     };
 }
+

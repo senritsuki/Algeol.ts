@@ -319,3 +319,6 @@ export const lch_to_rgb255 = etc.composite_2f(lch_to_lab, lab_to_rgb255);
 
 export const rgb01_to_lch = etc.composite_2f(rgb01_to_lab, lab_to_lch);
 export const lch_to_rgb01 = etc.composite_2f(lch_to_lab, lab_to_rgb01);
+
+
+export const clamp = (nn: number[], min: number, max: number): number[] => nn.map(n => n < min ? min : n > max ? max : n);

@@ -59,7 +59,7 @@ namespace priv {
             const dir = vc.polar_to_v2(len, ut.deg_to_rad(this._degree));
             const dst = this._coord.add(dir);
             const newTurtle = new TurtleDImpl(dst, this._degree);
-            const line = cv.line2(src, dst);
+            const line = cv.line(src, dst);
             return new TLTupleImpl<TurtleDImpl, vc.V2>(newTurtle, line);
         }
         degree(): number {

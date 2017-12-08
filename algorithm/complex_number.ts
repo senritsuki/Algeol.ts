@@ -1,6 +1,5 @@
 ﻿// Complex Number - 複素数・二元数
 
-import * as ut from "./utility";
 import * as vc from "./vector";
 
 
@@ -85,13 +84,13 @@ class ComplexNumberImpl implements ComplexNumber {
         return new ComplexNumberImpl(this.r(), -this.i());
     }
     abs2(): number {
-        return vc.fn.ip(this._v, this._v);
+        return vc.ip(this._v, this._v);
     }
     abs(): number {
-        return ut.sqrt(this.abs2());
+        return Math.sqrt(this.abs2());
     }
     polarRad(): number {
-        return ut.atan2(this.i(), this.r());
+        return Math.atan2(this.i(), this.r());
     }
     invAdd(): ComplexNumber {
         return this.scalar(-1);
@@ -112,11 +111,11 @@ class ComplexNumberImpl implements ComplexNumber {
     // 二項演算
 
     add(dist: ComplexNumber): ComplexNumber {
-        const v = vc.fn.add(this._v, dist._v);
+        const v = vc.add(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     }
     sub(dist: ComplexNumber): ComplexNumber {
-        const v = vc.fn.sub(this._v, dist._v);
+        const v = vc.sub(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     }
     mul(dist: ComplexNumber): ComplexNumber {
@@ -125,7 +124,7 @@ class ComplexNumberImpl implements ComplexNumber {
         return new ComplexNumberImpl(r, i);
     }
     scalar(n: number): ComplexNumber {
-        const v = vc.fn.scalar(this._v, n);
+        const v = vc.scalar(this._v, n);
         return new ComplexNumberImpl(v[0], v[1]);
     }
 
@@ -156,5 +155,5 @@ export function v2_cn(v: vc.V2): ComplexNumber {
 }
 /** (極形式の長さ, 極形式の偏角(radian)) -> 複素数 */
 export function polar_cn(r: number, rad: number): ComplexNumber {
-    return new ComplexNumberImpl(r * ut.cos(rad), r * ut.sin(rad));
+    return new ComplexNumberImpl(r * Math.cos(rad), r * Math.sin(rad));
 }
