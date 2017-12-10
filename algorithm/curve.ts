@@ -180,7 +180,15 @@ class NURBS<T extends vc.Vector<T>> extends CurveBase<T, NURBS<T>> {
     }
 }
 
-/** 円・楕円 */
+/**
+ * 円・楕円
+ * dx=x-o, dy=y-o
+ * (0) -> o+dx
+ * (1/4) -> o+dy
+ * (2/4) -> o-dx
+ * (3/4) -> o-dy
+ * (1) -> o+dx
+ */
 class Circle<T extends vc.Vector<T>> extends CurveBase<T, Circle<T>> {
     constructor(o: T, x: T, y: T) {
         super([o, x, y]);
@@ -197,7 +205,15 @@ class Circle<T extends vc.Vector<T>> extends CurveBase<T, Circle<T>> {
     }
 }
 
-/** 螺旋 */
+/**
+ * 螺旋
+ * dx=x-o, dy=y-o, dz=z-o
+ * (0) -> o+dx
+ * (1/4) -> o+dy+(1/4)dz
+ * (2/4) -> o-dx+(2/4)dz
+ * (3/4) -> o-dy+(3/4)dz
+ * (1) -> o+dx+dz
+ */
 class Spiral<T extends vc.Vector<T>> extends CurveBase<T, Spiral<T>> {
     constructor(o: T, x: T, y: T, z: T) {
         super([o, x, y, z]);
@@ -210,6 +226,32 @@ class Spiral<T extends vc.Vector<T>> extends CurveBase<T, Spiral<T>> {
         const o = this.v[0];
         const dx = this.v[1].sub(o).scalar(Math.cos(rad));
         const dy = this.v[2].sub(o).scalar(Math.sin(rad));
+        const dz = this.v[3].sub(o).scalar(i);
+        return o.add(dx).add(dy).add(dz);
+    }
+}
+
+/**
+ * 代数螺旋
+ * dx=x-o, dy=y-o, dz=z-o
+ * (0) -> o
+ * (1/4) -> o+(1/4)dy+(1/4)dz
+ * (2/4) -> o-(2/4)dx+(2/4)dz
+ * (3/4) -> o-(3/4)dy+(3/4)dz
+ * (1) -> o+a*dx+dz
+ */
+class ArchimedeanSpiral<T extends vc.Vector<T>> extends CurveBase<T, Spiral<T>> {
+    constructor(o: T, x: T, y: T, z: T) {
+        super([o, x, y, z]);
+    }
+    clone(): Spiral<T> {
+        return new Spiral(this.v[0], this.v[1], this.v[2], this.v[3]);
+    }
+    coord(i: number): T {
+        const rad = i * ut.deg360;
+        const o = this.v[0];
+        const dx = this.v[1].sub(o).scalar(i * Math.cos(rad));
+        const dy = this.v[2].sub(o).scalar(i * Math.sin(rad));
         const dz = this.v[3].sub(o).scalar(i);
         return o.add(dx).add(dy).add(dz);
     }
@@ -290,16 +332,43 @@ export function nurbs<T extends vc.Vector<T>>(controlPoints: T[], degree: number
     return new NURBS<T>(controlPoints, degree, knots, weights);
 }
 
-
-/** 楕円 */
+/**
+ * 円・楕円
+ * dx=x-o, dy=y-o
+ * (0) -> o+dx
+ * (1/4) -> o+dy
+ * (2/4) -> o-dx
+ * (3/4) -> o-dy
+ * (1) -> o+dx
+ */
 export function circle<T extends vc.Vector<T>>(o: T, x: T, y: T): Curve<T> {
     return new Circle<T>(o, x, y);
 }
-
-/** 螺旋 */
+/**
+ * 螺旋
+ * dx=x-o, dy=y-o, dz=z-o
+ * (0) -> o+dx
+ * (1/4) -> o+dy+(1/4)dz
+ * (2/4) -> o-dx+(2/4)dz
+ * (3/4) -> o-dy+(3/4)dz
+ * (1) -> o+dx+dz
+ */
 export function spiral<T extends vc.Vector<T>>(o: T, x: T, y: T, z: T): Curve<T> {
     return new Spiral<T>(o, x, y, z);
 }
+/**
+ * 代数螺旋
+ * dx=x-o, dy=y-o, dz=z-o
+ * (0) -> o
+ * (1/4) -> o+(1/4)dy+(1/4)dz
+ * (2/4) -> o-(2/4)dx+(2/4)dz
+ * (3/4) -> o-(3/4)dy+(3/4)dz
+ * (1) -> o+a*dx+dz
+ */
+export function archimedean_spiral<T extends vc.Vector<T>>(o: T, x: T, y: T, z: T): Curve<T> {
+    return new ArchimedeanSpiral<T>(o, x, y, z);
+}
+
 
 /** 連続曲線 */
 export function curves<T extends vc.Vector<T>>(curveArray: Curve<T>[]): CurveArray<T> {
