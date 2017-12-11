@@ -92,6 +92,8 @@ export const g0columnFloor = antiprism(4, rpzl(4, 0.25, 0.25, [-0.75, -0.25, 0.2
 export const g0cube = g1zpICube.clone_apply(v => mx.scale_m4([0.5, 0.5, 0.5]).map_v3(v, 1));
 export const g0crys4 = prim.tetrahedron(0.5).clone_apply(v => mx.scale_m4([0.5, 0.5, 1]).mul(mx.trans_m4([0, 0, 0.5])).map_v3(v, 1));
 
+const merge_geos = (name: string, geos: al.Geo[]): al.Obj => al.merge_geos(geos, null, name);
+const merge_objs = (objs: al.Obj[]): al.Obj[] =>
 
 // 塔
 export namespace node {
@@ -113,7 +115,7 @@ export namespace node {
             vc.v3(nr25 / ut.r2, nr25 / ut.r2, 0),
             vc.v3(0.5, 1.5, 0),
         ],
-        al.composite_m4<number>(seq.arith(4),
+        al.compose<number>(seq.arith(4),
             [d => mx.rotZ_m4(ut.deg90 * d)]
         )
     ).reduce((a, b) => a.concat(b), <vc.V3[]>[]);
@@ -122,7 +124,7 @@ export namespace node {
             vc.v3(1.5, -0.5, 0),
             vc.v3(1.5, 0.5, 0),
         ],
-        al.composite_m4<number>(seq.arith(6),
+        al.compose<number>(seq.arith(6),
             [d => mx.rotZ_m4(ut.deg60 * d)]
         )
     ).reduce((a, b) => a.concat(b), <vc.V3[]>[]);
@@ -136,10 +138,10 @@ export namespace node {
     const gRing = extrudeZZ(vRing, -nRingD, nRingD);
     const mapRingFloor = (v: vc.V3) => mx.trans_m4([0, 0, -nRingD]).mul(mx.scale_m4([1, 1, 1.5])).map_v3(v, 1);
     const mapRingArch = (v: vc.V3) => mx.trans_m4([0, 0, nColumnH - nArchWallHeight]).mul(mx.scale_m4([1, 1, 0.25])).map_v3(v, 1)
-    export const g4Rings = al.duplicate(gRing, al.composite_m4<number>(
+    export const g4Rings = al.duplicate(gRing, al.compose<number>(
         seq.arith(vxyFloor4.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rotZ_atan2_m4(vxyFloor4[i])]));
-    export const g6Rings = al.duplicate(gRing, al.composite_m4<number>(
+    export const g6Rings = al.duplicate(gRing, al.compose<number>(
         seq.arith(vxyFloor6.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rotZ_atan2_m4(vxyFloor6[i])]));
     export const g4FloorRings = g4Rings.map(g => g.clone_apply(v => mapRingFloor(v)));
@@ -152,18 +154,18 @@ export namespace node {
     export const g6BottomRings = g6FloorRings.map(g => g.clone_apply(v => v.sub(vc.v3(0, 0, nUnderFloorD))));
 
     const gColumn = antiprism(4, rpzl(4, 1 / 16, 1 / 32, seq.arith(7, 0, (nColumnH - 0.25) / 6)));
-    export const g4Columns = al.duplicate(gColumn, al.composite_m4<number>(
+    export const g4Columns = al.duplicate(gColumn, al.compose<number>(
         seq.arith(vxyFloor4.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rotZ_atan2_m4(vxyFloor4[i])]));
-    export const g6Columns = al.duplicate(gColumn, al.composite_m4<number>(
+    export const g6Columns = al.duplicate(gColumn, al.compose<number>(
         seq.arith(vxyFloor6.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rotZ_atan2_m4(vxyFloor6[i])]));
 
     const gColumnUnder = antiprism(4, rpzl(4, 1 / 16, 1 / 32, seq.arith(7, -nUnderFloorD, (nUnderFloorD - 0.25) / 6)));
-    export const g4ColumnUnders = al.duplicate(gColumnUnder, al.composite_m4<number>(
+    export const g4ColumnUnders = al.duplicate(gColumnUnder, al.compose<number>(
         seq.arith(vxyFloor4.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rotZ_atan2_m4(vxyFloor4[i])]));
-    export const g6ColumnUnders = al.duplicate(gColumnUnder, al.composite_m4<number>(
+    export const g6ColumnUnders = al.duplicate(gColumnUnder, al.compose<number>(
         seq.arith(vxyFloor6.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rotZ_atan2_m4(vxyFloor6[i])]));
 
@@ -188,20 +190,20 @@ export namespace node {
     export const g4RoofBase = g4Floor.clone_apply(v => v.add(vc.v3(0, 0, nColumnH)));
     export const g6RoofBase = g6Floor.clone_apply(v => v.add(vc.v3(0, 0, nColumnH)));
 
-    const mapsRoofA = al.composite_m4_to_m4<vc.V2>([vc.v2(1, nColumnH), vc.v2(0.625, nColumnH + 0.75), vc.v2(1 / 64, nColumnH + nRoofH * 0.875)],
+    const mapsRoofA = al.composite_m4<vc.V2>([vc.v2(1, nColumnH), vc.v2(0.625, nColumnH + 0.75), vc.v2(1 / 64, nColumnH + nRoofH * 0.875)],
         [d => mx.scale_m4([d.x(), d.x(), 1]), d => mx.trans_m4([0, 0, d.y()])]);
     export const g4RoofAm = multi.prismArray_pyramid(mapsRoofA.map(m => vxyFloor4.map(v => m.map_v3(v, 1))), vc.v3(0, 0, nColumnH + nRoofH));
     export const g6RoofAm = multi.prismArray_pyramid(mapsRoofA.map(m => vxyFloor6.map(v => m.map_v3(v, 1))), vc.v3(0, 0, nColumnH + nRoofH));
 
     const gRoofAs = prim.pyramid(4, 1 / 12, nRoofH / 4);
-    export const g4RoofAs = al.duplicate(gRoofAs, al.composite_m4<number>(
+    export const g4RoofAs = al.duplicate(gRoofAs, al.compose<number>(
         seq.arith(vxyFloor4.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, nColumnH]), i => rotZ_atan2_m4(vxyFloor4[i])]));
-    export const g6RoofAs = al.duplicate(gRoofAs, al.composite_m4<number>(
+    export const g6RoofAs = al.duplicate(gRoofAs, al.compose<number>(
         seq.arith(vxyFloor6.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, nColumnH]), i => rotZ_atan2_m4(vxyFloor6[i])]));
 
-    const mapsRoofB = al.composite_m4_to_m4<vc.V2>(seq.arith(12, 0, ut.deg90 / 12).map(rad => vc.v2(Math.cos(rad), nColumnH + nr25 * Math.sin(rad))),
+    const mapsRoofB = al.composite_m4<vc.V2>(seq.arith(12, 0, ut.deg90 / 12).map(rad => vc.v2(Math.cos(rad), nColumnH + nr25 * Math.sin(rad))),
         [d => mx.scale_m4([d.x(), d.x(), 1]), d => mx.trans_m4([0, 0, d.y()])]);
     export const g4RoofB = multi.prismArray_pyramid(mapsRoofB.map(m => vxyFloor4.map(v => m.map_v3(v, 1))), vc.v3(0, 0, nColumnH + nr25));
     export const g6RoofB = multi.prismArray_pyramid(mapsRoofB.map(m => vxyFloor6.map(v => m.map_v3(v, 1))), vc.v3(0, 0, nColumnH + nr25));
@@ -220,71 +222,71 @@ export namespace node {
     const seq6Obj1 = seq.arith(vxyFloor6.length).filter(i => i % 2 != 1);
     const seq6Obj2 = seq.arith(vxyFloor6.length).filter(i => i % 2 == 1);
 
-    export const g4RoofC1 = al.duplicate(gCrys, al.composite_m4<number>(seq.arith(vxyFloor4.length),
+    export const g4RoofC1 = al.duplicate(gCrys, al.compose<number>(seq.arith(vxyFloor4.length),
         [i => mx.scale_m4([1, 1, (2 + i % 3) / 2]), _ => mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]), i => rotZ_atan2_m4(vxyFloor4[i])]));
-    export const g4RoofC2 = al.duplicate(gObj1, al.composite_m4<number>(seq4Obj1,
+    export const g4RoofC2 = al.duplicate(gObj1, al.compose<number>(seq4Obj1,
         [i => mx.trans_m4([nr25 * nInner, 0, (2 + i % 3) / 2 + nFloorD / 2]), i => rotZ_atan2_m4(vxyFloor4[i])]));
-    export const g4RoofC3 = al.duplicate(gObj2, al.composite_m4<number>(seq4Obj2,
+    export const g4RoofC3 = al.duplicate(gObj2, al.compose<number>(seq4Obj2,
         [i => mx.trans_m4([nr25 * nInner, 0, (2 + i % 3) / 2 + nFloorD / 2]), i => rotZ_atan2_m4(vxyFloor4[i])]));
-    export const g6RoofC1 = al.duplicate(gCrys, al.composite_m4<number>(seq.arith(vxyFloor6.length),
+    export const g6RoofC1 = al.duplicate(gCrys, al.compose<number>(seq.arith(vxyFloor6.length),
         [i => mx.scale_m4([1, 1, (2 + 2 * (i % 2)) / 2]), _ => mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]), i => rotZ_atan2_m4(vxyFloor6[i])]));
-    export const g6RoofC2 = al.duplicate(gObj1, al.composite_m4<number>(seq6Obj1,
+    export const g6RoofC2 = al.duplicate(gObj1, al.compose<number>(seq6Obj1,
         [i => mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]), i => rotZ_atan2_m4(vxyFloor6[i])]));
-    export const g6RoofC3 = al.duplicate(gObj2, al.composite_m4<number>(seq6Obj2,
+    export const g6RoofC3 = al.duplicate(gObj2, al.compose<number>(seq6Obj2,
         [i => mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]), i => rotZ_atan2_m4(vxyFloor6[i])]));
 
-    const mapsBottom = al.composite_m4_to_m4<vc.V2>(
+    const mapsBottom = al.composite_m4<vc.V2>(
         [vc.v2(1, 0), vc.v2(1, -0.25), vc.v2(0.75, -0.5), vc.v2(0.5, -1.5), vc.v2(0.25, -6), vc.v2(1 / 16, -30)].map(v => v.sub(vc.v2(0, nUnderFloorD))),
         [d => mx.scale_m4([d.x(), d.x(), 1]), d => mx.trans_m4([0, 0, d.y()])]);
     export const g4Bottom = multi.prismArray_pyramid(mapsBottom.map(m => vxyFloor4.map(v => m.map_v3(v, 1))), vc.v3(0, 0, -256));
     export const g6Bottom = multi.prismArray_pyramid(mapsBottom.map(m => vxyFloor6.map(v => m.map_v3(v, 1))), vc.v3(0, 0, -256));
 
-    export const gdFloor4 = al.geoDict([
-        al.geoGroup('floor', [g4Floor]),
-        al.geoGroup('floor', [g4Bottom]),
-        al.geoGroup('wall', [g4FloorRings, g4BottomRings, g4ColumnUnders].reduce((a, b) => a.concat(b))),
-    ]);
-    export const gdFloor6 = al.geoDict([
-        al.geoGroup('floor', [g6Floor]),
-        al.geoGroup('floor', [g6Bottom]),
-        al.geoGroup('wall', [g6FloorRings, g6BottomRings, g6ColumnUnders].reduce((a, b) => a.concat(b))),
-    ]);
+    export const gdFloor4 = [
+        merge_geos('floor', [g4Floor]),
+        merge_geos('floor', [g4Bottom]),
+        merge_geos('wall', [g4FloorRings, g4BottomRings, g4ColumnUnders].reduce((a, b) => a.concat(b))),
+    ];
+    export const gdFloor6 = [
+        merge_geos('floor', [g6Floor]),
+        merge_geos('floor', [g6Bottom]),
+        merge_geos('wall', [g6FloorRings, g6BottomRings, g6ColumnUnders].reduce((a, b) => a.concat(b))),
+    ];
 
-    export const gdArch4 = al.geoDict([
-        al.geoGroup('wall', [g4Columns, g4ArchBars, g4ArchWalls, g4ArchRings].reduce((a, b) => a.concat(b))),
-    ]);
-    export const gdArch6 = al.geoDict([
-        al.geoGroup('wall', [g6Columns, g6ArchBars, g6ArchWalls, g6ArchRings].reduce((a, b) => a.concat(b))),
-    ]);
+    export const gdArch4 = [
+        merge_geos('wall', [g4Columns, g4ArchBars, g4ArchWalls, g4ArchRings].reduce((a, b) => a.concat(b))),
+    ];
+    export const gdArch6 = [
+        merge_geos('wall', [g6Columns, g6ArchBars, g6ArchWalls, g6ArchRings].reduce((a, b) => a.concat(b))),
+    ];
 
-    export const gdRoof4A = al.geoDict([
-        al.geoGroup('wall', [g4RoofBase]),
-        al.geoGroup('wall', g4RoofRings),
-        al.geoGroup('roof', [g4RoofAm].concat(g4RoofAs)),
-    ]);
-    export const gdRoof6A = al.geoDict([
-        al.geoGroup('wall', [g6RoofBase]),
-        al.geoGroup('wall', g6RoofRings),
-        al.geoGroup('roof', [g6RoofAm].concat(g6RoofAs)),
-    ]);
-    export const gdRoof4B = al.geoDict([
-        al.geoGroup('wall', [g4RoofBase]),
-        al.geoGroup('wall', g4RoofRings),
-        al.geoGroup('roof', [g4RoofB].concat(g4RoofAs)),
-    ]);
-    export const gdRoof6B = al.geoDict([
-        al.geoGroup('wall', [g6RoofBase]),
-        al.geoGroup('wall', g6RoofRings),
-        al.geoGroup('roof', [g6RoofB].concat(g6RoofAs)),
-    ]);
-    export const gdRoof4C = al.geoDict([
-        al.geoGroup('wall', g4RoofC1),
-        al.geoGroup('roof', g4RoofC2.concat(g4RoofC3)),
-    ]);
-    export const gdRoof6C = al.geoDict([
-        al.geoGroup('wall', g6RoofC1),
-        al.geoGroup('roof', g6RoofC2.concat(g6RoofC3)),
-    ]);
+    export const gdRoof4A = [
+        merge_geos('wall', [g4RoofBase]),
+        merge_geos('wall', g4RoofRings),
+        merge_geos('roof', [g4RoofAm].concat(g4RoofAs)),
+    ];
+    export const gdRoof6A = [
+        merge_geos('wall', [g6RoofBase]),
+        merge_geos('wall', g6RoofRings),
+        merge_geos('roof', [g6RoofAm].concat(g6RoofAs)),
+    ];
+    export const gdRoof4B = [
+        merge_geos('wall', [g4RoofBase]),
+        merge_geos('wall', g4RoofRings),
+        merge_geos('roof', [g4RoofB].concat(g4RoofAs)),
+    ];
+    export const gdRoof6B = [
+        merge_geos('wall', [g6RoofBase]),
+        merge_geos('wall', g6RoofRings),
+        merge_geos('roof', [g6RoofB].concat(g6RoofAs)),
+    ];
+    export const gdRoof4C = [
+        merge_geos('wall', g4RoofC1),
+        merge_geos('roof', g4RoofC2.concat(g4RoofC3)),
+    ];
+    export const gdRoof6C = [
+        merge_geos('wall', g6RoofC1),
+        merge_geos('roof', g6RoofC2.concat(g6RoofC3)),
+    ];
 
     export const gdFullTower4 = al.merge_geoDict([
         gdFloor4, gdArch4, gdRoof4A]);
@@ -338,23 +340,23 @@ export namespace link {
     const seqUnderZ = seq.arith(nStairCount).map(i => 2 - nLenH / 2 * Math.sin(Math.acos(1 - (0.5 + i) / (nStairCount / 2))));
 
     const gdStairSteps = seq.arith(nStairCount).map(i => al.geoDict([
-        al.geoGroup('floor', [gStairStep.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1))]),
-        al.geoGroup('wall', gRingPair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1)))),
-        al.geoGroup('wall', i % 2 != 0 ?
+        merge_geos('floor', [gStairStep.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1))]),
+        merge_geos('wall', gRingPair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1)))),
+        merge_geos('wall', i % 2 != 0 ?
             [] :
             gCrysPair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, nObjZ]).mul(mx.scale_m4([1, 1, seqOverZ[i]])).map_v3(v, 1)))),
-        al.geoGroup('roof', i % ((nStairCount - 1) / 2) != 0 ?
+        merge_geos('roof', i % ((nStairCount - 1) / 2) != 0 ?
             gObj1Pair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, nObjZ + seqOverZ[i]]).map_v3(v, 1))) :
             gObj2Pair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, nObjZ + seqOverZ[i]]).map_v3(v, 1)))),
-        al.geoGroup('wall', i % 2 != 0 ?
+        merge_geos('wall', i % 2 != 0 ?
             [] :
             gCrysPair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth]).mul(mx.scale_m4([1, 1, -seqUnderZ[i]])).map_v3(v, 1)))),
-        al.geoGroup('wall', i % ((nStairCount - 1) / 2) != 0 ?
+        merge_geos('wall', i % ((nStairCount - 1) / 2) != 0 ?
             gObj1Pair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth - seqUnderZ[i] - nObjR3 * 1.5]).map_v3(v, 1))) :
             gObj2Pair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth - seqUnderZ[i] - nObjR3 * 1.5]).map_v3(v, 1)))),
     ]));
 
-    export function shortenHorizontal(c: cv.Curve, r: number): cv.Curve {
+    export function shortenHorizontal(c: cv.Curve3, r: number): cv.Curve3 {
         const v1 = c.coord(0);
         const v2 = c.coord(1);
         const v1z = vc.v3(v1.x(), v1.y(), 0);
@@ -364,7 +366,7 @@ export namespace link {
         const v2r = v2.sub(dirH);
         return cv.line(v1r, v2r);
     }
-    export function gdLink(c: cv.Curve): al.GeoDict {
+    export function gdLink(c: cv.Curve3): al.GeoDict {
         const cs = shortenHorizontal(c, nLenH / 2);
         const v1 = cs.coord(0);
         const v2 = cs.coord(1);
@@ -376,7 +378,7 @@ export namespace link {
         const seqZ = seq.arith(count, 1).map(i => (v1.z() * (count + 1 - i) + v2.z() * i) / (count + 1));
         const mRotZ = mx.rotYZ_x_m4(dirH);
         const mTransV1 = mx.trans_v3_m4(vc.v3(v1.x(), v1.y(), 0));
-        const maps = al.composite_m4<number>(seq.arith(count), [
+        const maps = al.compose<number>(seq.arith(count), [
             i => mx.trans_m4([0, 0, seqZ[i]]),
             _ => mRotZ,
             _ => mTransV1,
@@ -387,7 +389,7 @@ export namespace link {
 
 // 島
 
-export function shortenLine(c: cv.Curve, r: number): cv.Curve {
+export function shortenLine(c: cv.Curve3, r: number): cv.Curve3 {
     const v1 = c.coord(0);
     const v2 = c.coord(1);
     const dir = v2.sub(v1).unit().scalar(r);
@@ -396,7 +398,7 @@ export function shortenLine(c: cv.Curve, r: number): cv.Curve {
     return cv.line(v1r, v2r);
 }
 
-export function gdLinkHorizontal(c: cv.Curve, geoXp: al.Geo): al.Geo {
+export function gdLinkHorizontal(c: cv.Curve3, geoXp: al.Geo): al.Geo {
     const v1 = c.coord(0);
     const v2 = c.coord(1);
     const dir = v2.sub(v1);
@@ -410,7 +412,7 @@ export function gdLinkHorizontal(c: cv.Curve, geoXp: al.Geo): al.Geo {
     ]);
     return geoXp.clone_apply(v => m.map_v3(v, 1));
 }
-export function gdLinkR15TypeA(c: cv.Curve): al.Geo {
+export function gdLinkR15TypeA(c: cv.Curve3): al.Geo {
     return gdLinkHorizontal(shortenLine(c, 1.5), g1xpznCCube);
 }
 
@@ -448,18 +450,18 @@ export function geoColumn(
 }
 
 
-export function dupl(geo: al.Geo, c: cv.Curve, ii: number[]): al.Geo[] {
+export function dupl(geo: al.Geo, c: cv.Curve3, ii: number[]): al.Geo[] {
     return al.duplicate(geo,
-        al.composite_m4<cv.CD>(ii.map(i => c.cd(i)), [
-            d => mx.rotYZ_x_m4(d.d().hadamart(vc.v3(1, 1, 0))),
-            d => mx.trans_v3_m4(d.c()),
+        al.compose<cv.CD3>(ii.map(i => c.cd(i)), [
+            d => mx.rotYZ_x_m4(d.d.hadamart(vc.v3(1, 1, 0))),
+            d => mx.trans_v3_m4(d.c),
         ]));
 }
 
 export function hexaObj() {
     al.duplicate(
         prim.bipyramid(4, 0.25, 0.5, 0.5),
-        al.composite_m4<number>(seq.arith(4), [
+        al.compose<number>(seq.arith(4), [
             _ => mx.rotX_m4(ut.deg90),
             _ => mx.trans_m4([3, 0, 0]),
             d => mx.rotZ_m4(ut.deg90 * d),

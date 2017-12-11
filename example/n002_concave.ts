@@ -10,7 +10,7 @@ const cube = prim.cube(0.5);
 const sq = seq.arith(21, -10, 1).map(x => seq.arith(21, -10, 1).map(y => vc.v2(x, y)))
     .reduce((a, b) => a.concat(b));
 
-const duplicater = al.composite_m4(sq, [
+const duplicater = al.compose(sq, [
     v => mx.trans_m4([v.x(), v.y(), 0.5]),
     v => mx.scale_m4([1, 1, 1 + Math.min(12, v.length())]),
 ]);

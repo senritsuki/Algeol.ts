@@ -145,11 +145,11 @@ export function duplicate_verts(verts: vc.V3[], maps: Array<(v: vc.V3) => vc.V3>
 }
 
 /** 任意のデータ配列を用いた合成写像の生成 */
-export function composite_m4_to_m4<T>(data: T[], lambdas: Array<(d: T) => mx.M4>): mx.M4[] {
+export function composite_m4<T>(data: T[], lambdas: Array<(d: T) => mx.M4>): mx.M4[] {
     return data.map(d => lambdas.reduce((m, lambda) => lambda(d).mul(m), mx.unit_m4));
 }
 /** 任意のデータ配列を用いた合成写像の生成 */
-export function composite_m4<T>(data: T[], lambdas: Array<(d: T) => mx.M4>): Array<(v: vc.V3) => vc.V3> {
-    return m4s_to_maps(composite_m4_to_m4(data, lambdas));
+export function compose<T>(data: T[], lambdas: Array<(d: T) => mx.M4>): Array<(v: vc.V3) => vc.V3> {
+    return m4s_to_maps(composite_m4(data, lambdas));
 }
 

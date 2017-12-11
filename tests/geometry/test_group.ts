@@ -24,7 +24,7 @@ export function test_al() {
         [vc.v3(0, 0, 0), vc.v3(1, 0, 0)],
         al.m4s_to_maps([mx.trans_m4([1, 0, 0]), mx.trans_m4([2, 0, 0])])
     ).forEach(vv => vv.forEach(v => console.log(v)));
-    al.composite_m4_to_m4<number>([0, 1], [
+    al.composite_m4<number>([0, 1], [
         d => mx.trans_m4([d + 1, 0, 0]),
         _d => mx.scale_m4([2, 2, 2]),
         d => mx.trans_m4([0, d + 1, 0]),
@@ -75,7 +75,7 @@ function test() {
     save('prismRing',
         multi.prismRing(al.duplicate_verts(
             prim.fn.circle.verts_i(4, 1),
-            al.composite_m4<number>(seq.arith(4), [
+            al.compose<number>(seq.arith(4), [
                 _d => mx.rotX_m4(ut.deg90),
                 _d => mx.trans_m4([3, 0, 0]),
                 d => mx.rotZ_m4(ut.deg90 * d),
@@ -83,7 +83,7 @@ function test() {
     save('antiprismRing',
         multi.antiprismRing(al.duplicate_verts(
             prim.fn.circle.verts_i(4, 1),
-            al.composite_m4<number>(seq.arith(8), [
+            al.compose<number>(seq.arith(8), [
                 d => mx.rotZ_m4(ut.deg45 * d),
                 _d => mx.rotX_m4(ut.deg90),
                 _d => mx.trans_m4([3, 0, 0]),

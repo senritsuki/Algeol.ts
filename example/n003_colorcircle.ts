@@ -12,7 +12,7 @@ const step = 360 / num;
 const geo = prim.prism(12, 0.5, 1.0);
 const sq = seq.arith(num);
 
-const duplicater = al.composite_m4(sq, [
+const duplicater = al.compose(sq, [
     _ => mx.trans_m4([0, 5, 0]),
     n => mx.rotZ_m4(ut.deg_to_rad(-n * step)),
 ]);

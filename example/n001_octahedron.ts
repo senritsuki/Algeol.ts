@@ -24,7 +24,7 @@ seq.range(-radius, radius, 1).forEach(x => {
     });
 });
 
-const duplicater = al.composite_m4(sq, [
+const duplicater = al.compose(sq, [
     v => mx.trans_m4(v),
 ]);
 
