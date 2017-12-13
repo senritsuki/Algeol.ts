@@ -161,12 +161,12 @@ function duplicate_verts(verts, maps) {
 }
 exports.duplicate_verts = duplicate_verts;
 /** 任意のデータ配列を用いた合成写像の生成 */
-function composite_m4_to_m4(data, lambdas) {
+function composite_m4(data, lambdas) {
     return data.map(function (d) { return lambdas.reduce(function (m, lambda) { return lambda(d).mul(m); }, mx.unit_m4); });
 }
-exports.composite_m4_to_m4 = composite_m4_to_m4;
-/** 任意のデータ配列を用いた合成写像の生成 */
-function composite_m4(data, lambdas) {
-    return m4s_to_maps(composite_m4_to_m4(data, lambdas));
-}
 exports.composite_m4 = composite_m4;
+/** 任意のデータ配列を用いた合成写像の生成 */
+function compose(data, lambdas) {
+    return m4s_to_maps(composite_m4(data, lambdas));
+}
+exports.compose = compose;

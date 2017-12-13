@@ -149,7 +149,15 @@ var NURBS = (function (_super) {
     };
     return NURBS;
 }(CurveBase));
-/** 円・楕円 */
+/**
+ * 円・楕円
+ * dx=x-o, dy=y-o
+ * (0) -> o+dx
+ * (1/4) -> o+dy
+ * (2/4) -> o-dx
+ * (3/4) -> o-dy
+ * (1) -> o+dx
+ */
 var Circle = (function (_super) {
     __extends(Circle, _super);
     function Circle(o, x, y) {
@@ -167,7 +175,15 @@ var Circle = (function (_super) {
     };
     return Circle;
 }(CurveBase));
-/** 螺旋 */
+/**
+ * 螺旋
+ * dx=x-o, dy=y-o, dz=z-o
+ * (0) -> o+dx
+ * (1/4) -> o+dy+(1/4)dz
+ * (2/4) -> o-dx+(2/4)dz
+ * (3/4) -> o-dy+(3/4)dz
+ * (1) -> o+dx+dz
+ */
 var Spiral = (function (_super) {
     __extends(Spiral, _super);
     function Spiral(o, x, y, z) {
@@ -185,6 +201,33 @@ var Spiral = (function (_super) {
         return o.add(dx).add(dy).add(dz);
     };
     return Spiral;
+}(CurveBase));
+/**
+ * 代数螺旋
+ * dx=x-o, dy=y-o, dz=z-o
+ * (0) -> o
+ * (1/4) -> o+(1/4)dy+(1/4)dz
+ * (2/4) -> o-(2/4)dx+(2/4)dz
+ * (3/4) -> o-(3/4)dy+(3/4)dz
+ * (1) -> o+a*dx+dz
+ */
+var ArchimedeanSpiral = (function (_super) {
+    __extends(ArchimedeanSpiral, _super);
+    function ArchimedeanSpiral(o, x, y, z) {
+        return _super.call(this, [o, x, y, z]) || this;
+    }
+    ArchimedeanSpiral.prototype.clone = function () {
+        return new Spiral(this.v[0], this.v[1], this.v[2], this.v[3]);
+    };
+    ArchimedeanSpiral.prototype.coord = function (i) {
+        var rad = i * ut.deg360;
+        var o = this.v[0];
+        var dx = this.v[1].sub(o).scalar(i * Math.cos(rad));
+        var dy = this.v[2].sub(o).scalar(i * Math.sin(rad));
+        var dz = this.v[3].sub(o).scalar(i);
+        return o.add(dx).add(dy).add(dz);
+    };
+    return ArchimedeanSpiral;
 }(CurveBase));
 /** 連続曲線 */
 var CurveArray = (function () {
@@ -257,16 +300,45 @@ function nurbs(controlPoints, degree, knots, weights) {
     return new NURBS(controlPoints, degree, knots, weights);
 }
 exports.nurbs = nurbs;
-/** 楕円 */
+/**
+ * 円・楕円
+ * dx=x-o, dy=y-o
+ * (0) -> o+dx
+ * (1/4) -> o+dy
+ * (2/4) -> o-dx
+ * (3/4) -> o-dy
+ * (1) -> o+dx
+ */
 function circle(o, x, y) {
     return new Circle(o, x, y);
 }
 exports.circle = circle;
-/** 螺旋 */
+/**
+ * 螺旋
+ * dx=x-o, dy=y-o, dz=z-o
+ * (0) -> o+dx
+ * (1/4) -> o+dy+(1/4)dz
+ * (2/4) -> o-dx+(2/4)dz
+ * (3/4) -> o-dy+(3/4)dz
+ * (1) -> o+dx+dz
+ */
 function spiral(o, x, y, z) {
     return new Spiral(o, x, y, z);
 }
 exports.spiral = spiral;
+/**
+ * 代数螺旋
+ * dx=x-o, dy=y-o, dz=z-o
+ * (0) -> o
+ * (1/4) -> o+(1/4)dy+(1/4)dz
+ * (2/4) -> o-(2/4)dx+(2/4)dz
+ * (3/4) -> o-(3/4)dy+(3/4)dz
+ * (1) -> o+a*dx+dz
+ */
+function archimedean_spiral(o, x, y, z) {
+    return new ArchimedeanSpiral(o, x, y, z);
+}
+exports.archimedean_spiral = archimedean_spiral;
 /** 連続曲線 */
 function curves(curveArray) {
     return new CurveArray(curveArray);

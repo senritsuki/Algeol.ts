@@ -12,7 +12,7 @@ var num = 24;
 var step = 360 / num;
 var geo = prim.prism(12, 0.5, 1.0);
 var sq = seq.arith(num);
-var duplicater = al.composite_m4(sq, [
+var duplicater = al.compose(sq, [
     function (_) { return mx.trans_m4([0, 5, 0]); },
     function (n) { return mx.rotZ_m4(ut.deg_to_rad(-n * step)); },
 ]);

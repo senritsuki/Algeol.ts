@@ -10,12 +10,12 @@ const octahedron = prim.octahedron(0.5);
 const radius = 9;
 
 const sq: vc.V3[] = [];
-seq.range(-radius, radius, 1).forEach(x => {
+seq.range_step(-radius, radius, 1).forEach(x => {
     const dx = Math.abs(x);
-    seq.range(-radius, radius, 1).forEach(y => {
+    seq.range_step(-radius, radius, 1).forEach(y => {
         const dy = Math.abs(y);
         if (dx + dy > radius) return;
-        seq.range(-radius, radius, 1).forEach(z => {
+        seq.range_step(-radius, radius, 1).forEach(z => {
             const dz = Math.abs(z);
             if (dx + dy + dz > radius) return;
             if (dx + dy + dz < radius-1) return;

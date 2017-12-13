@@ -214,10 +214,10 @@ exports.extrude = extrude;
         /** 原点中心の半径rの球に内接する正12面体の頂点20個
             球に内接する長方形3枚と立方体の頂点を流用する */
         function verts(r) {
-            var c = r / ut.r3;
-            var s = c / ut.phi;
-            var l = c * ut.phi;
-            return fn.trirect.verts(l, s).concat(fn.cube.verts(c));
+            var cube = r / ut.r3;
+            var short = cube / ut.phi;
+            var long = cube * ut.phi;
+            return fn.trirect.verts(long, short).concat(fn.cube.verts(cube));
         }
         dodecahedron.verts = verts;
         /** 正12面体の面12個
@@ -244,6 +244,7 @@ exports.extrude = extrude;
             ];
         }
         dodecahedron.faces = faces;
+        dodecahedron.rad_rot_y_to_z = ut.deg90 - Math.atan2(ut.phi * ut.phi, 1);
     })(dodecahedron = fn.dodecahedron || (fn.dodecahedron = {}));
     /** Icosahedron - 正20面体 */
     var icosahedron;
@@ -251,9 +252,9 @@ exports.extrude = extrude;
         /** 原点中心の半径rの球に内接する正20面体の頂点12個
             球に内接する長方形3枚の頂点を流用する */
         function verts(r) {
-            var s = r / Math.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
-            var l = s * ut.phi;
-            return fn.trirect.verts(l, s);
+            var short = r / Math.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
+            var long = short * ut.phi;
+            return fn.trirect.verts(long, short);
         }
         icosahedron.verts = verts;
         /** 正20面体の面20個
@@ -286,6 +287,7 @@ exports.extrude = extrude;
             ];
         }
         icosahedron.faces = faces;
+        icosahedron.rad_rot_y_to_z = ut.deg90 - Math.atan2(ut.phi, 1);
     })(icosahedron = fn.icosahedron || (fn.icosahedron = {}));
     /** Circle - 円 */
     var circle;
@@ -491,6 +493,16 @@ function bipyramid(n_gonal, r, h, d) {
     return geometry(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
 }
 exports.bipyramid = bipyramid;
+/** z軸上に頂点を置いた正12面体 */
+function rot_dodecahedron(r) {
+    return dodecahedron(r).clone_rotate_x(fn.dodecahedron.rad_rot_y_to_z);
+}
+exports.rot_dodecahedron = rot_dodecahedron;
+/** z軸上に頂点を置いた正20面体 */
+function rot_icosahedron(r) {
+    return icosahedron(r).clone_rotate_x(fn.icosahedron.rad_rot_y_to_z);
+}
+exports.rot_icosahedron = rot_icosahedron;
 /** v1とv2を対角の頂点とした直方体 */
 function cuboid_vv(v1, v2) {
     v1 = v1 instanceof Array ? vc.array_to_v3(v1) : v1;

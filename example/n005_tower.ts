@@ -5,7 +5,7 @@ import * as vc from "../algorithm/vector";
 import * as mx from "../algorithm/matrix";
 import * as cv from "../algorithm/curve";
 import * as prim from "../geometry/primitive";
-import * as multi from "../geometry/group";
+import * as multi from "../geometry/array";
 
 /** ? */
 export class RPZ {
@@ -93,7 +93,7 @@ export const g0cube = g1zpICube.clone_apply(v => mx.scale_m4([0.5, 0.5, 0.5]).ma
 export const g0crys4 = prim.tetrahedron(0.5).clone_apply(v => mx.scale_m4([0.5, 0.5, 1]).mul(mx.trans_m4([0, 0, 0.5])).map_v3(v, 1));
 
 const merge_geos = (name: string, geos: al.Geo[]): al.Obj => al.merge_geos(geos, null, name);
-const merge_objs = (objs: al.Obj[]): al.Obj[] =>
+const merge_objs = (objs: al.Obj[][]): al.Obj[][] => objs;
 
 // 塔
 export namespace node {
@@ -288,22 +288,18 @@ export namespace node {
         merge_geos('roof', g6RoofC2.concat(g6RoofC3)),
     ];
 
-    export const gdFullTower4 = al.merge_geoDict([
+    export const gdFullTower4 = merge_objs([
         gdFloor4, gdArch4, gdRoof4A]);
-    export const gdFullTower6 = al.merge_geoDict([
+    export const gdFullTower6 = merge_objs([
         gdFloor6, gdArch6, gdRoof6A]);
-    export const gdRoundTower4 = al.merge_geoDict([
+    export const gdRoundTower4 = merge_objs([
         gdFloor4, gdArch4, gdRoof4B]);
-    export const gdRoundTower6 = al.merge_geoDict([
+    export const gdRoundTower6 = merge_objs([
         gdFloor6, gdArch6, gdRoof6B]);
-    export const gdOpenTower4 = al.merge_geoDict([
+    export const gdOpenTower4 = merge_objs([
         gdFloor4, gdRoof4C]);
-    export const gdOpenTower6 = al.merge_geoDict([
+    export const gdOpenTower6 = merge_objs([
         gdFloor6, gdRoof6C]);
-
-    export function gdNode(v: vc.V3, gd: al.GeoDict): al.GeoDict {
-        return gd.clone_apply(lvTrans(v));
-    }
 }
 
 
@@ -339,7 +335,7 @@ export namespace link {
     const seqOverZ = seq.arith(nStairCount).map(i => (6 - Math.abs((nStairCount - 1) / 2 - i)) * 0.25);
     const seqUnderZ = seq.arith(nStairCount).map(i => 2 - nLenH / 2 * Math.sin(Math.acos(1 - (0.5 + i) / (nStairCount / 2))));
 
-    const gdStairSteps = seq.arith(nStairCount).map(i => al.geoDict([
+    const gdStairSteps = seq.arith(nStairCount).map(i => al.merge_objs([
         merge_geos('floor', [gStairStep.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1))]),
         merge_geos('wall', gRingPair.map(g => g.clone_apply(v => mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1)))),
         merge_geos('wall', i % 2 != 0 ?
@@ -366,7 +362,7 @@ export namespace link {
         const v2r = v2.sub(dirH);
         return cv.line(v1r, v2r);
     }
-    export function gdLink(c: cv.Curve3): al.GeoDict {
+    export function gdLink(c: cv.Curve3): al.Obj {
         const cs = shortenHorizontal(c, nLenH / 2);
         const v1 = cs.coord(0);
         const v2 = cs.coord(1);
@@ -383,7 +379,7 @@ export namespace link {
             _ => mRotZ,
             _ => mTransV1,
         ]);
-        return al.merge_geoDict(seq.arith(count).map(i => gdStairSteps[i].clone_apply(v => maps[i].map_v3(v, 1))));
+        return al.merge_objs(seq.arith(count).map(i => gdStairSteps[i].clone_apply(v => maps[i](v))));
     }
 }
 

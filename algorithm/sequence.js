@@ -34,9 +34,19 @@ function geo(count, start, ratio) {
     return seq;
 }
 exports.geo = geo;
-function range(first, last, step) {
+function range_step(first, last, step) {
     var seq = new Array(Math.floor((last - first) / step) + 1);
     for (var i = 0, n = first; n <= last; i++, n += step) {
+        seq[i] = n;
+    }
+    return seq;
+}
+exports.range_step = range_step;
+function range(first, last, count) {
+    var seq = new Array(count);
+    for (var i = 0; i < count; i++) {
+        var r = i / (count - 1); // 0.0 ... 1.0
+        var n = (1 - r) * first + r * last;
         seq[i] = n;
     }
     return seq;

@@ -7,7 +7,7 @@ import * as vc from "../../algorithm/vector";
 import * as mx from "../../algorithm/matrix";
 import * as al from "../../geometry/geo";
 import * as prim from "../../geometry/primitive";
-import * as multi from "../../geometry/group";
+import * as multi from "../../geometry/array";
 import * as wo from "../../decoder/wavefront";
 
 

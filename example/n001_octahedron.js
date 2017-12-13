@@ -9,13 +9,13 @@ var wf = require("../decoder/wavefront");
 var octahedron = prim.octahedron(0.5);
 var radius = 9;
 var sq = [];
-seq.range(-radius, radius, 1).forEach(function (x) {
+seq.range_step(-radius, radius, 1).forEach(function (x) {
     var dx = Math.abs(x);
-    seq.range(-radius, radius, 1).forEach(function (y) {
+    seq.range_step(-radius, radius, 1).forEach(function (y) {
         var dy = Math.abs(y);
         if (dx + dy > radius)
             return;
-        seq.range(-radius, radius, 1).forEach(function (z) {
+        seq.range_step(-radius, radius, 1).forEach(function (z) {
             var dz = Math.abs(z);
             if (dx + dy + dz > radius)
                 return;
@@ -25,7 +25,7 @@ seq.range(-radius, radius, 1).forEach(function (x) {
         });
     });
 });
-var duplicater = al.composite_m4(sq, [
+var duplicater = al.compose(sq, [
     function (v) { return mx.trans_m4(v); },
 ]);
 var octahedrons = al.duplicate_verts(octahedron.verts, duplicater)

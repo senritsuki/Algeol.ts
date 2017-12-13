@@ -201,10 +201,10 @@ export namespace fn {
         /** 原点中心の半径rの球に内接する正12面体の頂点20個
             球に内接する長方形3枚と立方体の頂点を流用する */
         export function verts(r: number): V3[] {
-            const c = r / ut.r3;
-            const s = c / ut.phi;
-            const l = c * ut.phi;
-            return fn.trirect.verts(l, s).concat(fn.cube.verts(c));
+            const cube = r / ut.r3;
+            const short = cube / ut.phi;
+            const long = cube * ut.phi;
+            return fn.trirect.verts(long, short).concat(fn.cube.verts(cube));
         }
         /** 正12面体の面12個
             面は全て合同の正五角形である */
@@ -229,15 +229,16 @@ export namespace fn {
                 [zx[2], cb[1], yz[3], cb[0], zx[1]], // 下 奥
             ];
         }
+        export const rad_rot_y_to_z = ut.deg90 - Math.atan2(ut.phi * ut.phi, 1);
     }
     /** Icosahedron - 正20面体 */
     export namespace icosahedron {
         /** 原点中心の半径rの球に内接する正20面体の頂点12個
             球に内接する長方形3枚の頂点を流用する */
         export function verts(r: number): V3[] {
-            const s = r / Math.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
-            const l = s * ut.phi;
-            return fn.trirect.verts(l, s);
+            const short = r / Math.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
+            const long = short * ut.phi;
+            return fn.trirect.verts(long, short);
         }
         /** 正20面体の面20個
             面は全て合同の正三角形である */
@@ -268,6 +269,7 @@ export namespace fn {
                 [zx[2], xy[1], yz[3]], // 中下 左奥
             ];
         }
+        export const rad_rot_y_to_z = ut.deg90 - Math.atan2(ut.phi, 1);
     }
     /** Circle - 円 */
     export namespace circle {
@@ -446,6 +448,15 @@ export function pyramid(n_gonal: number, r: number, h: number): al.Geo {
  */
 export function bipyramid(n_gonal: number, r: number, h: number, d: number): al.Geo {
     return geometry(fn.bipyramid.verts_i(n_gonal, r, h, d), fn.bipyramid.faces(n_gonal));
+}
+
+/** z軸上に頂点を置いた正12面体 */
+export function rot_dodecahedron(r: number): al.Geo {
+    return dodecahedron(r).clone_rotate_x(fn.dodecahedron.rad_rot_y_to_z);
+}
+/** z軸上に頂点を置いた正20面体 */
+export function rot_icosahedron(r: number): al.Geo {
+    return icosahedron(r).clone_rotate_x(fn.icosahedron.rad_rot_y_to_z);
 }
 
 /** v1とv2を対角の頂点とした直方体 */

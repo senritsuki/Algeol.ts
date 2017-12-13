@@ -30,9 +30,18 @@ export function geo(count: number, start: number = 1, ratio: number = 2): number
     return seq;
 }
 
-export function range(first: number, last: number, step: number): number[] {
+export function range_step(first: number, last: number, step: number): number[] {
     const seq: number[] = new Array(Math.floor((last - first) / step) + 1);
     for (let i = 0, n = first; n <= last; i++, n += step) {
+        seq[i] = n;
+    }
+    return seq;
+}
+export function range(first: number, last: number, count: number): number[] {
+    const seq: number[] = new Array(count);
+    for (let i = 0; i < count; i++) {
+        const r = i / (count - 1);  // 0.0 ... 1.0
+        const n = (1 - r) * first + r * last;
         seq[i] = n;
     }
     return seq;
