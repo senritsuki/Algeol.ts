@@ -8,7 +8,7 @@ type V3 = vc.V3;
 const geometry = (verts: V3[], faces: number[][]) => new al.Geo(verts, faces);
 
 /** 二次元配列の一次元化 */
-function flatten<T>(polygons: T[][]): T[] {
+export function flatten<T>(polygons: T[][]): T[] {
     return polygons
         .reduce((a, b) => a.concat(b));
 }

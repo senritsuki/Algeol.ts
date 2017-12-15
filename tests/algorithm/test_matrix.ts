@@ -14,9 +14,9 @@ export function test(): t.OkNg {
             t.dataNumArray2('m4', m4.array_rows(), [[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]]),
             t.dataNumArray2('trans_m4([3,4,5])', mx.trans_m4([3,4,5]).array_rows(), [[1,0,0,3], [0,1,0,4], [0,0,1,5], [0,0,0,1]]),
             t.dataNumArray2('scale_m3([3,4,5])', mx.scale_m3([3,4,5]).array_rows(), [[3,0,0], [0,4,0], [0,0,5]]),
-            t.dataNumArray2('rotX_m3(PI/2)', mx.rotX_m3(Math.PI/2).array_rows(), [[1,0,0], [0,0,-1], [0,1,0]]),
-            t.dataNumArray2('rotY_m3(PI/2)', mx.rotY_m3(Math.PI/2).array_rows(), [[0,0,1], [0,1,0], [-1,0,0]]),
-            t.dataNumArray2('rotZ_m3(PI/2)', mx.rotZ_m3(Math.PI/2).array_rows(), [[0,-1,0], [1,0,0], [0,0,1]]),
+            t.dataNumArray2('rotX_m3(PI/2)', mx.rot_x_m3(Math.PI/2).array_rows(), [[1,0,0], [0,0,-1], [0,1,0]]),
+            t.dataNumArray2('rotY_m3(PI/2)', mx.rot_y_m3(Math.PI/2).array_rows(), [[0,0,1], [0,1,0], [-1,0,0]]),
+            t.dataNumArray2('rotZ_m3(PI/2)', mx.rot_z_m3(Math.PI/2).array_rows(), [[0,-1,0], [1,0,0], [0,0,1]]),
         ], t.evalNumArray2, 1e-6)},
         {group: 'convert', results: t.tests([
             t.dataNumArray2('m2_m3(m2)', mx.m2_m3(m2).array_rows(), [[1,2,0], [3,4,0], [0,0,1]]),
@@ -31,9 +31,9 @@ export function test(): t.OkNg {
             t.dataNumArray('trans_m4([3,4,5]).map(v4(0,0,0,0))', mx.trans_m4([3,4,5]).map(vc.v4(0,0,0,0)).array(), [0,0,0,0]),
             t.dataNumArray('trans_m4([3,4,5]).map(v4(0,0,0,1))', mx.trans_m4([3,4,5]).map(vc.v4(0,0,0,1)).array(), [3,4,5,1]),
             t.dataNumArray('scale_m3([3,4,5]).map(v3(1,2,3))', mx.scale_m3([3,4,5]).map(vc.v3(1,2,3)).array(), [3,8,15]),
-            t.dataNumArray('rotX_m3(PI/2).map(v3(1,2,3))', mx.rotX_m3(Math.PI/2).map(vc.v3(1,2,3)).array(), [1,-3,2]),
-            t.dataNumArray('rotY_m3(PI/2).map(v3(1,2,3))', mx.rotY_m3(Math.PI/2).map(vc.v3(1,2,3)).array(), [3,2,-1]),
-            t.dataNumArray('rotZ_m3(PI/2).map(v3(1,2,3))', mx.rotZ_m3(Math.PI/2).map(vc.v3(1,2,3)).array(), [-2,1,3]),
+            t.dataNumArray('rotX_m3(PI/2).map(v3(1,2,3))', mx.rot_x_m3(Math.PI/2).map(vc.v3(1,2,3)).array(), [1,-3,2]),
+            t.dataNumArray('rotY_m3(PI/2).map(v3(1,2,3))', mx.rot_y_m3(Math.PI/2).map(vc.v3(1,2,3)).array(), [3,2,-1]),
+            t.dataNumArray('rotZ_m3(PI/2).map(v3(1,2,3))', mx.rot_z_m3(Math.PI/2).map(vc.v3(1,2,3)).array(), [-2,1,3]),
         ], t.evalNumArray, 1e-6)},
     ]);
 }

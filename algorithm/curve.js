@@ -15,7 +15,7 @@ var ut = require("./utility");
 var seq = require("./sequence");
 exports.E = 0.001;
 /** 位置ベクトルと方向ベクトルのペア */
-var CD = (function () {
+var CD = /** @class */ (function () {
     function CD(c, d) {
         this.c = c;
         this.d = d;
@@ -23,7 +23,7 @@ var CD = (function () {
     return CD;
 }());
 exports.CD = CD;
-var CurveBase = (function () {
+var CurveBase = /** @class */ (function () {
     function CurveBase(v) {
         this.v = v;
     }
@@ -51,7 +51,7 @@ var CurveBase = (function () {
     return CurveBase;
 }());
 /** (2次元ベクトル配列, 媒介変数) -> 2次元ベクトル を満たす任意の関数で定義される曲線 */
-var LambdaCurve = (function (_super) {
+var LambdaCurve = /** @class */ (function (_super) {
     __extends(LambdaCurve, _super);
     function LambdaCurve(v, _lambda) {
         var _this = _super.call(this, v) || this;
@@ -67,7 +67,7 @@ var LambdaCurve = (function (_super) {
     return LambdaCurve;
 }(CurveBase));
 /** 直線（一次曲線） */
-var Line = (function (_super) {
+var Line = /** @class */ (function (_super) {
     __extends(Line, _super);
     function Line(start, end) {
         return _super.call(this, [start, end]) || this;
@@ -83,7 +83,7 @@ var Line = (function (_super) {
     return Line;
 }(CurveBase));
 /** Bezier Curve - ベジェ曲線 */
-var BezierCurve = (function (_super) {
+var BezierCurve = /** @class */ (function (_super) {
     __extends(BezierCurve, _super);
     function BezierCurve(controls) {
         return _super.call(this, controls) || this;
@@ -100,7 +100,7 @@ var BezierCurve = (function (_super) {
     return BezierCurve;
 }(CurveBase));
 /** B-Spline Curve - Bスプライン曲線 */
-var BSplineCurve = (function (_super) {
+var BSplineCurve = /** @class */ (function (_super) {
     __extends(BSplineCurve, _super);
     function BSplineCurve(controls, degree) {
         var _this = _super.call(this, controls) || this;
@@ -120,7 +120,7 @@ var BSplineCurve = (function (_super) {
     return BSplineCurve;
 }(CurveBase));
 /** NURBS: Non-Uniform Rational B-Spline Curve */
-var NURBS = (function (_super) {
+var NURBS = /** @class */ (function (_super) {
     __extends(NURBS, _super);
     function NURBS(controls, degree, knots, weights) {
         var _this = _super.call(this, controls) || this;
@@ -158,7 +158,7 @@ var NURBS = (function (_super) {
  * (3/4) -> o-dy
  * (1) -> o+dx
  */
-var Circle = (function (_super) {
+var Circle = /** @class */ (function (_super) {
     __extends(Circle, _super);
     function Circle(o, x, y) {
         return _super.call(this, [o, x, y]) || this;
@@ -184,7 +184,7 @@ var Circle = (function (_super) {
  * (3/4) -> o-dy+(3/4)dz
  * (1) -> o+dx+dz
  */
-var Spiral = (function (_super) {
+var Spiral = /** @class */ (function (_super) {
     __extends(Spiral, _super);
     function Spiral(o, x, y, z) {
         return _super.call(this, [o, x, y, z]) || this;
@@ -211,7 +211,7 @@ var Spiral = (function (_super) {
  * (3/4) -> o-(3/4)dy+(3/4)dz
  * (1) -> o+a*dx+dz
  */
-var ArchimedeanSpiral = (function (_super) {
+var ArchimedeanSpiral = /** @class */ (function (_super) {
     __extends(ArchimedeanSpiral, _super);
     function ArchimedeanSpiral(o, x, y, z) {
         return _super.call(this, [o, x, y, z]) || this;
@@ -230,7 +230,7 @@ var ArchimedeanSpiral = (function (_super) {
     return ArchimedeanSpiral;
 }(CurveBase));
 /** 連続曲線 */
-var CurveArray = (function () {
+var CurveArray = /** @class */ (function () {
     function CurveArray(_curves) {
         this._curves = _curves;
     }

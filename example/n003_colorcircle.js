@@ -14,7 +14,7 @@ var geo = prim.prism(12, 0.5, 1.0);
 var sq = seq.arith(num);
 var duplicater = al.compose(sq, [
     function (_) { return mx.trans_m4([0, 5, 0]); },
-    function (n) { return mx.rotZ_m4(ut.deg_to_rad(-n * step)); },
+    function (n) { return mx.rot_z_m4(ut.deg_to_rad(-n * step)); },
 ]);
 var geos = al.duplicate(geo, duplicater);
 var lch = ut.composite_2f(cc.lch_to_rgb01, function (nn) { return cc.clamp(nn, 0, 1); });

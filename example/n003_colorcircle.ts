@@ -14,7 +14,7 @@ const sq = seq.arith(num);
 
 const duplicater = al.compose(sq, [
     _ => mx.trans_m4([0, 5, 0]),
-    n => mx.rotZ_m4(ut.deg_to_rad(-n * step)),
+    n => mx.rot_z_m4(ut.deg_to_rad(-n * step)),
 ]);
 
 const geos = al.duplicate(geo, duplicater);

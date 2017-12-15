@@ -76,18 +76,18 @@ function test() {
         multi.prismRing(al.duplicate_verts(
             prim.fn.circle.verts_i(4, 1),
             al.compose<number>(seq.arith(4), [
-                _d => mx.rotX_m4(ut.deg90),
+                _d => mx.rot_x_m4(ut.deg90),
                 _d => mx.trans_m4([3, 0, 0]),
-                d => mx.rotZ_m4(ut.deg90 * d),
+                d => mx.rot_z_m4(ut.deg90 * d),
             ]))));
     save('antiprismRing',
         multi.antiprismRing(al.duplicate_verts(
             prim.fn.circle.verts_i(4, 1),
             al.compose<number>(seq.arith(8), [
-                d => mx.rotZ_m4(ut.deg45 * d),
-                _d => mx.rotX_m4(ut.deg90),
+                d => mx.rot_z_m4(ut.deg45 * d),
+                _d => mx.rot_x_m4(ut.deg90),
                 _d => mx.trans_m4([3, 0, 0]),
-                d => mx.rotZ_m4(ut.deg45 * d),
+                d => mx.rot_z_m4(ut.deg45 * d),
             ]))));
 }
 test();

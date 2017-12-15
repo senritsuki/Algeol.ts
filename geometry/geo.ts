@@ -35,13 +35,13 @@ abstract class Translatable<T extends Translatable<T>> {
         return this.clone_update(this.verts.map(v2 => v2.add(v)));
     }
     clone_rotate_x(rad: number): T {
-        return this.clone_apply_m3(mx.rotX_m3(rad));
+        return this.clone_apply_m3(mx.rot_x_m3(rad));
     }
     clone_rotate_y(rad: number): T {
-        return this.clone_apply_m3(mx.rotY_m3(rad));
+        return this.clone_apply_m3(mx.rot_y_m3(rad));
     }
     clone_rotate_z(rad: number): T {
-        return this.clone_apply_m3(mx.rotZ_m3(rad));
+        return this.clone_apply_m3(mx.rot_z_m3(rad));
     }
     clone_scale(v: number[]|vc.V3): T {
         return this.clone_apply_m3(mx.scale_m3(v));

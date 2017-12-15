@@ -15,7 +15,7 @@ var mx = require("../algorithm/matrix");
 function shift_offset(face, index_offset) {
     return face.map(function (n) { return n + index_offset; });
 }
-var Translatable = (function () {
+var Translatable = /** @class */ (function () {
     function Translatable(verts) {
         this.verts = verts;
     }
@@ -37,20 +37,20 @@ var Translatable = (function () {
         return this.clone_update(this.verts.map(function (v2) { return v2.add(v); }));
     };
     Translatable.prototype.clone_rotate_x = function (rad) {
-        return this.clone_apply_m3(mx.rotX_m3(rad));
+        return this.clone_apply_m3(mx.rot_x_m3(rad));
     };
     Translatable.prototype.clone_rotate_y = function (rad) {
-        return this.clone_apply_m3(mx.rotY_m3(rad));
+        return this.clone_apply_m3(mx.rot_y_m3(rad));
     };
     Translatable.prototype.clone_rotate_z = function (rad) {
-        return this.clone_apply_m3(mx.rotZ_m3(rad));
+        return this.clone_apply_m3(mx.rot_z_m3(rad));
     };
     Translatable.prototype.clone_scale = function (v) {
         return this.clone_apply_m3(mx.scale_m3(v));
     };
     return Translatable;
 }());
-var Geo = (function (_super) {
+var Geo = /** @class */ (function (_super) {
     __extends(Geo, _super);
     function Geo(verts, faces) {
         var _this = _super.call(this, verts) || this;
@@ -63,7 +63,7 @@ var Geo = (function (_super) {
     return Geo;
 }(Translatable));
 exports.Geo = Geo;
-var Material = (function () {
+var Material = /** @class */ (function () {
     function Material(name, diffuse) {
         if (diffuse === void 0) { diffuse = null; }
         this.name = name;
@@ -72,7 +72,7 @@ var Material = (function () {
     return Material;
 }());
 exports.Material = Material;
-var FaceGroup = (function () {
+var FaceGroup = /** @class */ (function () {
     function FaceGroup(name, faces, material) {
         if (material === void 0) { material = null; }
         this.name = name;
@@ -86,7 +86,7 @@ var FaceGroup = (function () {
     return FaceGroup;
 }());
 exports.FaceGroup = FaceGroup;
-var Obj = (function (_super) {
+var Obj = /** @class */ (function (_super) {
     __extends(Obj, _super);
     function Obj(name, verts, faces) {
         var _this = _super.call(this, verts) || this;

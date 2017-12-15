@@ -9,7 +9,7 @@ var cv = require("../algorithm/curve");
 var prim = require("../geometry/primitive");
 var multi = require("../geometry/array");
 /** ? */
-var RPZ = (function () {
+var RPZ = /** @class */ (function () {
     function RPZ(r, p, z) {
         this.r = r;
         this.p = p;
@@ -67,7 +67,7 @@ function gArchBar(v1, v2, h) {
     var mid = v1.add(v2).scalar(0.5);
     var w = dir.length() / 2;
     var archBar = extrudeY(vxzArchBar(w - d1, w + d1, h - d1, h + d1), d2);
-    return archBar.clone_apply(function (v) { return mx.trans_v3_m4(mid).mul(mx.rotYZ_x_m4(dir)).map_v3(v, 1); });
+    return archBar.clone_apply(function (v) { return mx.trans_v3_m4(mid).mul(mx.rot_yz_x_m4(dir)).map_v3(v, 1); });
 }
 exports.gArchBar = gArchBar;
 function gArchWall(v1, v2, h, h2) {
@@ -76,7 +76,7 @@ function gArchWall(v1, v2, h, h2) {
     var mid = v1.add(v2).scalar(0.5);
     var w = dir.length() / 2;
     var archWall = extrudeY(vxzArchWall(w, h, h2), d2);
-    return archWall.clone_apply(function (v) { return mx.trans_v3_m4(mid).mul(mx.rotYZ_x_m4(dir)).map_v3(v, 1); });
+    return archWall.clone_apply(function (v) { return mx.trans_v3_m4(mid).mul(mx.rot_yz_x_m4(dir)).map_v3(v, 1); });
 }
 exports.gArchWall = gArchWall;
 function extrudeY(vv, d) {
@@ -96,7 +96,7 @@ function antiprism(d, rz) {
 }
 exports.antiprism = antiprism;
 exports.lvTrans = function (trans) { return function (v) { return mx.trans_v3_m4(trans).map_v3(v, 1); }; };
-exports.lvICube = function (v) { return mx.rotY_m3(-(ut.deg90 - Math.atan2(1, ut.r2))).mul(mx.rotZ_m3(-ut.deg45)).map(v); };
+exports.lvICube = function (v) { return mx.rot_y_m3(-(ut.deg90 - Math.atan2(1, ut.r2))).mul(mx.rot_z_m3(-ut.deg45)).map(v); };
 exports.g1oHalfCube = prim.cube(0.5).clone_apply(function (v) { return mx.scale_m3([1, 1, 0.5]).map(v); });
 exports.g1oICube = prim.cube(0.5 / ut.r3).clone_apply(exports.lvICube);
 exports.g1zpICube = exports.g1oICube.clone_apply(exports.lvTrans(vc.v3(0, 0, 0.5)));
@@ -124,20 +124,20 @@ var node;
         vc.v3(1.5, 0.5, 0),
         vc.v3(nr25 / ut.r2, nr25 / ut.r2, 0),
         vc.v3(0.5, 1.5, 0),
-    ], al.compose(seq.arith(4), [function (d) { return mx.rotZ_m4(ut.deg90 * d); }])).reduce(function (a, b) { return a.concat(b); }, []);
+    ], al.compose(seq.arith(4), [function (d) { return mx.rot_z_m4(ut.deg90 * d); }])).reduce(function (a, b) { return a.concat(b); }, []);
     node.vxyFloor6 = al.duplicate_verts([
         vc.v3(1.5, -0.5, 0),
         vc.v3(1.5, 0.5, 0),
-    ], al.compose(seq.arith(6), [function (d) { return mx.rotZ_m4(ut.deg60 * d); }])).reduce(function (a, b) { return a.concat(b); }, []);
+    ], al.compose(seq.arith(6), [function (d) { return mx.rot_z_m4(ut.deg60 * d); }])).reduce(function (a, b) { return a.concat(b); }, []);
     node.g4Floor = extrudeZZ(node.vxyFloor4, -nFloorD, 0);
     node.g6Floor = extrudeZZ(node.vxyFloor6, -nFloorD, 0);
-    var rotZ_atan2_m4 = function (v) { return mx.rotZ_m4(Math.atan2(v.y(), v.x())); };
+    var rot_z_atan2_m4 = function (v) { return mx.rot_z_m4(Math.atan2(v.y(), v.x())); };
     var vRing = prim.fn.circle.verts_i(6, nRingR);
     var gRing = extrudeZZ(vRing, -nRingD, nRingD);
     var mapRingFloor = function (v) { return mx.trans_m4([0, 0, -nRingD]).mul(mx.scale_m4([1, 1, 1.5])).map_v3(v, 1); };
     var mapRingArch = function (v) { return mx.trans_m4([0, 0, nColumnH - nArchWallHeight]).mul(mx.scale_m4([1, 1, 0.25])).map_v3(v, 1); };
-    node.g4Rings = al.duplicate(gRing, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor4[i]); }]));
-    node.g6Rings = al.duplicate(gRing, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor6[i]); }]));
+    node.g4Rings = al.duplicate(gRing, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
+    node.g6Rings = al.duplicate(gRing, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
     node.g4FloorRings = node.g4Rings.map(function (g) { return g.clone_apply(function (v) { return mapRingFloor(v); }); });
     node.g6FloorRings = node.g6Rings.map(function (g) { return g.clone_apply(function (v) { return mapRingFloor(v); }); });
     node.g4ArchRings = node.g4Rings.map(function (g) { return g.clone_apply(function (v) { return mapRingArch(v); }); });
@@ -147,11 +147,11 @@ var node;
     node.g4BottomRings = node.g4FloorRings.map(function (g) { return g.clone_apply(function (v) { return v.sub(vc.v3(0, 0, nUnderFloorD)); }); });
     node.g6BottomRings = node.g6FloorRings.map(function (g) { return g.clone_apply(function (v) { return v.sub(vc.v3(0, 0, nUnderFloorD)); }); });
     var gColumn = antiprism(4, rpzl(4, 1 / 16, 1 / 32, seq.arith(7, 0, (nColumnH - 0.25) / 6)));
-    node.g4Columns = al.duplicate(gColumn, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor4[i]); }]));
-    node.g6Columns = al.duplicate(gColumn, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor6[i]); }]));
+    node.g4Columns = al.duplicate(gColumn, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
+    node.g6Columns = al.duplicate(gColumn, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
     var gColumnUnder = antiprism(4, rpzl(4, 1 / 16, 1 / 32, seq.arith(7, -nUnderFloorD, (nUnderFloorD - 0.25) / 6)));
-    node.g4ColumnUnders = al.duplicate(gColumnUnder, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor4[i]); }]));
-    node.g6ColumnUnders = al.duplicate(gColumnUnder, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor6[i]); }]));
+    node.g4ColumnUnders = al.duplicate(gColumnUnder, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
+    node.g6ColumnUnders = al.duplicate(gColumnUnder, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
     var vArchOffset = vc.v3(0, 0, nColumnH - nArchWallHeight);
     var mapVPair = function (vv, d) { return function (i) { return ({ v1: vv[i].add(d), v2: vv[(i + 1) % vv.length].add(d) }); }; };
     //const mapVPair = (vv: vc.V3[], d: vc.V3) => (i: number) => { return { v1: vv[i].add(d), v2: vv[(i + 1) % vv.length].add(d) }; };
@@ -175,8 +175,8 @@ var node;
     node.g4RoofAm = multi.prismArray_pyramid(mapsRoofA.map(function (m) { return node.vxyFloor4.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nRoofH));
     node.g6RoofAm = multi.prismArray_pyramid(mapsRoofA.map(function (m) { return node.vxyFloor6.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nRoofH));
     var gRoofAs = prim.pyramid(4, 1 / 12, nRoofH / 4);
-    node.g4RoofAs = al.duplicate(gRoofAs, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, nColumnH]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor4[i]); }]));
-    node.g6RoofAs = al.duplicate(gRoofAs, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, nColumnH]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor6[i]); }]));
+    node.g4RoofAs = al.duplicate(gRoofAs, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, nColumnH]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
+    node.g6RoofAs = al.duplicate(gRoofAs, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, nColumnH]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
     var mapsRoofB = al.composite_m4(seq.arith(12, 0, ut.deg90 / 12).map(function (rad) { return vc.v2(Math.cos(rad), nColumnH + nr25 * Math.sin(rad)); }), [function (d) { return mx.scale_m4([d.x(), d.x(), 1]); }, function (d) { return mx.trans_m4([0, 0, d.y()]); }]);
     node.g4RoofB = multi.prismArray_pyramid(mapsRoofB.map(function (m) { return node.vxyFloor4.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nr25));
     node.g6RoofB = multi.prismArray_pyramid(mapsRoofB.map(function (m) { return node.vxyFloor6.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nr25));
@@ -192,12 +192,12 @@ var node;
     var seq4Obj2 = seq.arith(node.vxyFloor4.length).filter(function (i) { return i % 3 == 2; });
     var seq6Obj1 = seq.arith(node.vxyFloor6.length).filter(function (i) { return i % 2 != 1; });
     var seq6Obj2 = seq.arith(node.vxyFloor6.length).filter(function (i) { return i % 2 == 1; });
-    node.g4RoofC1 = al.duplicate(gCrys, al.compose(seq.arith(node.vxyFloor4.length), [function (i) { return mx.scale_m4([1, 1, (2 + i % 3) / 2]); }, function (_) { return mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor4[i]); }]));
-    node.g4RoofC2 = al.duplicate(gObj1, al.compose(seq4Obj1, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + i % 3) / 2 + nFloorD / 2]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor4[i]); }]));
-    node.g4RoofC3 = al.duplicate(gObj2, al.compose(seq4Obj2, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + i % 3) / 2 + nFloorD / 2]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor4[i]); }]));
-    node.g6RoofC1 = al.duplicate(gCrys, al.compose(seq.arith(node.vxyFloor6.length), [function (i) { return mx.scale_m4([1, 1, (2 + 2 * (i % 2)) / 2]); }, function (_) { return mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor6[i]); }]));
-    node.g6RoofC2 = al.duplicate(gObj1, al.compose(seq6Obj1, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor6[i]); }]));
-    node.g6RoofC3 = al.duplicate(gObj2, al.compose(seq6Obj2, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]); }, function (i) { return rotZ_atan2_m4(node.vxyFloor6[i]); }]));
+    node.g4RoofC1 = al.duplicate(gCrys, al.compose(seq.arith(node.vxyFloor4.length), [function (i) { return mx.scale_m4([1, 1, (2 + i % 3) / 2]); }, function (_) { return mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
+    node.g4RoofC2 = al.duplicate(gObj1, al.compose(seq4Obj1, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + i % 3) / 2 + nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
+    node.g4RoofC3 = al.duplicate(gObj2, al.compose(seq4Obj2, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + i % 3) / 2 + nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
+    node.g6RoofC1 = al.duplicate(gCrys, al.compose(seq.arith(node.vxyFloor6.length), [function (i) { return mx.scale_m4([1, 1, (2 + 2 * (i % 2)) / 2]); }, function (_) { return mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
+    node.g6RoofC2 = al.duplicate(gObj1, al.compose(seq6Obj1, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
+    node.g6RoofC3 = al.duplicate(gObj2, al.compose(seq6Obj2, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
     var mapsBottom = al.composite_m4([vc.v2(1, 0), vc.v2(1, -0.25), vc.v2(0.75, -0.5), vc.v2(0.5, -1.5), vc.v2(0.25, -6), vc.v2(1 / 16, -30)].map(function (v) { return v.sub(vc.v2(0, nUnderFloorD)); }), [function (d) { return mx.scale_m4([d.x(), d.x(), 1]); }, function (d) { return mx.trans_m4([0, 0, d.y()]); }]);
     node.g4Bottom = multi.prismArray_pyramid(mapsBottom.map(function (m) { return node.vxyFloor4.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, -256));
     node.g6Bottom = multi.prismArray_pyramid(mapsBottom.map(function (m) { return node.vxyFloor6.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, -256));
@@ -329,7 +329,7 @@ var link;
         //const dv = dir.z();
         var count = gdStairSteps.length;
         var seqZ = seq.arith(count, 1).map(function (i) { return (v1.z() * (count + 1 - i) + v2.z() * i) / (count + 1); });
-        var mRotZ = mx.rotYZ_x_m4(dirH);
+        var mRotZ = mx.rot_yz_x_m4(dirH);
         var mTransV1 = mx.trans_v3_m4(vc.v3(v1.x(), v1.y(), 0));
         var maps = al.compose(seq.arith(count), [
             function (i) { return mx.trans_m4([0, 0, seqZ[i]]); },
@@ -357,9 +357,9 @@ function gdLinkHorizontal(c, geoXp) {
     var dirH = vc.v3(dir.x(), dir.y(), 0);
     var dh = dirH.length();
     //const dv = dir.z();
-    var m = mx.compositeLeft_m4([
+    var m = mx.compose_left([
         mx.scale_m4([dh, 1, 1]),
-        mx.rotYZ_x_m4(dirH),
+        mx.rot_yz_x_m4(dirH),
         mx.trans_v3_m4(v1),
     ]);
     return geoXp.clone_apply(function (v) { return m.map_v3(v, 1); });
@@ -402,16 +402,16 @@ function geoColumn(r, h, dim, countColumn, hBase, rBaseT, rColumn, vCircle) {
 exports.geoColumn = geoColumn;
 function dupl(geo, c, ii) {
     return al.duplicate(geo, al.compose(ii.map(function (i) { return c.cd(i); }), [
-        function (d) { return mx.rotYZ_x_m4(d.d.hadamart(vc.v3(1, 1, 0))); },
+        function (d) { return mx.rot_yz_x_m4(d.d.hadamart(vc.v3(1, 1, 0))); },
         function (d) { return mx.trans_v3_m4(d.c); },
     ]));
 }
 exports.dupl = dupl;
 function hexaObj() {
     al.duplicate(prim.bipyramid(4, 0.25, 0.5, 0.5), al.compose(seq.arith(4), [
-        function (_) { return mx.rotX_m4(ut.deg90); },
+        function (_) { return mx.rot_x_m4(ut.deg90); },
         function (_) { return mx.trans_m4([3, 0, 0]); },
-        function (d) { return mx.rotZ_m4(ut.deg90 * d); },
+        function (d) { return mx.rot_z_m4(ut.deg90 * d); },
     ]));
 }
 exports.hexaObj = hexaObj;

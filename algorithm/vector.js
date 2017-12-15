@@ -69,7 +69,7 @@ function angle(a, b) {
 }
 exports.angle = angle;
 /** 2D Vector - 2次元ベクトル */
-var V2Impl = (function () {
+var V2Impl = /** @class */ (function () {
     function V2Impl(x, y) {
         var _this = this;
         // 取得
@@ -96,7 +96,7 @@ var V2Impl = (function () {
     };
     return V2Impl;
 }());
-var V3Impl = (function () {
+var V3Impl = /** @class */ (function () {
     function V3Impl(x, y, z) {
         var _this = this;
         // 単項演算
@@ -124,7 +124,7 @@ var V3Impl = (function () {
     };
     return V3Impl;
 }());
-var V4Impl = (function () {
+var V4Impl = /** @class */ (function () {
     function V4Impl(x, y, z, w) {
         var _this = this;
         // 取得

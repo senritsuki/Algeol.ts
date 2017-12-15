@@ -281,7 +281,7 @@ export function scale_m4(v: number[]|vc.V3): M4 {
 }
 
 /** x軸回転写像 */
-export function rotX_m3(rad: number): M3 {
+export function rot_x_m3(rad: number): M3 {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -291,12 +291,12 @@ export function rotX_m3(rad: number): M3 {
     ]);
 }
 /** x軸回転写像 */
-export function rotX_m4(rad: number): M4 {
-    return m3_m4(rotX_m3(rad));
+export function rot_x_m4(rad: number): M4 {
+    return m3_m4(rot_x_m3(rad));
 }
 
 /** y軸回転写像 */
-export function rotY_m3(rad: number): M3 {
+export function rot_y_m3(rad: number): M3 {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -306,12 +306,12 @@ export function rotY_m3(rad: number): M3 {
     ]);
 }
 /** y軸回転写像 */
-export function rotY_m4(rad: number): M4 {
-    return m3_m4(rotY_m3(rad));
+export function rot_y_m4(rad: number): M4 {
+    return m3_m4(rot_y_m3(rad));
 }
 
 /** z軸回転写像 */
-export function rotZ_m3(rad: number): M3 {
+export function rot_z_m3(rad: number): M3 {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -321,73 +321,66 @@ export function rotZ_m3(rad: number): M3 {
     ]);
 }
 /** z軸回転写像 */
-export function rotZ_m4(rad: number): M4 {
-    return m3_m4(rotZ_m3(rad));
+export function rot_z_m4(rad: number): M4 {
+    return m3_m4(rot_z_m3(rad));
 }
 
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rotYZ_x_m3(v3: vc.V3): M3 {
+export function rot_yz_x_m3(v3: vc.V3): M3 {
     const x = v3.x();
     const y = v3.y();
     const z = v3.z();
     const radY = -Math.atan2(z, Math.sqrt(x * x + y * y));
     const radZ = Math.atan2(y, x);
-    const mxRotY = rotY_m3(radY);
-    const mxRotZ = rotZ_m3(radZ);
+    const mxRotY = rot_y_m3(radY);
+    const mxRotZ = rot_z_m3(radZ);
     return mxRotZ.mul(mxRotY);
 }
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rotYZ_x_m4(v3: vc.V3): M4 {
-    return m3_m4(rotYZ_x_m3(v3));
+export function rot_yz_x_m4(v3: vc.V3): M4 {
+    return m3_m4(rot_yz_x_m3(v3));
 }
 
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rotYZ_z_m3(v3: vc.V3): M3 {
+export function rot_yz_z_m3(v3: vc.V3): M3 {
     const x = v3.x();
     const y = v3.y();
     const z = v3.z();
     const radY = ut.deg90 - Math.atan2(z, Math.sqrt(x * x + y * y));
     const radZ = Math.atan2(y, x);
-    const mxRotY = rotY_m3(radY);
-    const mxRotZ = rotZ_m3(radZ);
+    const mxRotY = rot_y_m3(radY);
+    const mxRotZ = rot_z_m3(radZ);
     return mxRotZ.mul(mxRotY);
 }
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rotYZ_z_m4(v3: vc.V3): M4 {
-    return m3_m4(rotYZ_z_m3(v3));
+export function rot_yz_z_m4(v3: vc.V3): M4 {
+    return m3_m4(rot_yz_z_m3(v3));
 }
 
 
 /** オイラー角XYZの回転写像 */
-export function rotXYZ_m3(radX: number, radY: number, radZ: number): M3 {
-    return rotX_m3(radX)
-        .mul(rotY_m3(radY))
-        .mul(rotZ_m3(radZ));
+export function rot_xyz_m3(radX: number, radY: number, radZ: number): M3 {
+    return rot_x_m3(radX)
+        .mul(rot_y_m3(radY))
+        .mul(rot_z_m3(radZ));
 }
 /** オイラー角XYZの回転写像 */
-export function rotXYZ_m4(radX: number, radY: number, radZ: number): M4 {
-    return m3_m4(rotXYZ_m3(radX, radY, radZ));
+export function rot_xyz_m4(radX: number, radY: number, radZ: number): M4 {
+    return m3_m4(rot_xyz_m3(radX, radY, radZ));
 }
 
 /** オイラー角XYZの逆回転写像 */
-export function rotInvXYZ_m3(radX: number, radY: number, radZ: number): M3 {
-    return rotZ_m3(-radZ)
-        .mul(rotY_m3(-radY))
-        .mul(rotX_m3(-radX));
+export function rot_inv_xyz_m3(radX: number, radY: number, radZ: number): M3 {
+    return rot_z_m3(-radZ)
+        .mul(rot_y_m3(-radY))
+        .mul(rot_x_m3(-radX));
 }
 /** オイラー角XYZの回転写像 */
-export function rotInvXYZ_m4(radX: number, radY: number, radZ: number): M4 {
-    return m3_m4(rotInvXYZ_m3(radX, radY, radZ));
+export function rot_inv_xyz_m4(radX: number, radY: number, radZ: number): M4 {
+    return m3_m4(rot_inv_xyz_m3(radX, radY, radZ));
 }
 
 
-export function compositeLeft_m2(mm: M2[]): M2 {
+export function compose_left<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
     return mm.reduce((a, b) => b.mul(a));
 }
-export function compositeLeft_m3(mm: M3[]): M3 {
-    return mm.reduce((a, b) => b.mul(a));
-}
-export function compositeLeft_m4(mm: M4[]): M4 {
-    return mm.reduce((a, b) => b.mul(a));
-}
-

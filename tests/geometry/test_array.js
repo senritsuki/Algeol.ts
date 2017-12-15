@@ -59,15 +59,15 @@ function test() {
     save('prismArray_bipyramid', multi.prismArray_bipyramid(seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * Math.sin(rad), 0, 2 * -Math.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('antiprismArray_bipyramid', multi.antiprismArray_bipyramid(seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * Math.sin(rad), rad / 2, 2 * -Math.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('prismRing', multi.prismRing(al.duplicate_verts(prim.fn.circle.verts_i(4, 1), al.compose(seq.arith(4), [
-        function (_d) { return mx.rotX_m4(ut.deg90); },
+        function (_d) { return mx.rot_x_m4(ut.deg90); },
         function (_d) { return mx.trans_m4([3, 0, 0]); },
-        function (d) { return mx.rotZ_m4(ut.deg90 * d); },
+        function (d) { return mx.rot_z_m4(ut.deg90 * d); },
     ]))));
     save('antiprismRing', multi.antiprismRing(al.duplicate_verts(prim.fn.circle.verts_i(4, 1), al.compose(seq.arith(8), [
-        function (d) { return mx.rotZ_m4(ut.deg45 * d); },
-        function (_d) { return mx.rotX_m4(ut.deg90); },
+        function (d) { return mx.rot_z_m4(ut.deg45 * d); },
+        function (_d) { return mx.rot_x_m4(ut.deg90); },
         function (_d) { return mx.trans_m4([3, 0, 0]); },
-        function (d) { return mx.rotZ_m4(ut.deg45 * d); },
+        function (d) { return mx.rot_z_m4(ut.deg45 * d); },
     ]))));
 }
 test();
