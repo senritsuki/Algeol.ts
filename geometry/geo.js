@@ -15,7 +15,7 @@ var mx = require("../algorithm/matrix");
 function shift_offset(face, index_offset) {
     return face.map(function (n) { return n + index_offset; });
 }
-var Translatable = /** @class */ (function () {
+var Translatable = (function () {
     function Translatable(verts) {
         this.verts = verts;
     }
@@ -50,7 +50,7 @@ var Translatable = /** @class */ (function () {
     };
     return Translatable;
 }());
-var Geo = /** @class */ (function (_super) {
+var Geo = (function (_super) {
     __extends(Geo, _super);
     function Geo(verts, faces) {
         var _this = _super.call(this, verts) || this;
@@ -63,7 +63,7 @@ var Geo = /** @class */ (function (_super) {
     return Geo;
 }(Translatable));
 exports.Geo = Geo;
-var Material = /** @class */ (function () {
+var Material = (function () {
     function Material(name, diffuse) {
         if (diffuse === void 0) { diffuse = null; }
         this.name = name;
@@ -72,7 +72,7 @@ var Material = /** @class */ (function () {
     return Material;
 }());
 exports.Material = Material;
-var FaceGroup = /** @class */ (function () {
+var FaceGroup = (function () {
     function FaceGroup(name, faces, material) {
         if (material === void 0) { material = null; }
         this.name = name;
@@ -86,7 +86,7 @@ var FaceGroup = /** @class */ (function () {
     return FaceGroup;
 }());
 exports.FaceGroup = FaceGroup;
-var Obj = /** @class */ (function (_super) {
+var Obj = (function (_super) {
     __extends(Obj, _super);
     function Obj(name, verts, faces) {
         var _this = _super.call(this, verts) || this;

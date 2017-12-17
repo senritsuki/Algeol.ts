@@ -9,7 +9,7 @@ var cv = require("../algorithm/curve");
 var prim = require("../geometry/primitive");
 var multi = require("../geometry/array");
 /** ? */
-var RPZ = /** @class */ (function () {
+var RPZ = (function () {
     function RPZ(r, p, z) {
         this.r = r;
         this.p = p;

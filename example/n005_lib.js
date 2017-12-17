@@ -92,6 +92,11 @@ function to_xy_hexagon_basis(d, offset_deg) {
     return to_xy_hexagon(v3_zero, d0, d1);
 }
 exports.to_xy_hexagon_basis = to_xy_hexagon_basis;
+function to_xy_hexagon_basis_deg30(d_inner) {
+    var d_outer = d_inner * 2 / ut.r3;
+    return to_xy_hexagon_basis(d_outer, 30);
+}
+exports.to_xy_hexagon_basis_deg30 = to_xy_hexagon_basis_deg30;
 // x/y plane & z depth geometry
 /**
  *
@@ -120,3 +125,19 @@ function xygeo_scale_rot_trans(xy_verts, z_num, z) {
     return geo_array.prismArray(polygons);
 }
 exports.xygeo_scale_rot_trans = xygeo_scale_rot_trans;
+function duplicate_rot_z(xy_verts, count, deg) {
+    var maps = al.compose(seq.arith(count), [
+        function (i) { return mx.rot_z_m4(ut.deg_to_rad(i * deg)); },
+    ]);
+    var new_verts = al.duplicate_verts(xy_verts, maps);
+    return geo_array.flatten(new_verts);
+}
+exports.duplicate_rot_z = duplicate_rot_z;
+function duplicate_rot_z_90_4(xy_verts) {
+    return duplicate_rot_z(xy_verts, 4, 90);
+}
+exports.duplicate_rot_z_90_4 = duplicate_rot_z_90_4;
+function duplicate_rot_z_120_3(xy_verts) {
+    return duplicate_rot_z(xy_verts, 3, 120);
+}
+exports.duplicate_rot_z_120_3 = duplicate_rot_z_120_3;

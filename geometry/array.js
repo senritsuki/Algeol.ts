@@ -9,6 +9,7 @@ function flatten(polygons) {
     return polygons
         .reduce(function (a, b) { return a.concat(b); });
 }
+exports.flatten = flatten;
 function faces_side_common(polygons, op) {
     var count = polygons.length;
     var n_gonal = polygons[0].length;

@@ -78,7 +78,7 @@ function map(m1, v1) {
     return v;
 }
 exports.map = map;
-var M2Impl = /** @class */ (function () {
+var M2Impl = (function () {
     function M2Impl(rows) {
         this._m = clone(rows, M2Impl.Dim, M2Impl.Dim);
     }
@@ -99,7 +99,7 @@ var M2Impl = /** @class */ (function () {
     M2Impl.Dim = 2;
     return M2Impl;
 }());
-var M3Impl = /** @class */ (function () {
+var M3Impl = (function () {
     function M3Impl(rows) {
         this._m = clone(rows, M3Impl.Dim, M3Impl.Dim);
     }
@@ -120,7 +120,7 @@ var M3Impl = /** @class */ (function () {
     M3Impl.Dim = 3;
     return M3Impl;
 }());
-var M4Impl = /** @class */ (function () {
+var M4Impl = (function () {
     function M4Impl(rows) {
         this._m = clone(rows, M4Impl.Dim, M4Impl.Dim);
     }

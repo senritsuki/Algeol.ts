@@ -2,7 +2,7 @@
 // Complex Number - 複素数・二元数
 Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("./vector");
-var ComplexNumberImpl = /** @class */ (function () {
+var ComplexNumberImpl = (function () {
     function ComplexNumberImpl(real, imag) {
         this._v = [real, imag];
     }
