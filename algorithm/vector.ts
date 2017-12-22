@@ -130,13 +130,13 @@ class V2Impl implements V2 {
 
     // 二項演算
 
-    add = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(add(this._v, to_array(dist)));
-    sub = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(sub(this._v, to_array(dist)));
-    hadamart = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(hadamart(this._v, to_array(dist)));
+    add = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(add(this._v, to_array_if(dist)));
+    sub = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(sub(this._v, to_array_if(dist)));
+    hadamart = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(hadamart(this._v, to_array_if(dist)));
     scalar = (n: number): V2Impl => V2Impl.fm_array(scalar(this._v, n));
-    ip = (dist: V2Impl|number[]): number => ip(this.array(), to_array(dist));
-    cp = (dist: V2Impl|number[]): number => cp2(this._v, to_array(dist));
-    angle = (dist: V2Impl|number[]): number => angle(this._v, to_array(dist));
+    ip = (dist: V2Impl|number[]): number => ip(this.array(), to_array_if(dist));
+    cp = (dist: V2Impl|number[]): number => cp2(this._v, to_array_if(dist));
+    angle = (dist: V2Impl|number[]): number => angle(this._v, to_array_if(dist));
 }
 
 /** 3D Vector - 3次元ベクトル */
@@ -180,13 +180,13 @@ class V3Impl implements V3 {
 
     // 二項演算
 
-    add = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(add(this._v, to_array(dist)));
-    sub = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(sub(this._v, to_array(dist)));
-    hadamart = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(hadamart(this._v, to_array(dist)));
+    add = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(add(this._v, to_array_if(dist)));
+    sub = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(sub(this._v, to_array_if(dist)));
+    hadamart = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(hadamart(this._v, to_array_if(dist)));
     scalar = (n: number): V3Impl => V3Impl.fm_array(scalar(this._v, n));
-    ip = (dist: V3Impl|number[]): number => ip(this.array(), to_array(dist));
-    cp = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(cp3(this._v, to_array(dist)));
-    angle = (dist: V3Impl|number[]): number => angle(this._v, to_array(dist));
+    ip = (dist: V3Impl|number[]): number => ip(this.array(), to_array_if(dist));
+    cp = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(cp3(this._v, to_array_if(dist)));
+    angle = (dist: V3Impl|number[]): number => angle(this._v, to_array_if(dist));
 }
 
 /** 4D Vector - 4次元ベクトル */
@@ -230,16 +230,17 @@ class V4Impl implements V4 {
 
     // 二項演算
 
-    add = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(add(this._v, to_array(dist)));
-    sub = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(sub(this._v, to_array(dist)));
-    hadamart = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(hadamart(this._v, to_array(dist)));
+    add = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(add(this._v, to_array_if(dist)));
+    sub = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(sub(this._v, to_array_if(dist)));
+    hadamart = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(hadamart(this._v, to_array_if(dist)));
     scalar = (n: number): V4Impl => V4Impl.fm_array(scalar(this._v, n));
-    ip = (dist: V4Impl|number[]): number => ip(this.array(), to_array(dist));
-    angle = (dist: V4Impl|number[]): number => angle(this._v, to_array(dist));
+    ip = (dist: V4Impl|number[]): number => ip(this.array(), to_array_if(dist));
+    angle = (dist: V4Impl|number[]): number => angle(this._v, to_array_if(dist));
 }
 
 
-export const to_array = <T extends Vector<T>>(n: T|number[]): number[] => n instanceof Array ? n : n._v;
+export const to_array_if = <T extends Vector<T>>(n: T|number[]): number[] => n instanceof Array ? n : n._v;
+export const to_v3_if = (v: V3|number[]): V3 => v instanceof Array ? array_to_v3(v) : v;
 
 
 // --------------------------------------------------------

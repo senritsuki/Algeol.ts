@@ -17,7 +17,7 @@ var duplicater = al.compose(sq, [
     function (n) { return mx.rot_z_m4(ut.deg_to_rad(-n * step)); },
 ]);
 var geos = al.duplicate(geo, duplicater);
-var lch = ut.composite_2f(cc.lch_to_rgb01, function (nn) { return cc.clamp(nn, 0, 1); });
+var lch = ut.compose_2f(cc.lch_to_rgb01, function (nn) { return cc.clamp(nn, 0, 1); });
 var materials = sq.map(function (n) { return new al.Material("c1510" + ut.format_02d(n), lch([75, 50, n * step])); });
 var obj = al.merge_geos_materials(geos, materials);
 var result = wf.objs_to_strings('./_obj/n003_colorcircle', [obj]);

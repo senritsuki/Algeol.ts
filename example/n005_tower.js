@@ -67,7 +67,7 @@ function gArchBar(v1, v2, h) {
     var mid = v1.add(v2).scalar(0.5);
     var w = dir.length() / 2;
     var archBar = extrudeY(vxzArchBar(w - d1, w + d1, h - d1, h + d1), d2);
-    return archBar.clone_apply(function (v) { return mx.trans_v3_m4(mid).mul(mx.rot_yz_x_m4(dir)).map_v3(v, 1); });
+    return archBar.map(function (v) { return mx.trans_v3_m4(mid).mul(mx.rot_yz_x_m4(dir)).map_v3(v, 1); });
 }
 exports.gArchBar = gArchBar;
 function gArchWall(v1, v2, h, h2) {
@@ -76,7 +76,7 @@ function gArchWall(v1, v2, h, h2) {
     var mid = v1.add(v2).scalar(0.5);
     var w = dir.length() / 2;
     var archWall = extrudeY(vxzArchWall(w, h, h2), d2);
-    return archWall.clone_apply(function (v) { return mx.trans_v3_m4(mid).mul(mx.rot_yz_x_m4(dir)).map_v3(v, 1); });
+    return archWall.map(function (v) { return mx.trans_v3_m4(mid).mul(mx.rot_yz_x_m4(dir)).map_v3(v, 1); });
 }
 exports.gArchWall = gArchWall;
 function extrudeY(vv, d) {
@@ -97,14 +97,14 @@ function antiprism(d, rz) {
 exports.antiprism = antiprism;
 exports.lvTrans = function (trans) { return function (v) { return mx.trans_v3_m4(trans).map_v3(v, 1); }; };
 exports.lvICube = function (v) { return mx.rot_y_m3(-(ut.deg90 - Math.atan2(1, ut.r2))).mul(mx.rot_z_m3(-ut.deg45)).map(v); };
-exports.g1oHalfCube = prim.cube(0.5).clone_apply(function (v) { return mx.scale_m3([1, 1, 0.5]).map(v); });
-exports.g1oICube = prim.cube(0.5 / ut.r3).clone_apply(exports.lvICube);
-exports.g1zpICube = exports.g1oICube.clone_apply(exports.lvTrans(vc.v3(0, 0, 0.5)));
-exports.g1xpznCCube = exports.g1oHalfCube.clone_apply(exports.lvTrans(vc.v3(0.5, 0, -0.25)));
+exports.g1oHalfCube = prim.cube(0.5).map(function (v) { return mx.scale_m3([1, 1, 0.5]).map(v); });
+exports.g1oICube = prim.cube(0.5 / ut.r3).map(exports.lvICube);
+exports.g1zpICube = exports.g1oICube.map(exports.lvTrans(vc.v3(0, 0, 0.5)));
+exports.g1xpznCCube = exports.g1oHalfCube.map(exports.lvTrans(vc.v3(0.5, 0, -0.25)));
 exports.g0columnFloor = antiprism(4, rpzl(4, 0.25, 0.25, [-0.75, -0.25, 0.25]));
-exports.g0cube = exports.g1zpICube.clone_apply(function (v) { return mx.scale_m4([0.5, 0.5, 0.5]).map_v3(v, 1); });
-exports.g0crys4 = prim.tetrahedron(0.5).clone_apply(function (v) { return mx.scale_m4([0.5, 0.5, 1]).mul(mx.trans_m4([0, 0, 0.5])).map_v3(v, 1); });
-var merge_geos = function (name, geos) { return al.merge_geos(geos, null, name); };
+exports.g0cube = exports.g1zpICube.map(function (v) { return mx.scale_m4([0.5, 0.5, 0.5]).map_v3(v, 1); });
+exports.g0crys4 = prim.tetrahedron(0.5).map(function (v) { return mx.scale_m4([0.5, 0.5, 1]).mul(mx.trans_m4([0, 0, 0.5])).map_v3(v, 1); });
+var merge_geos = function (name, geos) { return al.geos_to_obj(geos, null, name); };
 var merge_objs = function (objs) { return objs; };
 // 塔
 var node;
@@ -138,14 +138,14 @@ var node;
     var mapRingArch = function (v) { return mx.trans_m4([0, 0, nColumnH - nArchWallHeight]).mul(mx.scale_m4([1, 1, 0.25])).map_v3(v, 1); };
     node.g4Rings = al.duplicate(gRing, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
     node.g6Rings = al.duplicate(gRing, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
-    node.g4FloorRings = node.g4Rings.map(function (g) { return g.clone_apply(function (v) { return mapRingFloor(v); }); });
-    node.g6FloorRings = node.g6Rings.map(function (g) { return g.clone_apply(function (v) { return mapRingFloor(v); }); });
-    node.g4ArchRings = node.g4Rings.map(function (g) { return g.clone_apply(function (v) { return mapRingArch(v); }); });
-    node.g6ArchRings = node.g6Rings.map(function (g) { return g.clone_apply(function (v) { return mapRingArch(v); }); });
-    node.g4RoofRings = node.g4FloorRings.map(function (g) { return g.clone_apply(function (v) { return v.add(vc.v3(0, 0, nColumnH)); }); });
-    node.g6RoofRings = node.g6FloorRings.map(function (g) { return g.clone_apply(function (v) { return v.add(vc.v3(0, 0, nColumnH)); }); });
-    node.g4BottomRings = node.g4FloorRings.map(function (g) { return g.clone_apply(function (v) { return v.sub(vc.v3(0, 0, nUnderFloorD)); }); });
-    node.g6BottomRings = node.g6FloorRings.map(function (g) { return g.clone_apply(function (v) { return v.sub(vc.v3(0, 0, nUnderFloorD)); }); });
+    node.g4FloorRings = node.g4Rings.map(function (g) { return g.map(function (v) { return mapRingFloor(v); }); });
+    node.g6FloorRings = node.g6Rings.map(function (g) { return g.map(function (v) { return mapRingFloor(v); }); });
+    node.g4ArchRings = node.g4Rings.map(function (g) { return g.map(function (v) { return mapRingArch(v); }); });
+    node.g6ArchRings = node.g6Rings.map(function (g) { return g.map(function (v) { return mapRingArch(v); }); });
+    node.g4RoofRings = node.g4FloorRings.map(function (g) { return g.map(function (v) { return v.add(vc.v3(0, 0, nColumnH)); }); });
+    node.g6RoofRings = node.g6FloorRings.map(function (g) { return g.map(function (v) { return v.add(vc.v3(0, 0, nColumnH)); }); });
+    node.g4BottomRings = node.g4FloorRings.map(function (g) { return g.map(function (v) { return v.sub(vc.v3(0, 0, nUnderFloorD)); }); });
+    node.g6BottomRings = node.g6FloorRings.map(function (g) { return g.map(function (v) { return v.sub(vc.v3(0, 0, nUnderFloorD)); }); });
     var gColumn = antiprism(4, rpzl(4, 1 / 16, 1 / 32, seq.arith(7, 0, (nColumnH - 0.25) / 6)));
     node.g4Columns = al.duplicate(gColumn, al.compose(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
     node.g6Columns = al.duplicate(gColumn, al.compose(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, 0]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
@@ -169,8 +169,8 @@ var node;
     node.g6ArchWalls = seq.arith(node.vxyFloor6.length)
         .map(function (i) { return mapVPair6(i); })
         .map(function (v) { return gArchWall(v.v1.hadamart(vInner), v.v2.hadamart(vInner), nArchHeight, nArchWallHeight); });
-    node.g4RoofBase = node.g4Floor.clone_apply(function (v) { return v.add(vc.v3(0, 0, nColumnH)); });
-    node.g6RoofBase = node.g6Floor.clone_apply(function (v) { return v.add(vc.v3(0, 0, nColumnH)); });
+    node.g4RoofBase = node.g4Floor.map(function (v) { return v.add(vc.v3(0, 0, nColumnH)); });
+    node.g6RoofBase = node.g6Floor.map(function (v) { return v.add(vc.v3(0, 0, nColumnH)); });
     var mapsRoofA = al.composite_m4([vc.v2(1, nColumnH), vc.v2(0.625, nColumnH + 0.75), vc.v2(1 / 64, nColumnH + nRoofH * 0.875)], [function (d) { return mx.scale_m4([d.x(), d.x(), 1]); }, function (d) { return mx.trans_m4([0, 0, d.y()]); }]);
     node.g4RoofAm = multi.prismArray_pyramid(mapsRoofA.map(function (m) { return node.vxyFloor4.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nRoofH));
     node.g6RoofAm = multi.prismArray_pyramid(mapsRoofA.map(function (m) { return node.vxyFloor6.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nRoofH));
@@ -183,11 +183,11 @@ var node;
     var nObjR = nRingR * 1.5;
     var nCrysR = nRingR / 1.5;
     var gCrys = prim.bipyramid(4, nCrysR, ut.phi / (1 + ut.phi), 1 / (1 + ut.phi))
-        .clone_apply(function (v) { return mx.trans_m4([0, 0, 1 / (1 + ut.phi)]).map_v3(v, 1); });
+        .map(function (v) { return mx.trans_m4([0, 0, 1 / (1 + ut.phi)]).map_v3(v, 1); });
     var gObj1 = exports.g1oICube
-        .clone_apply(function (v) { return mx.trans_m4([0, 0, nObjR / 2]).mul(mx.scale_m4([nObjR, nObjR, nObjR])).map_v3(v, 1); });
+        .map(function (v) { return mx.trans_m4([0, 0, nObjR / 2]).mul(mx.scale_m4([nObjR, nObjR, nObjR])).map_v3(v, 1); });
     var gObj2 = prim.dodecahedron(0.5)
-        .clone_apply(function (v) { return mx.trans_m4([0, 0, nObjR / 2]).mul(mx.scale_m4([nObjR, nObjR, nObjR])).map_v3(v, 1); });
+        .map(function (v) { return mx.trans_m4([0, 0, nObjR / 2]).mul(mx.scale_m4([nObjR, nObjR, nObjR])).map_v3(v, 1); });
     var seq4Obj1 = seq.arith(node.vxyFloor4.length).filter(function (i) { return i % 3 != 2; });
     var seq4Obj2 = seq.arith(node.vxyFloor4.length).filter(function (i) { return i % 3 == 2; });
     var seq6Obj1 = seq.arith(node.vxyFloor6.length).filter(function (i) { return i % 2 != 1; });
@@ -277,36 +277,36 @@ var link;
     var nObjR3 = nStairStepX / 1.5;
     var nObjZ = nStairDepth / 2;
     var gStairStep = prim.cube(0.5)
-        .clone_apply(function (v) { return mx.scale_m4([nStairStepX, nStairStepY, nStairDepth]).mul(mx.trans_m4([0.5, 0, -0.5])).map_v3(v, 1); });
+        .map(function (v) { return mx.scale_m4([nStairStepX, nStairStepY, nStairDepth]).mul(mx.trans_m4([0.5, 0, -0.5])).map_v3(v, 1); });
     var gRing = prim.prism(4, nObjR1, nStairDepth * 2)
-        .clone_apply(function (v) { return mx.trans_m4([nObjX, 0, -nStairDepth * 1.5]).map_v3(v, 1); });
+        .map(function (v) { return mx.trans_m4([nObjX, 0, -nStairDepth * 1.5]).map_v3(v, 1); });
     var gCrys = prim.bipyramid(4, nObjR2, ut.phi / (1 + ut.phi), 1 / (1 + ut.phi))
-        .clone_apply(function (v) { return mx.trans_m4([nObjX, 0, 1 / (1 + ut.phi)]).map_v3(v, 1); });
+        .map(function (v) { return mx.trans_m4([nObjX, 0, 1 / (1 + ut.phi)]).map_v3(v, 1); });
     var gObj1 = exports.g1oICube
-        .clone_apply(function (v) { return mx.trans_m4([nObjX, 0, nObjR1]).mul(mx.scale_m4([nObjR3, nObjR3, nObjR3])).map_v3(v, 1); });
+        .map(function (v) { return mx.trans_m4([nObjX, 0, nObjR1]).mul(mx.scale_m4([nObjR3, nObjR3, nObjR3])).map_v3(v, 1); });
     var gObj2 = prim.dodecahedron(0.5)
-        .clone_apply(function (v) { return mx.trans_m4([nObjX, 0, nObjR1]).mul(mx.scale_m4([nObjR3, nObjR3, nObjR3])).map_v3(v, 1); });
-    var gRingPair = [-0.5, 0.5].map(function (i) { return gRing.clone_apply(function (v) { return v.add(vc.v3(0, i * nStairStepY, 0)); }); });
-    var gCrysPair = [-0.5, 0.5].map(function (i) { return gCrys.clone_apply(function (v) { return v.add(vc.v3(0, i * nStairStepY, 0)); }); });
-    var gObj1Pair = [-0.5, 0.5].map(function (i) { return gObj1.clone_apply(function (v) { return v.add(vc.v3(0, i * nStairStepY, 0)); }); });
-    var gObj2Pair = [-0.5, 0.5].map(function (i) { return gObj2.clone_apply(function (v) { return v.add(vc.v3(0, i * nStairStepY, 0)); }); });
+        .map(function (v) { return mx.trans_m4([nObjX, 0, nObjR1]).mul(mx.scale_m4([nObjR3, nObjR3, nObjR3])).map_v3(v, 1); });
+    var gRingPair = [-0.5, 0.5].map(function (i) { return gRing.map(function (v) { return v.add(vc.v3(0, i * nStairStepY, 0)); }); });
+    var gCrysPair = [-0.5, 0.5].map(function (i) { return gCrys.map(function (v) { return v.add(vc.v3(0, i * nStairStepY, 0)); }); });
+    var gObj1Pair = [-0.5, 0.5].map(function (i) { return gObj1.map(function (v) { return v.add(vc.v3(0, i * nStairStepY, 0)); }); });
+    var gObj2Pair = [-0.5, 0.5].map(function (i) { return gObj2.map(function (v) { return v.add(vc.v3(0, i * nStairStepY, 0)); }); });
     var seqOverZ = seq.arith(nStairCount).map(function (i) { return (6 - Math.abs((nStairCount - 1) / 2 - i)) * 0.25; });
     var seqUnderZ = seq.arith(nStairCount).map(function (i) { return 2 - nLenH / 2 * Math.sin(Math.acos(1 - (0.5 + i) / (nStairCount / 2))); });
     var gdStairSteps = seq.arith(nStairCount).map(function (i) { return al.merge_objs([
-        merge_geos('floor', [gStairStep.clone_apply(function (v) { return mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1); })]),
-        merge_geos('wall', gRingPair.map(function (g) { return g.clone_apply(function (v) { return mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1); }); })),
+        merge_geos('floor', [gStairStep.map(function (v) { return mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1); })]),
+        merge_geos('wall', gRingPair.map(function (g) { return g.map(function (v) { return mx.trans_m4([i * nStairStepX, 0, 0]).map_v3(v, 1); }); })),
         merge_geos('wall', i % 2 != 0 ?
             [] :
-            gCrysPair.map(function (g) { return g.clone_apply(function (v) { return mx.trans_m4([i * nStairStepX, 0, nObjZ]).mul(mx.scale_m4([1, 1, seqOverZ[i]])).map_v3(v, 1); }); })),
+            gCrysPair.map(function (g) { return g.map(function (v) { return mx.trans_m4([i * nStairStepX, 0, nObjZ]).mul(mx.scale_m4([1, 1, seqOverZ[i]])).map_v3(v, 1); }); })),
         merge_geos('roof', i % ((nStairCount - 1) / 2) != 0 ?
-            gObj1Pair.map(function (g) { return g.clone_apply(function (v) { return mx.trans_m4([i * nStairStepX, 0, nObjZ + seqOverZ[i]]).map_v3(v, 1); }); }) :
-            gObj2Pair.map(function (g) { return g.clone_apply(function (v) { return mx.trans_m4([i * nStairStepX, 0, nObjZ + seqOverZ[i]]).map_v3(v, 1); }); })),
+            gObj1Pair.map(function (g) { return g.map(function (v) { return mx.trans_m4([i * nStairStepX, 0, nObjZ + seqOverZ[i]]).map_v3(v, 1); }); }) :
+            gObj2Pair.map(function (g) { return g.map(function (v) { return mx.trans_m4([i * nStairStepX, 0, nObjZ + seqOverZ[i]]).map_v3(v, 1); }); })),
         merge_geos('wall', i % 2 != 0 ?
             [] :
-            gCrysPair.map(function (g) { return g.clone_apply(function (v) { return mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth]).mul(mx.scale_m4([1, 1, -seqUnderZ[i]])).map_v3(v, 1); }); })),
+            gCrysPair.map(function (g) { return g.map(function (v) { return mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth]).mul(mx.scale_m4([1, 1, -seqUnderZ[i]])).map_v3(v, 1); }); })),
         merge_geos('wall', i % ((nStairCount - 1) / 2) != 0 ?
-            gObj1Pair.map(function (g) { return g.clone_apply(function (v) { return mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth - seqUnderZ[i] - nObjR3 * 1.5]).map_v3(v, 1); }); }) :
-            gObj2Pair.map(function (g) { return g.clone_apply(function (v) { return mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth - seqUnderZ[i] - nObjR3 * 1.5]).map_v3(v, 1); }); })),
+            gObj1Pair.map(function (g) { return g.map(function (v) { return mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth - seqUnderZ[i] - nObjR3 * 1.5]).map_v3(v, 1); }); }) :
+            gObj2Pair.map(function (g) { return g.map(function (v) { return mx.trans_m4([i * nStairStepX, 0, -nObjZ - nStairDepth - seqUnderZ[i] - nObjR3 * 1.5]).map_v3(v, 1); }); })),
     ]); });
     function shortenHorizontal(c, r) {
         var v1 = c.coord(0);
@@ -336,7 +336,7 @@ var link;
             function (_) { return mRotZ; },
             function (_) { return mTransV1; },
         ]);
-        return al.merge_objs(seq.arith(count).map(function (i) { return gdStairSteps[i].clone_apply(function (v) { return maps[i](v); }); }));
+        return al.merge_objs(seq.arith(count).map(function (i) { return gdStairSteps[i].map(function (v) { return maps[i](v); }); }));
     }
     link.gdLink = gdLink;
 })(link = exports.link || (exports.link = {}));
@@ -362,7 +362,7 @@ function gdLinkHorizontal(c, geoXp) {
         mx.rot_yz_x_m4(dirH),
         mx.trans_v3_m4(v1),
     ]);
-    return geoXp.clone_apply(function (v) { return m.map_v3(v, 1); });
+    return geoXp.map(function (v) { return m.map_v3(v, 1); });
 }
 exports.gdLinkHorizontal = gdLinkHorizontal;
 function gdLinkR15TypeA(c) {
@@ -370,7 +370,7 @@ function gdLinkR15TypeA(c) {
 }
 exports.gdLinkR15TypeA = gdLinkR15TypeA;
 function gdNode(v, geo) {
-    return geo.clone_apply(exports.lvTrans(v));
+    return geo.map(exports.lvTrans(v));
 }
 exports.gdNode = gdNode;
 function gdNodeR15TypeA4(v) {

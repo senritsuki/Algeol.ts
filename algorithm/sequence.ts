@@ -37,6 +37,9 @@ export function range_step(first: number, last: number, step: number): number[] 
     }
     return seq;
 }
+/** 
+ * (5, 10, 3) -> [5, 7.5, 10]
+ */
 export function range(first: number, last: number, count: number): number[] {
     const seq: number[] = new Array(count);
     for (let i = 0; i < count; i++) {

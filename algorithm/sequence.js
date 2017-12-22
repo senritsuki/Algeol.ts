@@ -42,6 +42,9 @@ function range_step(first, last, step) {
     return seq;
 }
 exports.range_step = range_step;
+/**
+ * (5, 10, 3) -> [5, 7.5, 10]
+ */
 function range(first, last, count) {
     var seq = new Array(count);
     for (var i = 0; i < count; i++) {

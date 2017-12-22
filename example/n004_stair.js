@@ -10,7 +10,7 @@ var al = require("../geometry/geo");
 var prim = require("../geometry/primitive");
 var wf = require("../decoder/wavefront");
 var save = require("./n003_save");
-var lch = ut.composite_2f(cc.lch_to_rgb01, function (nn) { return cc.clamp(nn, 0, 1); });
+var lch = ut.compose_2f(cc.lch_to_rgb01, function (nn) { return cc.clamp(nn, 0, 1); });
 function lch5(l, c, h) {
     var diffuse = lch([l * 5, c * 5, h * 15]);
     var name = 'c' + ut.format_02d(l) + ut.format_02d(c) + ut.format_02d(h);
@@ -34,8 +34,8 @@ var stair_coords = seq.arith(stair_step_num + 1).map(function (i) { return stair
 var stairstep_duplicater = al.compose(stair_coords, [
     function (d) { return mx.trans_m4(d); },
 ]);
-var obj_floors = al.merge_geos(al.duplicate(geo_floor, floor_duplicater), lch5(19, 0, 0));
-var obj_stairsteps = al.merge_geos(al.duplicate(geo_stairstep, stairstep_duplicater), lch5(18, 1, 17));
+var obj_floors = al.geos_to_obj(al.duplicate(geo_floor, floor_duplicater), lch5(19, 0, 0));
+var obj_stairsteps = al.geos_to_obj(al.duplicate(geo_stairstep, stairstep_duplicater), lch5(18, 1, 17));
 var objs = [obj_floors, obj_stairsteps];
 var result = wf.objs_to_strings('./_obj/n004_stair', objs);
 save.save_objmtl(result);

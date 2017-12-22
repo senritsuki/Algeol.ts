@@ -172,9 +172,9 @@ def b_spline(P: list, T: list, t: float) -> np.array:
 */
 
 /** 2関数の合成 */
-export const composite_2f = <R, S, T>(a: (r: R) => S, b: (s: S) => T): (r: R) => T => (r: R) => b(a(r));
+export const compose_2f = <R, S, T>(a: (r: R) => S, b: (s: S) => T): (r: R) => T => (r: R) => b(a(r));
 /** 3関数の合成 */
-export const composite_3f = <R, S, T, U>(a: (r: R) => S, b: (s: S) => T, c: (t: T) => U): (r: R) => U => (r: R) => c(b(a(r)));
+export const compose_3f = <R, S, T, U>(a: (r: R) => S, b: (s: S) => T, c: (t: T) => U): (r: R) => U => (r: R) => c(b(a(r)));
 
 /** 0 -> '00', 255 -> 'ff' */
 export const format_02x = (n: number): string => ('00' + Math.round(clamp(n, 0, 255)).toString(16)).slice(-2);
@@ -203,4 +203,11 @@ namespace priv {
         return seq;
     };
 }
+
+/** サイン関数（引数は360で一周の度数法） */
+export const sin_deg = compose_2f(deg_to_rad, Math.sin);
+/** コサイン関数（引数は360で一周の度数法） */
+export const cos_deg = compose_2f(deg_to_rad, Math.cos);
+/** タンジェント関数（引数は360で一周の度数法） */
+export const tan_deg = compose_2f(deg_to_rad, Math.tan);
 

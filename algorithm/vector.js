@@ -82,13 +82,13 @@ var V2Impl = (function () {
         this.length2 = function () { return _this.ip(_this); };
         this.length = function () { return Math.sqrt(_this.length2()); };
         // 二項演算
-        this.add = function (dist) { return V2Impl.fm_array(add(_this._v, exports.to_array(dist))); };
-        this.sub = function (dist) { return V2Impl.fm_array(sub(_this._v, exports.to_array(dist))); };
-        this.hadamart = function (dist) { return V2Impl.fm_array(hadamart(_this._v, exports.to_array(dist))); };
+        this.add = function (dist) { return V2Impl.fm_array(add(_this._v, exports.to_array_if(dist))); };
+        this.sub = function (dist) { return V2Impl.fm_array(sub(_this._v, exports.to_array_if(dist))); };
+        this.hadamart = function (dist) { return V2Impl.fm_array(hadamart(_this._v, exports.to_array_if(dist))); };
         this.scalar = function (n) { return V2Impl.fm_array(scalar(_this._v, n)); };
-        this.ip = function (dist) { return ip(_this.array(), exports.to_array(dist)); };
-        this.cp = function (dist) { return cp2(_this._v, exports.to_array(dist)); };
-        this.angle = function (dist) { return angle(_this._v, exports.to_array(dist)); };
+        this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
+        this.cp = function (dist) { return cp2(_this._v, exports.to_array_if(dist)); };
+        this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
         this._v = [x, y];
     }
     V2Impl.fm_array = function (v) {
@@ -110,13 +110,13 @@ var V3Impl = (function () {
         this.y = function () { return _this._v[1]; };
         this.z = function () { return _this._v[2]; };
         // 二項演算
-        this.add = function (dist) { return V3Impl.fm_array(add(_this._v, exports.to_array(dist))); };
-        this.sub = function (dist) { return V3Impl.fm_array(sub(_this._v, exports.to_array(dist))); };
-        this.hadamart = function (dist) { return V3Impl.fm_array(hadamart(_this._v, exports.to_array(dist))); };
+        this.add = function (dist) { return V3Impl.fm_array(add(_this._v, exports.to_array_if(dist))); };
+        this.sub = function (dist) { return V3Impl.fm_array(sub(_this._v, exports.to_array_if(dist))); };
+        this.hadamart = function (dist) { return V3Impl.fm_array(hadamart(_this._v, exports.to_array_if(dist))); };
         this.scalar = function (n) { return V3Impl.fm_array(scalar(_this._v, n)); };
-        this.ip = function (dist) { return ip(_this.array(), exports.to_array(dist)); };
-        this.cp = function (dist) { return V3Impl.fm_array(cp3(_this._v, exports.to_array(dist))); };
-        this.angle = function (dist) { return angle(_this._v, exports.to_array(dist)); };
+        this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
+        this.cp = function (dist) { return V3Impl.fm_array(cp3(_this._v, exports.to_array_if(dist))); };
+        this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
         this._v = [x, y, z];
     }
     V3Impl.fm_array = function (v) {
@@ -139,12 +139,12 @@ var V4Impl = (function () {
         this.length2 = function () { return _this.ip(_this); };
         this.length = function () { return Math.sqrt(_this.length2()); };
         // 二項演算
-        this.add = function (dist) { return V4Impl.fm_array(add(_this._v, exports.to_array(dist))); };
-        this.sub = function (dist) { return V4Impl.fm_array(sub(_this._v, exports.to_array(dist))); };
-        this.hadamart = function (dist) { return V4Impl.fm_array(hadamart(_this._v, exports.to_array(dist))); };
+        this.add = function (dist) { return V4Impl.fm_array(add(_this._v, exports.to_array_if(dist))); };
+        this.sub = function (dist) { return V4Impl.fm_array(sub(_this._v, exports.to_array_if(dist))); };
+        this.hadamart = function (dist) { return V4Impl.fm_array(hadamart(_this._v, exports.to_array_if(dist))); };
         this.scalar = function (n) { return V4Impl.fm_array(scalar(_this._v, n)); };
-        this.ip = function (dist) { return ip(_this.array(), exports.to_array(dist)); };
-        this.angle = function (dist) { return angle(_this._v, exports.to_array(dist)); };
+        this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
+        this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
         this._v = [x, y, z, w];
     }
     V4Impl.fm_array = function (v) {
@@ -152,7 +152,8 @@ var V4Impl = (function () {
     };
     return V4Impl;
 }());
-exports.to_array = function (n) { return n instanceof Array ? n : n._v; };
+exports.to_array_if = function (n) { return n instanceof Array ? n : n._v; };
+exports.to_v3_if = function (v) { return v instanceof Array ? exports.array_to_v3(v) : v; };
 // --------------------------------------------------------
 // 直交座標系による生成
 /** (x成分, y成分) -> 2次元ベクトル */

@@ -1,76 +1,14 @@
 "use strict";
 /** プリミティブオブジェクト */
 Object.defineProperty(exports, "__esModule", { value: true });
-var al = require("./geo");
 var ut = require("../algorithm/utility");
 var sq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
-var v2_polar = vc.polar_to_v2;
+var al = require("./geo");
+var prim2 = require("./primitive2");
 var geometry = function (verts, faces) { return new al.Geo(verts, faces); };
-var fn;
-(function (fn) {
-    /** Polygon - 多角形 */
-    var polygon;
-    (function (polygon) {
-        /**
-         * 円に内接するn角形
-         * @param   n_gonal     多角形の頂点数
-         * @param   r           多角形の外接円の半径
-         * @param   t           多角形の1つ目の頂点の偏角
-         */
-        function verts_i(n_gonal, r, t) {
-            if (t === void 0) { t = 0; }
-            return sq.arith(n_gonal, t, ut.deg360 / n_gonal)
-                .map(function (rad) { return v2_polar(r, rad); });
-        }
-        polygon.verts_i = verts_i;
-        /**
-         * 円に外接するn角形
-         * @param   n_gonal     多角形の頂点数
-         * @param   r           多角形の内接円の半径
-         * @param   t           多角形の1つ目の頂点の偏角
-         */
-        function verts_c(n_gonal, r, t) {
-            if (t === void 0) { t = 0; }
-            var theta = ut.deg360 / (n_gonal * 2);
-            var r2 = r / Math.cos(theta);
-            var p2 = t + theta;
-            return verts_i(n_gonal, r2, p2);
-        }
-        polygon.verts_c = verts_c;
-    })(polygon = fn.polygon || (fn.polygon = {}));
-    function arc(n, r, t1, t2) {
-        var step = n >= 2 ? (t2 - t1) / (n - 1) : 0;
-        return sq.arith(n, t1, step).map(function (t) { return v2_polar(r, t); });
-    }
-    fn.arc = arc;
-})(fn = exports.fn || (exports.fn = {}));
-function pie(n, r, t1, t2) {
-    return [vc.v2_zero].concat(fn.arc(n, r, t1, t2));
-}
-exports.pie = pie;
-function doughnut(n, r1, r2, t1, t2) {
-    var arc1 = fn.arc(n, r1, t1, t2);
-    var arc2 = fn.arc(n, r2, t2, t1);
-    return arc1.concat(arc2);
-}
-exports.doughnut = doughnut;
-function extrude(verts, z) {
-    var len = verts.length;
-    var new_verts_1 = verts.map(function (v) { return vc.v2_to_v3(v, 0); });
-    var new_verts_2 = verts.map(function (v) { return vc.v2_to_v3(v, z); });
-    var new_verts = new_verts_1.concat(new_verts_2);
-    var new_face_1 = sq.arith(len);
-    var new_face_2 = sq.arith(len, len);
-    var new_side_faces = sq.arith(len).map(function (n) { return [n, (n + 1) % len, len + (n + 1) % len, len + n]; });
-    var new_faces = [];
-    new_faces.push(new_face_1);
-    new_faces.push(new_face_2);
-    new_side_faces.forEach(function (f) { return new_faces.push(f); });
-    return geometry(new_verts, new_faces);
-}
-exports.extrude = extrude;
 /** プリミティブオブジェクト生成用関数群 */
+var fn;
 (function (fn) {
     var deg120_c = Math.cos(120 * ut.pi / 180);
     var deg120_s = Math.sin(120 * ut.pi / 180);
@@ -296,18 +234,14 @@ exports.extrude = extrude;
         function verts_i(n_gonal, r, t, z) {
             if (t === void 0) { t = 0; }
             if (z === void 0) { z = 0; }
-            return fn.polygon.verts_i(n_gonal, r, t)
-                .map(function (v) { return vc.v2_to_v3(v, z); });
+            return prim2.circle_i(n_gonal, r, t).map(function (v) { return vc.v2_to_v3(v, z); });
         }
         circle.verts_i = verts_i;
         /** 円に外接するn角形 */
         function verts_c(n_gonal, r, t, z) {
             if (t === void 0) { t = 0; }
             if (z === void 0) { z = 0; }
-            var theta = ut.deg360 / (n_gonal * 2);
-            var r2 = r / Math.cos(theta);
-            var p2 = t + theta;
-            return verts_i(n_gonal, r2, p2, z);
+            return prim2.circle_c(n_gonal, r, t).map(function (v) { return vc.v2_to_v3(v, z); });
         }
         circle.verts_c = verts_c;
     })(circle = fn.circle || (fn.circle = {}));
@@ -495,12 +429,12 @@ function bipyramid(n_gonal, r, h, d) {
 exports.bipyramid = bipyramid;
 /** z軸上に頂点を置いた正12面体 */
 function rot_dodecahedron(r) {
-    return dodecahedron(r).clone_rotate_x(fn.dodecahedron.rad_rot_y_to_z);
+    return al.rotate_x(dodecahedron(r), fn.dodecahedron.rad_rot_y_to_z);
 }
 exports.rot_dodecahedron = rot_dodecahedron;
 /** z軸上に頂点を置いた正20面体 */
 function rot_icosahedron(r) {
-    return icosahedron(r).clone_rotate_x(fn.icosahedron.rad_rot_y_to_z);
+    return al.rotate_x(icosahedron(r), fn.icosahedron.rad_rot_y_to_z);
 }
 exports.rot_icosahedron = rot_icosahedron;
 /** v1とv2を対角の頂点とした直方体 */
@@ -509,6 +443,31 @@ function cuboid_vv(v1, v2) {
     v2 = v2 instanceof Array ? vc.array_to_v3(v2) : v2;
     var center = v1.add(v2).scalar(0.5);
     var d = v2.sub(center);
-    return cuboid(d.x(), d.y(), d.z()).clone_translate(center);
+    return al.translate(cuboid(d.x(), d.y(), d.z()), center);
 }
 exports.cuboid_vv = cuboid_vv;
+function trimesh(index, f) {
+    var iMax = index.length;
+    var jMax = index[0].length;
+    var verts = [];
+    for (var i = 0; i < iMax; i++) {
+        for (var j = 0; j < jMax; j++) {
+            verts.push(f(i, j));
+        }
+    }
+    var faces = [];
+    for (var i = 0; i < iMax - 1; i++) {
+        var i0 = i * jMax;
+        var i1 = (i + 1) * jMax;
+        for (var j = 0; j < jMax - 1; j++) {
+            var i0j0 = i0 + j;
+            var i0j1 = i0 + j + 1;
+            var i1j0 = i1 + j;
+            var i1j1 = i1 + j + 1;
+            faces.push([i0j0, i0j1, i1j0]);
+            faces.push([i1j1, i1j0, i0j1]);
+        }
+    }
+    return geometry(verts, faces);
+}
+exports.trimesh = trimesh;

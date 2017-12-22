@@ -13,16 +13,32 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("./utility");
 var seq = require("./sequence");
+var vc = require("./vector");
 exports.E = 0.001;
 /** 位置ベクトルと方向ベクトルのペア */
-var CD = (function () {
-    function CD(c, d) {
+var Ray = (function () {
+    function Ray(c, d) {
         this.c = c;
         this.d = d;
     }
-    return CD;
+    Ray.prototype.map = function (f) {
+        var c = f(this.c);
+        var d = f(this.d);
+        return new Ray(c, d);
+    };
+    Ray.prototype.p = function (t) {
+        var d = this.d.scalar(t);
+        return this.c.add(d);
+    };
+    return Ray;
 }());
-exports.CD = CD;
+exports.Ray = Ray;
+function ray3_to_ray2(cd3) {
+    var c = vc.v3_to_v2(cd3.c);
+    var d = vc.v3_to_v2(cd3.d);
+    return cd(c, d);
+}
+exports.ray3_to_ray2 = ray3_to_ray2;
 var CurveBase = (function () {
     function CurveBase(v) {
         this.v = v;
@@ -272,7 +288,7 @@ var CurveArray = (function () {
 exports.CurveArray = CurveArray;
 /** 位置ベクトルと方向ベクトルのペア */
 function cd(c, d) {
-    return new CD(c, d);
+    return new Ray(c, d);
 }
 exports.cd = cd;
 /** 直線 */
@@ -355,7 +371,8 @@ exports.bezier_arc_p = function (deg) { return 4 / 3 * Math.tan(ut.deg_to_rad(de
 function bezier3_interpolate_s(p0, p1, d) {
     var c0 = p0.scalar(2).add(p1).scalar(1 / 3).sub(d);
     var c1 = p1.scalar(2).add(p0).scalar(1 / 3).add(d);
-    return [p0, c0, c1, p1];
+    var controls = [p0, c0, c1, p1];
+    return bezier(controls);
 }
 exports.bezier3_interpolate_s = bezier3_interpolate_s;
 /** 三次ベジェの楕円弧カーブ */
@@ -366,6 +383,7 @@ function bezier3_interpolate_arc(p0, p1, o) {
     var n = exports.bezier_arc_p(rad);
     var c0 = p0.add(d1.scalar(n));
     var c1 = p1.add(d0.scalar(n));
-    return [p0, c0, c1, p1];
+    var controls = [p0, c0, c1, p1];
+    return bezier(controls);
 }
 exports.bezier3_interpolate_arc = bezier3_interpolate_arc;

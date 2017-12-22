@@ -1,72 +1,13 @@
 ﻿/** プリミティブオブジェクト */
 
-import * as al from "./geo";
 import * as ut from "../algorithm/utility";
 import * as sq from "../algorithm/sequence";
 import * as vc from "../algorithm/vector";
+import * as al from "./geo";
+import * as prim2 from "./primitive2";
 
-type V2 = vc.V2;
 type V3 = vc.V3;
-const v2_polar = vc.polar_to_v2;
 const geometry = (verts: V3[], faces: number[][]) => new al.Geo(verts, faces);
-
-export namespace fn {
-    /** Polygon - 多角形 */
-    export namespace polygon {
-        /**
-         * 円に内接するn角形
-         * @param   n_gonal     多角形の頂点数
-         * @param   r           多角形の外接円の半径
-         * @param   t           多角形の1つ目の頂点の偏角
-         */
-        export function verts_i(n_gonal: number, r: number, t: number = 0): V2[] {
-            return sq.arith(n_gonal, t, ut.deg360 / n_gonal)
-                .map(rad => v2_polar(r, rad));
-        }
-        /**
-         * 円に外接するn角形
-         * @param   n_gonal     多角形の頂点数
-         * @param   r           多角形の内接円の半径
-         * @param   t           多角形の1つ目の頂点の偏角
-         */
-        export function verts_c(n_gonal: number, r: number, t: number = 0): V2[] {
-            const theta = ut.deg360 / (n_gonal * 2);
-            const r2 = r / Math.cos(theta);
-            const p2 = t + theta;
-            return verts_i(n_gonal, r2, p2);
-        }
-    }
-
-    export function arc(n: number, r: number, t1: number, t2: number): V2[] {
-        const step = n >= 2 ? (t2 - t1) / (n - 1) : 0;
-        return sq.arith(n, t1, step).map(t => v2_polar(r, t));
-    }
-}
-
-export function pie(n: number, r: number, t1: number, t2: number): V2[] {
-    return [vc.v2_zero].concat(fn.arc(n, r, t1, t2));
-}
-
-export function doughnut(n: number, r1: number, r2: number, t1: number, t2: number): V2[] {
-    const arc1 = fn.arc(n, r1, t1, t2);
-    const arc2 = fn.arc(n, r2, t2, t1);
-    return arc1.concat(arc2);
-}
-
-export function extrude(verts: V2[], z: number): al.Geo {
-    const len = verts.length;
-    const new_verts_1 = verts.map(v => vc.v2_to_v3(v, 0))
-    const new_verts_2 = verts.map(v => vc.v2_to_v3(v, z))
-    const new_verts = new_verts_1.concat(new_verts_2);
-    const new_face_1 = sq.arith(len);
-    const new_face_2 = sq.arith(len, len);
-    const new_side_faces = sq.arith(len).map(n => [n, (n+1)%len, len+(n+1)%len, len+n]);
-    const new_faces: number[][] = [];
-    new_faces.push(new_face_1);
-    new_faces.push(new_face_2);
-    new_side_faces.forEach(f => new_faces.push(f));
-    return geometry(new_verts, new_faces);
-}
 
 
 /** プリミティブオブジェクト生成用関数群 */
@@ -275,15 +216,11 @@ export namespace fn {
     export namespace circle {
         /** 円に内接するn角形 */
         export function verts_i(n_gonal: number, r: number, t: number = 0, z: number = 0): V3[] {
-            return fn.polygon.verts_i(n_gonal, r, t)
-                .map(v => vc.v2_to_v3(v, z));
+            return prim2.circle_i(n_gonal, r, t).map(v => vc.v2_to_v3(v, z));
         }
         /** 円に外接するn角形 */
         export function verts_c(n_gonal: number, r: number, t: number = 0, z: number = 0): V3[] {
-            const theta = ut.deg360 / (n_gonal * 2);
-            const r2 = r / Math.cos(theta);
-            const p2 = t + theta;
-            return verts_i(n_gonal, r2, p2, z);
+            return prim2.circle_c(n_gonal, r, t).map(v => vc.v2_to_v3(v, z));
         }
     }
     /** Prism - 角柱 */
@@ -452,11 +389,11 @@ export function bipyramid(n_gonal: number, r: number, h: number, d: number): al.
 
 /** z軸上に頂点を置いた正12面体 */
 export function rot_dodecahedron(r: number): al.Geo {
-    return dodecahedron(r).clone_rotate_x(fn.dodecahedron.rad_rot_y_to_z);
+    return al.rotate_x(dodecahedron(r), fn.dodecahedron.rad_rot_y_to_z);
 }
 /** z軸上に頂点を置いた正20面体 */
 export function rot_icosahedron(r: number): al.Geo {
-    return icosahedron(r).clone_rotate_x(fn.icosahedron.rad_rot_y_to_z);
+    return al.rotate_x(icosahedron(r), fn.icosahedron.rad_rot_y_to_z);
 }
 
 /** v1とv2を対角の頂点とした直方体 */
@@ -465,5 +402,30 @@ export function cuboid_vv(v1: number[]|V3, v2: number[]|V3): al.Geo {
     v2 = v2 instanceof Array ? vc.array_to_v3(v2) : v2;
     const center = v1.add(v2).scalar(0.5);
     const d = v2.sub(center);
-    return cuboid(d.x(), d.y(), d.z()).clone_translate(center);
+    return al.translate(cuboid(d.x(), d.y(), d.z()), center);
+}
+
+export function trimesh(index: number[][], f: (i: number, j: number) => V3): al.Geo {
+    const iMax = index.length;
+    const jMax = index[0].length;
+    const verts: V3[] = [];
+    for (let i = 0; i < iMax; i++) {
+        for (let j = 0; j < jMax; j++) {
+            verts.push(f(i, j));
+        }
+    }
+    const faces: number[][] = [];
+    for (let i = 0; i < iMax - 1; i++) {
+        const i0 = i * jMax;
+        const i1 = (i+1) * jMax;
+        for (let j = 0; j < jMax - 1; j++) {
+            const i0j0 = i0 + j;
+            const i0j1 = i0 + j + 1;
+            const i1j0 = i1 + j;
+            const i1j1 = i1 + j + 1;
+            faces.push([i0j0, i0j1, i1j0]);
+            faces.push([i1j1, i1j0, i0j1]);
+        }
+    }
+    return geometry(verts, faces);
 }

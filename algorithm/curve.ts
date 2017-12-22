@@ -8,20 +8,35 @@ export let E = 0.001;
 
 
 /** 位置ベクトルと方向ベクトルのペア */
-export class CD<T extends vc.Vector<T>> {
+export class Ray<T extends vc.Vector<T>> {
     constructor(
         public c: T,
         public d: T,
     ) { }
+
+    map(f: (v: T) => T): Ray<T> {
+        const c = f(this.c);
+        const d = f(this.d);
+        return new Ray(c, d);
+    }
+    p(t: number): T {
+        const d = this.d.scalar(t);
+        return this.c.add(d);
+    }
 }
 
 /** 2次元の位置ベクトルと方向ベクトルのペア */
-export interface CD2 extends CD<vc.V2> {}
+export interface Ray2 extends Ray<vc.V2> {}
 /** 3次元の位置ベクトルと方向ベクトルのペア */
-export interface CD3 extends CD<vc.V3> {}
+export interface Ray3 extends Ray<vc.V3> {}
 /** 4次元の位置ベクトルと方向ベクトルのペア */
-export interface CD4 extends CD<vc.V4> {}
+export interface Ray4 extends Ray<vc.V4> {}
 
+export function ray3_to_ray2(cd3: Ray3): Ray2 {
+    const c = vc.v3_to_v2(cd3.c);
+    const d = vc.v3_to_v2(cd3.d);
+    return cd(c, d);
+}
 
 /** Parametric Equation - パラメトリック方程式による曲線 */
 export interface Curve<T extends vc.Vector<T>> {
@@ -31,7 +46,7 @@ export interface Curve<T extends vc.Vector<T>> {
     /** パラメータiに対応する座標 */
     coord(t: number): T;
     /** パラメータiに対応する位置と方向 */
-    cd(t: number, delta?: number): CD<T>;
+    cd(t: number, delta?: number): Ray<T>;
 
     /** coord(0.0) と同値 */
     start(): T;
@@ -68,7 +83,7 @@ abstract class CurveBase<T extends vc.Vector<T>, U extends CurveC<T, U>> impleme
         return this.v.slice(0);
     }
 
-    cd(t: number, delta: number = E): CD<T> {
+    cd(t: number, delta: number = E): Ray<T> {
         const c = this.coord(t);
         const d1 = this.coord(t - delta);
         const d2 = this.coord(t + delta);
@@ -271,7 +286,7 @@ export class CurveArray<T extends vc.Vector<T>> {
         const k = t - j;
         return this._curves[j].coord(k);
     }
-    cd(t: number, delta: number = E): CD<T> {
+    cd(t: number, delta: number = E): Ray<T> {
         const c = this.coord(t);
         const d1 = this.coord(t - delta);
         const d2 = this.coord(t + delta);
@@ -305,8 +320,8 @@ export interface CurveArray4 extends CurveArray<vc.V4> {}
 
 
 /** 位置ベクトルと方向ベクトルのペア */
-export function cd<T extends vc.Vector<T>>(c: T, d: T): CD<T> {
-    return new CD(c, d);
+export function cd<T extends vc.Vector<T>>(c: T, d: T): Ray<T> {
+    return new Ray(c, d);
 }
 
 /** 直線 */
@@ -385,18 +400,20 @@ export function lines<T extends vc.Vector<T>>(verts: T[]): CurveArray<T> {
 export const bezier_arc_p = (deg: number): number => 4 / 3 * Math.tan(ut.deg_to_rad(deg) / 4);
 
 /** 三次ベジェのS字カーブ */
-export function bezier3_interpolate_s<T extends vc.Vector<T>>(p0: T, p1: T, d: T): T[] {
+export function bezier3_interpolate_s<T extends vc.Vector<T>>(p0: T, p1: T, d: T): Curve<T> {
     const c0 = p0.scalar(2).add(p1).scalar(1/3).sub(d);
     const c1 = p1.scalar(2).add(p0).scalar(1/3).add(d);
-    return [p0, c0, c1, p1];
+    const controls = [p0, c0, c1, p1];
+    return bezier(controls);
 }
 /** 三次ベジェの楕円弧カーブ */
-export function bezier3_interpolate_arc<T extends vc.Vector<T>>(p0: T, p1: T, o: T): T[] {
+export function bezier3_interpolate_arc<T extends vc.Vector<T>>(p0: T, p1: T, o: T): Curve<T> {
     const d0 = p0.sub(o);
     const d1 = p1.sub(o);
     const rad = d0.angle(d1);
     const n = bezier_arc_p(rad);
     const c0 = p0.add(d1.scalar(n));
     const c1 = p1.add(d0.scalar(n));
-    return [p0, c0, c1, p1];
+    const controls = [p0, c0, c1, p1];
+    return bezier(controls);
 }

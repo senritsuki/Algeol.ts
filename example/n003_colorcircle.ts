@@ -19,7 +19,7 @@ const duplicater = al.compose(sq, [
 
 const geos = al.duplicate(geo, duplicater);
 
-const lch = ut.composite_2f(cc.lch_to_rgb01, (nn: number[]) => cc.clamp(nn, 0, 1));
+const lch = ut.compose_2f(cc.lch_to_rgb01, (nn: number[]) => cc.clamp(nn, 0, 1));
 
 const materials = sq.map(n => new al.Material(`c1510${ut.format_02d(n)}`, lch([75, 50, n*step])));
 

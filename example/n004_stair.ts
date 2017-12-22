@@ -9,7 +9,7 @@ import * as prim from '../geometry/primitive';
 import * as wf from '../decoder/wavefront';
 import * as save from './n003_save';
 
-const lch = ut.composite_2f(cc.lch_to_rgb01, (nn: number[]) => cc.clamp(nn, 0, 1));
+const lch = ut.compose_2f(cc.lch_to_rgb01, (nn: number[]) => cc.clamp(nn, 0, 1));
 
 function lch5(l: number, c: number, h: number): al.Material {
     const diffuse = lch([l*5, c*5, h*15]);
@@ -43,8 +43,8 @@ const stairstep_duplicater = al.compose(stair_coords, [
     d => mx.trans_m4(d),
 ]);
 
-const obj_floors = al.merge_geos(al.duplicate(geo_floor, floor_duplicater), lch5(19, 0, 0));
-const obj_stairsteps = al.merge_geos(al.duplicate(geo_stairstep, stairstep_duplicater), lch5(18, 1, 17));
+const obj_floors = al.geos_to_obj(al.duplicate(geo_floor, floor_duplicater), lch5(19, 0, 0));
+const obj_stairsteps = al.geos_to_obj(al.duplicate(geo_stairstep, stairstep_duplicater), lch5(18, 1, 17));
 
 const objs = [obj_floors, obj_stairsteps];
 

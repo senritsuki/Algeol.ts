@@ -2,65 +2,44 @@
 import * as ut from "../algorithm/utility";
 import * as seq from "../algorithm/sequence";
 import * as vc from "../algorithm/vector";
-import * as cv from "../algorithm/curve";
+import * as mx from "../algorithm/matrix";
+//import * as cv from "../algorithm/curve";
 
 import * as al from '../geometry/geo';
+//import * as prim from '../geometry/primitive';
+import * as prim2 from '../geometry/primitive2';
 import * as lib from './n005_lib';
-
-
-type V3 = vc.V3;
-
-export class Connector {
-    constructor(
-        public c: V3,
-        public deg: number,
-    ) {}
-}
-
-export function build_connector(o: V3, r: number, deg: number): Connector {
-    const d = vc.polar_to_v3(r, ut.deg_to_rad(deg), 0);
-    const c = o.add(d);
-    return new Connector(c, deg);
-}
-
-export class Floor {
-    constructor(
-        public o: V3,
-        public connectors: Connector[],
-    ) {}
-}
-
-export class SquareFloor extends Floor {
-    constructor(
-        o: V3,
-        public r: number,
-        public deg_offset: number = 0,
-    ) {
-        super(o, seq.arith(4).map(i => build_connector(o, r, i*90+deg_offset)));
-    }
-}
-export class HexaFloor extends Floor {
-    constructor(
-        o: V3,
-        public r: number,
-        public deg_offset: number = 0,
-    ) {
-        super(o, seq.arith(6).map(i => build_connector(o, r, i*60+deg_offset)));
-    }
-}
-
-export class Route {
-    constructor(
-        public c1: Connector,
-        public c2: Connector,
-    ) {}
-
-    curve(): cv.Curve3 {}
-}
-
 
 import * as wf from '../decoder/wavefront';
 import * as saver from './n003_save';
+
+const v3 = vc.v3;
+
+
+const BottomZ = -100;
+
+const square = geo_rfloor_simple(lib.floor_square(v3(0, 0, 3), 1));
+
+const squares = al.duplicate(square, al.compose(seq.arith(4), [
+    _ => mx.trans_m4(v3(0, 5, 0)),
+    i => mx.rot_z_m4(ut.deg90 * i),
+]));
+
+export function geo_rfloor_simple(floor: lib.RegularFloor): al.Geo {
+    return lib.xygeo_z_scale_rot(floor.verts(), [
+        v3(0, 1, 0),
+        v3(-1/8, 1, 0),
+        v3(-1, 1/8, 0),
+        v3(BottomZ, 1/8, 0),
+    ]);
+}
+
+const plane = prim2.plane(prim2.circle_i(24, 10), prim2.to_v3_xy(0));
+
+save([
+    al.geos_to_obj(squares, lib.lch(18, 0, 0)),
+    al.geo_to_obj(plane, lib.lch(17, 5, 2)),
+]);
 
 function save(objs: al.Obj[]) {
     const result = wf.objs_to_strings('./_obj/n006', objs);

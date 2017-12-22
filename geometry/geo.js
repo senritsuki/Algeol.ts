@@ -15,41 +15,49 @@ var mx = require("../algorithm/matrix");
 function shift_offset(face, index_offset) {
     return face.map(function (n) { return n + index_offset; });
 }
-var Translatable = (function () {
-    function Translatable(verts) {
+function apply_m3(geo, m) {
+    return geo.map(m.map);
+}
+exports.apply_m3 = apply_m3;
+function apply_m4(geo, m) {
+    return geo.map(function (v) { return m.map_v3(v, 1); });
+}
+exports.apply_m4 = apply_m4;
+function translate(geo, v_add) {
+    return geo.map(function (v) { return v.add(v_add); });
+}
+exports.translate = translate;
+function rotate_x(geo, rad) {
+    return apply_m3(geo, mx.rot_x_m3(rad));
+}
+exports.rotate_x = rotate_x;
+function rotate_y(geo, rad) {
+    return apply_m3(geo, mx.rot_y_m3(rad));
+}
+exports.rotate_y = rotate_y;
+function rotate_z(geo, rad) {
+    return apply_m3(geo, mx.rot_z_m3(rad));
+}
+exports.rotate_z = rotate_z;
+function scale(geo, v) {
+    return apply_m3(geo, mx.scale_m3(v));
+}
+exports.scale = scale;
+var MapBase = (function () {
+    function MapBase(verts) {
         this.verts = verts;
     }
-    Translatable.prototype.clone_update = function (v) {
+    MapBase.prototype.clone_update = function (v) {
         var t = this.clone();
         t.verts = v;
         return t;
     };
-    Translatable.prototype.clone_apply = function (f) {
+    MapBase.prototype.map = function (f) {
         return this.clone_update(this.verts.map(function (v) { return f(v); }));
     };
-    Translatable.prototype.clone_apply_m3 = function (m3) {
-        return this.clone_apply(m3.map);
-    };
-    Translatable.prototype.clone_apply_m4 = function (m4) {
-        return this.clone_apply(function (v) { return m4.map_v3(v, 1); });
-    };
-    Translatable.prototype.clone_translate = function (v) {
-        return this.clone_update(this.verts.map(function (v2) { return v2.add(v); }));
-    };
-    Translatable.prototype.clone_rotate_x = function (rad) {
-        return this.clone_apply_m3(mx.rot_x_m3(rad));
-    };
-    Translatable.prototype.clone_rotate_y = function (rad) {
-        return this.clone_apply_m3(mx.rot_y_m3(rad));
-    };
-    Translatable.prototype.clone_rotate_z = function (rad) {
-        return this.clone_apply_m3(mx.rot_z_m3(rad));
-    };
-    Translatable.prototype.clone_scale = function (v) {
-        return this.clone_apply_m3(mx.scale_m3(v));
-    };
-    return Translatable;
+    return MapBase;
 }());
+exports.MapBase = MapBase;
 var Geo = (function (_super) {
     __extends(Geo, _super);
     function Geo(verts, faces) {
@@ -61,7 +69,7 @@ var Geo = (function (_super) {
         return new Geo(this.verts, this.faces);
     };
     return Geo;
-}(Translatable));
+}(MapBase));
 exports.Geo = Geo;
 var Material = (function () {
     function Material(name, diffuse) {
@@ -98,19 +106,18 @@ var Obj = (function (_super) {
         return new Obj(this.name, this.verts, this.faces);
     };
     return Obj;
-}(Translatable));
+}(MapBase));
 exports.Obj = Obj;
-function geo_to_obj(geo, name, material) {
+function geo_to_obj(geo, material, name) {
     if (name === void 0) { name = null; }
-    if (material === void 0) { material = null; }
     return new Obj(name, geo.verts, [new FaceGroup(name, geo.faces, material)]);
 }
 exports.geo_to_obj = geo_to_obj;
-function merge_geos(geos, material, name) {
+function geos_to_obj(geos, material, name) {
     if (name === void 0) { name = null; }
     return _merge_geos(geos, name, function (_) { return material; });
 }
-exports.merge_geos = merge_geos;
+exports.geos_to_obj = geos_to_obj;
 function merge_geos_materials(geos, materials, name) {
     if (materials === void 0) { materials = []; }
     if (name === void 0) { name = null; }
@@ -152,7 +159,7 @@ function m4s_to_maps(mm) {
 exports.m4s_to_maps = m4s_to_maps;
 /** 写像配列を用いたジオメトリ・オブジェクト配列複製 */
 function duplicate(obj, maps) {
-    return maps.map(function (m) { return obj.clone_apply(m); });
+    return maps.map(function (m) { return obj.map(m); });
 }
 exports.duplicate = duplicate;
 /** 写像配列を用いた3次元ベクトル配列複製 */

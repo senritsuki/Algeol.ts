@@ -159,9 +159,9 @@ def b_spline(P: list, T: list, t: float) -> np.array:
     return p
 */
 /** 2関数の合成 */
-exports.composite_2f = function (a, b) { return function (r) { return b(a(r)); }; };
+exports.compose_2f = function (a, b) { return function (r) { return b(a(r)); }; };
 /** 3関数の合成 */
-exports.composite_3f = function (a, b, c) { return function (r) { return c(b(a(r))); }; };
+exports.compose_3f = function (a, b, c) { return function (r) { return c(b(a(r))); }; };
 /** 0 -> '00', 255 -> 'ff' */
 exports.format_02x = function (n) { return ('00' + Math.round(clamp(n, 0, 255)).toString(16)).slice(-2); };
 function clamp(n, min, max) {
@@ -194,3 +194,9 @@ var priv;
         return seq;
     };
 })(priv || (priv = {}));
+/** サイン関数（引数は360で一周の度数法） */
+exports.sin_deg = exports.compose_2f(exports.deg_to_rad, Math.sin);
+/** コサイン関数（引数は360で一周の度数法） */
+exports.cos_deg = exports.compose_2f(exports.deg_to_rad, Math.cos);
+/** タンジェント関数（引数は360で一周の度数法） */
+exports.tan_deg = exports.compose_2f(exports.deg_to_rad, Math.tan);

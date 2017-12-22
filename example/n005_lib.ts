@@ -3,10 +3,12 @@ import * as seq from "../algorithm/sequence";
 import * as vc from "../algorithm/vector";
 import * as mx from "../algorithm/matrix";
 import * as cv from "../algorithm/curve";
+import * as cc from "../algorithm/color_converter";
 
 import * as al from "../geometry/geo";
 import * as geo_array from "../geometry/array";
 
+type V2 = vc.V2;
 type V3 = vc.V3;
 const v3 = vc.v3;
 const v3_zero = vc.v3_zero;
@@ -103,7 +105,7 @@ export function to_xy_hexagon_basis_deg30(d_inner: number): V3[] {
  * @param z_num 
  * @param z     (0 ... 1) => x縮小率, y縮小率, z位置
  */
-export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (i: number) => V3): al.Geo {
+export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
     const maps = al.compose(z_rates, [
         v => mx.scale_m4([v.x(), v.y(), 1]),
@@ -113,7 +115,7 @@ export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (i: number) 
     return geo_array.prismArray(polygons);
 }
 
-export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (i: number) => V3): al.Geo {
+export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
     const maps = al.compose(z_rates, [
         v => mx.scale_m4([v.x(), v.x(), 1]),
@@ -123,6 +125,17 @@ export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (i: numb
     const polygons = al.duplicate_verts(xy_verts, maps);
     return geo_array.prismArray(polygons);
 }
+
+export function xygeo_z_scale_rot(xy_verts: V3[], zsr_list: V3[]): al.Geo {
+    const maps = al.compose(zsr_list, [
+        zsr => mx.trans_m4([0, 0, zsr.x()]),
+        zsr => mx.scale_m4([zsr.y(), zsr.y(), 1]),
+        zsr => mx.rot_z_m4(zsr.z()),
+    ]);
+    const polygons = al.duplicate_verts(xy_verts, maps);
+    return geo_array.prismArray(polygons);
+}
+
 
 export function duplicate_rot_z(xy_verts: V3[], count: number, deg: number): V3[] {
     const maps = al.compose(seq.arith(count), [
@@ -138,3 +151,173 @@ export function duplicate_rot_z_120_3(xy_verts: V3[]): V3[] {
     return duplicate_rot_z(xy_verts, 3, 120);
 }
 
+
+
+export function v3_rot_z(v: V3, deg: number): V3 {
+    return mx.rot_z_m3(ut.deg_to_rad(deg)).map(v);
+}
+export function ray3_rot_z_scale(cd: cv.Ray3, deg: number, len: number): cv.Ray3 {
+    const d = v3_rot_z(cd.d, deg).scalar(len);
+    return cv.cd(cd.c, d);
+}
+
+
+export class Connector implements al.IMap<Connector> {
+    constructor(
+        public ray: cv.Ray3,
+        public width: number,
+    ) {}
+
+    clone(): Connector {
+        return new Connector(this.ray, this.width);
+    }
+    map(f: (v: V3) => V3): Connector {
+        const ray = this.ray.map(f);
+        return new Connector(ray, this.width);
+    }
+
+    /** コネクタ左端 */
+    cl(): V3 {
+        return ray3_rot_z_scale(this.ray, 90, this.width / 2).c;
+    }
+    /** コネクタ右端 */
+    cr(): V3 {
+        return ray3_rot_z_scale(this.ray, -90, this.width / 2).c;
+    }
+}
+
+export function build_connector(o: V3, r: number, deg: number, width: number): Connector {
+    const d = vc.polar_to_v3(r, ut.deg_to_rad(deg), 0);
+    const c = o.add(d);
+    const cd = cv.cd(c, d);
+    return new Connector(cd, width);
+}
+
+export abstract class FloorBase<T extends FloorBase<T>> implements al.IMap<T> {
+    constructor(
+        public o: V3,
+        public connectors: Connector[],
+    ) {}
+
+    abstract clone(): T;
+
+    clone_update(o: V3, connectors: Connector[]): T {
+        const t = this.clone();
+        t.o = o;
+        t.connectors = connectors;
+        return t;
+    }
+    map(f: (v: V3) => V3): T {
+        const o = f(this.o);
+        const connectors = this.connectors.map(c => c.map(f));
+        return this.clone_update(o, connectors);
+    }
+}
+
+export class RegularFloor extends FloorBase<RegularFloor> {
+    constructor(
+        o: V3,
+        /** 頂点数 */
+        public n: number,
+        /** 内接円半径 */
+        public ir: number,
+        /** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
+        public width_rate: number = 1.0,
+        /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
+        public deg_offset: number = 0,
+    ) {
+        super(o, seq.arith(4).map(i => build_connector(
+            o, 
+            ir, 
+            i * 360 / n + deg_offset, 
+            ir * ut.tan_deg(180 / n) * width_rate,
+        )));
+    }
+
+    clone(): RegularFloor {
+        return new RegularFloor(this.o, this.n, this.ir, this.width_rate, this.deg_offset);
+    }
+    verts(): V3[] {
+        const cr = this.ir / Math.cos(ut.deg180 / this.n);
+        const rad_start = ut.deg_to_rad(this.deg_offset);
+        const verts = seq.range(rad_start, rad_start + ut.pi2, this.n).map(rad => vc.polar_to_v3(cr, rad, 0));
+        return verts.map(v => v.add(this.o));
+    }
+}
+
+export function floor_square(o: V3, ir: number, width_rate: number = 1.0, deg_offset: number = 0): RegularFloor {
+    return new RegularFloor(o, 4, ir, width_rate, deg_offset);
+}
+export function floor_hexa(o: V3, ir: number, width_rate: number = 1.0, deg_offset: number = 0): RegularFloor {
+    return new RegularFloor(o, 6, ir, width_rate, deg_offset);
+}
+
+
+export function calc_cross_point(cd1: cv.Ray2, cd2: cv.Ray2): V2|null {
+    // 位置ベクトルと方向ベクトル取り出し
+    const c11 = cd1.c;
+    const c21 = cd2.c;
+    const c22 = cd2.c.add(cd2.d);
+    const d11_12 = cd1.d;
+    const d11_21 = c21.sub(c11);
+    const d11_22 = c22.sub(c11);
+    const d21_22 = cd2.d;
+
+    // cd2の始点と終点の、cd1との距離を求める
+    const cross_1 = d11_12.cp(d11_21);
+    const cross_2 = d11_12.cp(d11_22);
+
+    // 距離がゼロとなる係数を求める（ゼロとならない＝平行ならnull）
+    const cross_d = cross_2 - cross_1;
+    if (cross_d == 0) return null;
+    const t = cross_1 / cross_d;
+
+    // 距離がゼロとなる位置を求める
+    const c = c21.sub(d21_22.scalar(t));
+    return c;
+}
+
+export function calc_cross_point_v3(cd1: cv.Ray3, cd2: cv.Ray3): V2|null {
+    const cd1_ = cv.ray3_to_ray2(cd1);
+    const cd2_ = cv.ray3_to_ray2(cd2);
+    return calc_cross_point(cd1_, cd2_);
+}
+
+export function build_curve_simple(c1: Connector, c2: Connector): cv.Curve3 {
+    const d = c2.ray.c.sub(c1.ray.c);
+    const len = d.length();
+    const mid1 = c1.ray.p(len/3);
+    const mid2 = c2.ray.p(len/3);
+    const controls = [c1.ray.c, mid1, mid2, c2.ray.c];
+    return cv.bezier(controls);
+}
+
+export function build_curve_arc(c1: Connector, c2: Connector): cv.Curve3 {
+    const oz = (c1.ray.c.z() + c2.ray.c.z()) / 2;
+    const ray1 = ray3_rot_z_scale(c1.ray, 90, 1);
+    const ray2 = ray3_rot_z_scale(c2.ray, 90, 1);
+    const oxy = calc_cross_point_v3(ray1, ray2);
+    if (oxy == null) {
+        return build_curve_simple(c1, c2);
+    }
+    const o = v3(oxy.x(), oxy.y(), oz);
+    return cv.bezier3_interpolate_arc(c1.ray.c, c2.ray.c, o);
+}
+
+export class Route {
+    public curve: cv.Curve3;
+
+    constructor(
+        public c1: Connector,
+        public c2: Connector,
+        builder: (c1: Connector, c2: Connector) => cv.Curve3,
+    ) {
+        this.curve = builder(c1, c2);
+    }
+}
+
+export function lch(l: number, c: number, h: number): al.Material {
+    const name = `lch${ut.format_02d(l)}${ut.format_02d(c)}${ut.format_02d(h)}`;
+    const lch = cc.clamp01(cc.lch_to_rgb01([l*5, c*5, h*15]));
+    return new al.Material(name, lch);
+}
