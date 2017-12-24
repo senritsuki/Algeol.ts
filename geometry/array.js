@@ -1,6 +1,6 @@
 "use strict";
 /** 複合オブジェクト */
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var al = require("./geo");
 var seq = require("../algorithm/sequence");
 var geometry = function (verts, faces) { return new al.Geo(verts, faces); };

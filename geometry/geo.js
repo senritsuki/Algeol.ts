@@ -10,37 +10,34 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
+var vc = require("../algorithm/vector");
 var mx = require("../algorithm/matrix");
 function shift_offset(face, index_offset) {
     return face.map(function (n) { return n + index_offset; });
 }
-function apply_m3(geo, m) {
-    return geo.map(m.map);
+function apply(geo, m) {
+    return geo.map(function (v) { return m.map(v); });
 }
-exports.apply_m3 = apply_m3;
-function apply_m4(geo, m) {
-    return geo.map(function (v) { return m.map_v3(v, 1); });
-}
-exports.apply_m4 = apply_m4;
+exports.apply = apply;
 function translate(geo, v_add) {
-    return geo.map(function (v) { return v.add(v_add); });
+    return apply(geo, mx.trans_m4(v_add));
 }
 exports.translate = translate;
 function rotate_x(geo, rad) {
-    return apply_m3(geo, mx.rot_x_m3(rad));
+    return apply(geo, mx.rot_x_m4(rad));
 }
 exports.rotate_x = rotate_x;
 function rotate_y(geo, rad) {
-    return apply_m3(geo, mx.rot_y_m3(rad));
+    return apply(geo, mx.rot_y_m4(rad));
 }
 exports.rotate_y = rotate_y;
 function rotate_z(geo, rad) {
-    return apply_m3(geo, mx.rot_z_m3(rad));
+    return apply(geo, mx.rot_z_m4(rad));
 }
 exports.rotate_z = rotate_z;
 function scale(geo, v) {
-    return apply_m3(geo, mx.scale_m3(v));
+    return apply(geo, mx.scale_m4(v));
 }
 exports.scale = scale;
 var MapBase = (function () {
@@ -53,6 +50,9 @@ var MapBase = (function () {
         return t;
     };
     MapBase.prototype.map = function (f) {
+        return this.clone_update(this.verts.map(function (v) { return vc.v4map_v3(v, 1, f); }));
+    };
+    MapBase.prototype.map3 = function (f) {
         return this.clone_update(this.verts.map(function (v) { return f(v); }));
     };
     return MapBase;
@@ -153,27 +153,37 @@ function merge_objs(objs, name) {
 }
 exports.merge_objs = merge_objs;
 /** 4次元行列リストを写像配列に変換 */
-function m4s_to_maps(mm) {
+function m4s_to_v3maps(mm) {
     return mm.map(function (m) { return function (v) { return m.map_v3(v, 1); }; });
 }
-exports.m4s_to_maps = m4s_to_maps;
+exports.m4s_to_v3maps = m4s_to_v3maps;
+/** 4次元行列リストを写像配列に変換 */
+function m4s_to_v4maps(mm) {
+    return mm.map(function (m) { return function (v) { return m.map(v); }; });
+}
+exports.m4s_to_v4maps = m4s_to_v4maps;
 /** 写像配列を用いたジオメトリ・オブジェクト配列複製 */
-function duplicate(obj, maps) {
-    return maps.map(function (m) { return obj.map(m); });
+function duplicate_f(obj, v3maps) {
+    return v3maps.map(function (f) { return obj.map(function (v) { return vc.v3map_v4(v, f); }); });
 }
-exports.duplicate = duplicate;
+exports.duplicate_f = duplicate_f;
 /** 写像配列を用いた3次元ベクトル配列複製 */
-function duplicate_verts(verts, maps) {
-    return maps.map(function (m) { return verts.map(m); });
+function duplicate_v3(verts, v3maps) {
+    return v3maps.map(function (m) { return verts.map(m); });
 }
-exports.duplicate_verts = duplicate_verts;
+exports.duplicate_v3 = duplicate_v3;
 /** 任意のデータ配列を用いた合成写像の生成 */
-function composite_m4(data, lambdas) {
+function compose_m4(data, lambdas) {
     return data.map(function (d) { return lambdas.reduce(function (m, lambda) { return lambda(d).mul(m); }, mx.unit_m4); });
 }
-exports.composite_m4 = composite_m4;
+exports.compose_m4 = compose_m4;
 /** 任意のデータ配列を用いた合成写像の生成 */
-function compose(data, lambdas) {
-    return m4s_to_maps(composite_m4(data, lambdas));
+function compose_v3map(data, lambdas) {
+    return m4s_to_v3maps(compose_m4(data, lambdas));
 }
-exports.compose = compose;
+exports.compose_v3map = compose_v3map;
+/** 任意のデータ配列を用いた合成写像の生成 */
+function compose_v4map(data, lambdas) {
+    return m4s_to_v4maps(compose_m4(data, lambdas));
+}
+exports.compose_v4map = compose_v4map;

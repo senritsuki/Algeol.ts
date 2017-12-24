@@ -17,8 +17,8 @@ function save(name, geo) {
     console.log('save: ' + path);
 }
 function test_al() {
-    al.duplicate_verts([vc.v3(0, 0, 0), vc.v3(1, 0, 0)], al.m4s_to_maps([mx.trans_m4([1, 0, 0]), mx.trans_m4([2, 0, 0])])).forEach(function (vv) { return vv.forEach(function (v) { return console.log(v); }); });
-    al.composite_m4([0, 1], [
+    al.duplicate_v3([vc.v3(0, 0, 0), vc.v3(1, 0, 0)], al.m4s_to_v3maps([mx.trans_m4([1, 0, 0]), mx.trans_m4([2, 0, 0])])).forEach(function (vv) { return vv.forEach(function (v) { return console.log(v); }); });
+    al.compose_m4([0, 1], [
         function (d) { return mx.trans_m4([d + 1, 0, 0]); },
         function (_d) { return mx.scale_m4([2, 2, 2]); },
         function (d) { return mx.trans_m4([0, d + 1, 0]); },
@@ -58,12 +58,12 @@ function test() {
     ], vc.v3(0, 0, 9.0)));
     save('prismArray_bipyramid', multi.prismArray_bipyramid(seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * Math.sin(rad), 0, 2 * -Math.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('antiprismArray_bipyramid', multi.antiprismArray_bipyramid(seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * Math.sin(rad), rad / 2, 2 * -Math.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
-    save('prismRing', multi.prismRing(al.duplicate_verts(prim.fn.circle.verts_i(4, 1), al.compose(seq.arith(4), [
+    save('prismRing', multi.prismRing(al.duplicate_v3(prim.fn.circle.verts_i(4, 1), al.compose_v3map(seq.arith(4), [
         function (_d) { return mx.rot_x_m4(ut.deg90); },
         function (_d) { return mx.trans_m4([3, 0, 0]); },
         function (d) { return mx.rot_z_m4(ut.deg90 * d); },
     ]))));
-    save('antiprismRing', multi.antiprismRing(al.duplicate_verts(prim.fn.circle.verts_i(4, 1), al.compose(seq.arith(8), [
+    save('antiprismRing', multi.antiprismRing(al.duplicate_v3(prim.fn.circle.verts_i(4, 1), al.compose_v3map(seq.arith(8), [
         function (d) { return mx.rot_z_m4(ut.deg45 * d); },
         function (_d) { return mx.rot_x_m4(ut.deg90); },
         function (_d) { return mx.trans_m4([3, 0, 0]); },

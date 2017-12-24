@@ -1,9 +1,10 @@
 "use strict";
 /** Wavefront .obj, .mtl */
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
+var ut = require("../algorithm/utility");
+exports.format_florts = function (nn) { return nn.map(function (n) { return ut.format_03f(n); }).join(' '); };
 exports.vert_to_str = function (v) { return 'v ' + v._v.join(' '); };
 exports.face_to_str = function (f) { return 'f ' + f.join(' '); };
-exports.__face_to_str = function (f, offset) { return ['f'].concat(f.map(function (i) { return '' + (i + offset); })).join(' '); };
 /**
  * OpenGL座標系を用いる (default)
  * [1, 2, 3] -> 'v 1 2 3'
@@ -17,7 +18,7 @@ exports.useOpenGLCoordinateSystem = useOpenGLCoordinateSystem;
  * [1, 2, 3] -> 'v 1 3 -2'
  */
 function useBlenderCoordinateSystem() {
-    exports.vert_to_str = function (v) { return ['v', v.x(), v.z(), -v.y()].join(' '); };
+    exports.vert_to_str = function (v) { return 'v ' + exports.format_florts([v.x(), v.z(), -v.y()]); };
 }
 exports.useBlenderCoordinateSystem = useBlenderCoordinateSystem;
 function geos_to_strings(name, geos) {

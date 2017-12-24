@@ -313,6 +313,11 @@ export namespace fn {
     }
 }
 
+export function plane_xy(verts: V3[], z: number): al.Geo {
+    const verts2 = verts.map(v => vc.v3(v.x(), v.y(), z));
+    return geometry(verts2, [verts.map((_, i) => i)]);
+}
+
 /**
  * Tetrahedron - 正4面体
  * @param   r   radius of circumscribed sphere - 外接球の半径

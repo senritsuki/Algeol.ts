@@ -1,6 +1,6 @@
 "use strict";
 /** Vector - ベクトル */
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 /** 配列の単項演算を行い、新しい配列を返す */
 function op1(a, dim, fn) {
     var v = new Array(dim);
@@ -89,6 +89,7 @@ var V2Impl = (function () {
         this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
         this.cp = function (dist) { return cp2(_this._v, exports.to_array_if(dist)); };
         this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
+        this.toString = function () { return "[" + _this._v.join(', ') + "]"; };
         this._v = [x, y];
     }
     V2Impl.fm_array = function (v) {
@@ -117,6 +118,7 @@ var V3Impl = (function () {
         this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
         this.cp = function (dist) { return V3Impl.fm_array(cp3(_this._v, exports.to_array_if(dist))); };
         this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
+        this.toString = function () { return "[" + _this._v.join(', ') + "]"; };
         this._v = [x, y, z];
     }
     V3Impl.fm_array = function (v) {
@@ -145,6 +147,7 @@ var V4Impl = (function () {
         this.scalar = function (n) { return V4Impl.fm_array(scalar(_this._v, n)); };
         this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
         this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
+        this.toString = function () { return "[" + _this._v.join(', ') + "]"; };
         this._v = [x, y, z, w];
     }
     V4Impl.fm_array = function (v) {
@@ -254,6 +257,21 @@ exports.v3_to_v4 = function (v3, w) { return V4Impl.fm_array(v3._v.concat(w)); }
  * </ul>
  */
 exports.v4_to_v3 = function (v4) { return V3Impl.fm_array(v4._v); };
+function v3map_v4(v, f) {
+    var w = v.w();
+    var v_1 = exports.v4_to_v3(v);
+    var v_2 = f(v_1);
+    var v_3 = exports.v3_to_v4(v_2, w);
+    return v_3;
+}
+exports.v3map_v4 = v3map_v4;
+function v4map_v3(v, w, f) {
+    var v_1 = exports.v3_to_v4(v, w);
+    var v_2 = f(v_1);
+    var v_3 = exports.v4_to_v3(v_2);
+    return v_3;
+}
+exports.v4map_v3 = v4map_v3;
 // 定数
 /** 2次元ゼロベクトル v2(0, 0) */
 exports.v2_zero = exports.v2(0, 0);

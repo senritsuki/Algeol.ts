@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var etc;
 (function (etc) {
     /** 3次元ベクトルの線形変換 */

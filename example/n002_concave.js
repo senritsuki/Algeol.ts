@@ -9,11 +9,11 @@ var wf = require("../decoder/wavefront");
 var cube = prim.cube(0.5);
 var sq = seq.arith(21, -10, 1).map(function (x) { return seq.arith(21, -10, 1).map(function (y) { return vc.v2(x, y); }); })
     .reduce(function (a, b) { return a.concat(b); });
-var duplicater = al.compose(sq, [
+var duplicater = al.compose_v3map(sq, [
     function (v) { return mx.trans_m4([v.x(), v.y(), 0.5]); },
     function (v) { return mx.scale_m4([1, 1, 1 + Math.min(12, v.length())]); },
 ]);
-var cubes = al.duplicate_verts(cube.verts, duplicater)
+var cubes = al.duplicate_v3(cube.verts, duplicater)
     .map(function (v) { return new al.Geo(v, cube.faces); });
 wf.useBlenderCoordinateSystem();
 var data = wf.geos_to_strings('./_obj/w001_concave', cubes);

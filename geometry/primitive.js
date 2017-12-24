@@ -1,6 +1,6 @@
 "use strict";
 /** プリミティブオブジェクト */
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var ut = require("../algorithm/utility");
 var sq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
@@ -346,6 +346,11 @@ var fn;
         bipyramid.faces = faces;
     })(bipyramid = fn.bipyramid || (fn.bipyramid = {}));
 })(fn = exports.fn || (exports.fn = {}));
+function plane_xy(verts, z) {
+    var verts2 = verts.map(function (v) { return vc.v3(v.x(), v.y(), z); });
+    return geometry(verts2, [verts.map(function (_, i) { return i; })]);
+}
+exports.plane_xy = plane_xy;
 /**
  * Tetrahedron - 正4面体
  * @param   r   radius of circumscribed sphere - 外接球の半径

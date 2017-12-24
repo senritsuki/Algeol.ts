@@ -24,11 +24,11 @@ seq.range_step(-radius, radius, 1).forEach(x => {
     });
 });
 
-const duplicater = al.compose(sq, [
+const duplicater = al.compose_v3map(sq, [
     v => mx.trans_m4(v),
 ]);
 
-const octahedrons = al.duplicate_verts(octahedron.verts, duplicater)
+const octahedrons = al.duplicate_v3(octahedron.verts, duplicater)
     .map(v => new al.Geo(v, octahedron.faces));
 
 wf.useBlenderCoordinateSystem();

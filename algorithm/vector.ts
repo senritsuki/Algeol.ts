@@ -137,6 +137,8 @@ class V2Impl implements V2 {
     ip = (dist: V2Impl|number[]): number => ip(this.array(), to_array_if(dist));
     cp = (dist: V2Impl|number[]): number => cp2(this._v, to_array_if(dist));
     angle = (dist: V2Impl|number[]): number => angle(this._v, to_array_if(dist));
+
+    toString = (): string => `[${this._v.join(', ')}]`;
 }
 
 /** 3D Vector - 3次元ベクトル */
@@ -187,6 +189,8 @@ class V3Impl implements V3 {
     ip = (dist: V3Impl|number[]): number => ip(this.array(), to_array_if(dist));
     cp = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(cp3(this._v, to_array_if(dist)));
     angle = (dist: V3Impl|number[]): number => angle(this._v, to_array_if(dist));
+
+    toString = (): string => `[${this._v.join(', ')}]`;
 }
 
 /** 4D Vector - 4次元ベクトル */
@@ -236,6 +240,8 @@ class V4Impl implements V4 {
     scalar = (n: number): V4Impl => V4Impl.fm_array(scalar(this._v, n));
     ip = (dist: V4Impl|number[]): number => ip(this.array(), to_array_if(dist));
     angle = (dist: V4Impl|number[]): number => angle(this._v, to_array_if(dist));
+
+    toString = (): string => `[${this._v.join(', ')}]`;
 }
 
 
@@ -351,6 +357,21 @@ export const v3_to_v4 = (v3: V3, w: number): V4 => V4Impl.fm_array(v3._v.concat(
  * </ul>
  */
 export const v4_to_v3 = (v4: V4): V3 => V3Impl.fm_array(v4._v);
+
+
+export function v3map_v4(v: V4, f: (v: V3) => V3): V4 {
+    const w = v.w();
+    const v_1 = v4_to_v3(v);
+    const v_2 = f(v_1);
+    const v_3 = v3_to_v4(v_2, w);
+    return v_3;
+}
+export function v4map_v3(v: V3, w: number, f: (v: V4) => V4): V3 {
+    const v_1 = v3_to_v4(v, w);
+    const v_2 = f(v_1);
+    const v_3 = v4_to_v3(v_2);
+    return v_3;
+}
 
 // 定数
 

@@ -187,9 +187,13 @@ export function format_n(n: number, f: (n: number) => string): string {
     if (n < 0) { b = '-'; n = -n; }
     return b + f(n);
 }
+
 export const format_02d = (n: number): string => format_n(n, n => ('00' + n).slice(-2));
+export const format_03d = (n: number): string => format_n(n, n => ('000' + n).slice(-3));
+
 export const format_01f = (n: number): string => format_n(n, n => `${Math.floor(n)}.${Math.floor(n*10)%10}`);
 export const format_02f = (n: number): string => format_n(n, n => `${Math.floor(n)}.${format_02d(Math.floor(n*100)%100)}`);
+export const format_03f = (n: number): string => format_n(n, n => `${Math.floor(n)}.${format_03d(Math.floor(n*1000)%1000)}`);
 
 /** 非公開関数 */
 namespace priv {

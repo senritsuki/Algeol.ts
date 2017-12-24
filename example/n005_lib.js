@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var ut = require("../algorithm/utility");
 var seq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
@@ -117,40 +117,40 @@ exports.to_xy_hexagon_basis_deg30 = to_xy_hexagon_basis_deg30;
  */
 function xygeo_scale_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
-    var maps = al.compose(z_rates, [
+    var maps = al.compose_v3map(z_rates, [
         function (v) { return mx.scale_m4([v.x(), v.y(), 1]); },
         function (v) { return mx.trans_m4([0, 0, v.z()]); },
     ]);
-    var polygons = al.duplicate_verts(xy_verts, maps);
+    var polygons = al.duplicate_v3(xy_verts, maps);
     return geo_array.prismArray(polygons);
 }
 exports.xygeo_scale_trans = xygeo_scale_trans;
 function xygeo_scale_rot_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
-    var maps = al.compose(z_rates, [
+    var maps = al.compose_v3map(z_rates, [
         function (v) { return mx.scale_m4([v.x(), v.x(), 1]); },
         function (v) { return mx.rot_z_m4(v.y()); },
         function (v) { return mx.trans_m4([0, 0, v.z()]); },
     ]);
-    var polygons = al.duplicate_verts(xy_verts, maps);
+    var polygons = al.duplicate_v3(xy_verts, maps);
     return geo_array.prismArray(polygons);
 }
 exports.xygeo_scale_rot_trans = xygeo_scale_rot_trans;
 function xygeo_z_scale_rot(xy_verts, zsr_list) {
-    var maps = al.compose(zsr_list, [
+    var maps = al.compose_v3map(zsr_list, [
         function (zsr) { return mx.trans_m4([0, 0, zsr.x()]); },
         function (zsr) { return mx.scale_m4([zsr.y(), zsr.y(), 1]); },
         function (zsr) { return mx.rot_z_m4(zsr.z()); },
     ]);
-    var polygons = al.duplicate_verts(xy_verts, maps);
+    var polygons = al.duplicate_v3(xy_verts, maps);
     return geo_array.prismArray(polygons);
 }
 exports.xygeo_z_scale_rot = xygeo_z_scale_rot;
 function duplicate_rot_z(xy_verts, count, deg) {
-    var maps = al.compose(seq.arith(count), [
+    var maps = al.compose_v3map(seq.arith(count), [
         function (i) { return mx.rot_z_m4(ut.deg_to_rad(i * deg)); },
     ]);
-    var new_verts = al.duplicate_verts(xy_verts, maps);
+    var new_verts = al.duplicate_v3(xy_verts, maps);
     return geo_array.flatten(new_verts);
 }
 exports.duplicate_rot_z = duplicate_rot_z;
@@ -168,7 +168,7 @@ function v3_rot_z(v, deg) {
 exports.v3_rot_z = v3_rot_z;
 function ray3_rot_z_scale(cd, deg, len) {
     var d = v3_rot_z(cd.d, deg).scalar(len);
-    return cv.cd(cd.c, d);
+    return cv.ray(cd.c, d);
 }
 exports.ray3_rot_z_scale = ray3_rot_z_scale;
 var Connector = (function () {
@@ -180,7 +180,7 @@ var Connector = (function () {
         return new Connector(this.ray, this.width);
     };
     Connector.prototype.map = function (f) {
-        var ray = this.ray.map(f);
+        var ray = cv.map_ray3(this.ray, f);
         return new Connector(ray, this.width);
     };
     /** コネクタ左端 */
@@ -197,7 +197,7 @@ exports.Connector = Connector;
 function build_connector(o, r, deg, width) {
     var d = vc.polar_to_v3(r, ut.deg_to_rad(deg), 0);
     var c = o.add(d);
-    var cd = cv.cd(c, d);
+    var cd = cv.ray(c, d);
     return new Connector(cd, width);
 }
 exports.build_connector = build_connector;
@@ -206,6 +206,9 @@ var FloorBase = (function () {
         this.o = o;
         this.connectors = connectors;
     }
+    FloorBase.prototype.cn = function (i) {
+        return this.connectors[i % this.connectors.length];
+    };
     FloorBase.prototype.clone_update = function (o, connectors) {
         var t = this.clone();
         t.o = o;
@@ -213,7 +216,7 @@ var FloorBase = (function () {
         return t;
     };
     FloorBase.prototype.map = function (f) {
-        var o = f(this.o);
+        var o = vc.v4map_v3(this.o, 1, f);
         var connectors = this.connectors.map(function (c) { return c.map(f); });
         return this.clone_update(o, connectors);
     };
@@ -222,47 +225,62 @@ var FloorBase = (function () {
 exports.FloorBase = FloorBase;
 var RegularFloor = (function (_super) {
     __extends(RegularFloor, _super);
-    function RegularFloor(o, 
+    function RegularFloor(o, connectors, 
         /** 頂点数 */
         n, 
         /** 内接円半径 */
         ir, 
-        /** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
-        width_rate, 
         /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
         deg_offset) {
-        if (width_rate === void 0) { width_rate = 1.0; }
         if (deg_offset === void 0) { deg_offset = 0; }
-        var _this = _super.call(this, o, seq.arith(4).map(function (i) { return build_connector(o, ir, i * 360 / n + deg_offset, ir * ut.tan_deg(180 / n) * width_rate); })) || this;
+        var _this = _super.call(this, o, connectors) || this;
         _this.n = n;
         _this.ir = ir;
-        _this.width_rate = width_rate;
         _this.deg_offset = deg_offset;
         return _this;
     }
     RegularFloor.prototype.clone = function () {
-        return new RegularFloor(this.o, this.n, this.ir, this.width_rate, this.deg_offset);
+        return new RegularFloor(this.o, this.connectors, this.n, this.ir, this.deg_offset);
     };
     RegularFloor.prototype.verts = function () {
         var _this = this;
         var cr = this.ir / Math.cos(ut.deg180 / this.n);
-        var rad_start = ut.deg_to_rad(this.deg_offset);
-        var verts = seq.range(rad_start, rad_start + ut.pi2, this.n).map(function (rad) { return vc.polar_to_v3(cr, rad, 0); });
+        var rad_start = ut.deg_to_rad(this.deg_offset + 180 / this.n);
+        var verts = seq.arith(this.n, rad_start, ut.pi2 / this.n).map(function (rad) { return vc.polar_to_v3(cr, rad, 0); });
         return verts.map(function (v) { return v.add(_this.o); });
     };
     return RegularFloor;
 }(FloorBase));
 exports.RegularFloor = RegularFloor;
+function floor_regular(o, 
+    /** 頂点数 */
+    n, 
+    /** 内接円半径 */
+    ir, 
+    /** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
+    width_rate, 
+    /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
+    deg_offset) {
+    /** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
+    if (width_rate === void 0) { width_rate = 1.0; }
+    /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
+    if (deg_offset === void 0) { deg_offset = 0; }
+    var width = ir * ut.tan_deg(180 / n) * width_rate;
+    var deg = function (i) { return i * 360 / n + deg_offset; };
+    var connectors = seq.arith(n).map(function (i) { return build_connector(o, ir, deg(i), width); });
+    return new RegularFloor(o, connectors, n, ir, deg_offset);
+}
+exports.floor_regular = floor_regular;
 function floor_square(o, ir, width_rate, deg_offset) {
     if (width_rate === void 0) { width_rate = 1.0; }
     if (deg_offset === void 0) { deg_offset = 0; }
-    return new RegularFloor(o, 4, ir, width_rate, deg_offset);
+    return floor_regular(o, 4, ir, width_rate, deg_offset);
 }
 exports.floor_square = floor_square;
 function floor_hexa(o, ir, width_rate, deg_offset) {
     if (width_rate === void 0) { width_rate = 1.0; }
     if (deg_offset === void 0) { deg_offset = 0; }
-    return new RegularFloor(o, 6, ir, width_rate, deg_offset);
+    return floor_regular(o, 6, ir, width_rate, deg_offset);
 }
 exports.floor_hexa = floor_hexa;
 function calc_cross_point(cd1, cd2) {
@@ -307,6 +325,9 @@ function build_curve_arc(c1, c2) {
     var ray1 = ray3_rot_z_scale(c1.ray, 90, 1);
     var ray2 = ray3_rot_z_scale(c2.ray, 90, 1);
     var oxy = calc_cross_point_v3(ray1, ray2);
+    console.log(ray1.toString());
+    console.log(ray2.toString());
+    console.log(oxy != null ? oxy.toString() : null);
     if (oxy == null) {
         return build_curve_simple(c1, c2);
     }
@@ -320,9 +341,23 @@ var Route = (function () {
         this.c2 = c2;
         this.curve = builder(c1, c2);
     }
+    /** tに対応する左, 中央, 右, 方向 */
+    Route.prototype.lcrd = function (t) {
+        var len1 = this.c1.width / 2;
+        var len2 = this.c2.width / 2;
+        var len = (1 - t) * len1 + t * len2;
+        var ray = this.curve.ray(t);
+        var l = cv.rot_ray3d_z(ray, ut.deg90).unit();
+        var r = cv.rot_ray3d_z(ray, -ut.deg90).unit();
+        return [l.p(len), ray.c, r.p(len), ray.d];
+    };
     return Route;
 }());
 exports.Route = Route;
+function route_simple(c1, c2) {
+    return new Route(c1, c2, build_curve_simple);
+}
+exports.route_simple = route_simple;
 function lch(l, c, h) {
     var name = "lch" + ut.format_02d(l) + ut.format_02d(c) + ut.format_02d(h);
     var lch = cc.clamp01(cc.lch_to_rgb01([l * 5, c * 5, h * 15]));

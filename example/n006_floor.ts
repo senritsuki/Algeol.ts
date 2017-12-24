@@ -6,7 +6,7 @@ import * as mx from "../algorithm/matrix";
 //import * as cv from "../algorithm/curve";
 
 import * as al from '../geometry/geo';
-//import * as prim from '../geometry/primitive';
+import * as prim from '../geometry/primitive';
 import * as prim2 from '../geometry/primitive2';
 import * as lib from './n005_lib';
 
@@ -18,31 +18,75 @@ const v3 = vc.v3;
 
 const BottomZ = -100;
 
-const square = geo_rfloor_simple(lib.floor_square(v3(0, 0, 3), 1));
-
-const squares = al.duplicate(square, al.compose(seq.arith(4), [
-    _ => mx.trans_m4(v3(0, 5, 0)),
-    i => mx.rot_z_m4(ut.deg90 * i),
-]));
-
 export function geo_rfloor_simple(floor: lib.RegularFloor): al.Geo {
-    return lib.xygeo_z_scale_rot(floor.verts(), [
+    const o = v3(floor.o.x(), floor.o.y(), 0);
+    const verts = floor.verts().map(v => v.sub(o));
+    const geo = lib.xygeo_z_scale_rot(verts, [
         v3(0, 1, 0),
         v3(-1/8, 1, 0),
         v3(-1, 1/8, 0),
         v3(BottomZ, 1/8, 0),
     ]);
+    return al.translate(geo, o);
 }
 
-const plane = prim2.plane(prim2.circle_i(24, 10), prim2.to_v3_xy(0));
+export function geo_route_planes(route: lib.Route, n: number): al.Geo[] {
+    const lcrd = seq.range(0, 1, n + 1).map(t => route.lcrd(t));    
+    const bases = seq.arith(n).map(i => {
+        const d1 = lcrd[i];
+        const d2 = lcrd[i+1];
+        const z = d1[1].z();
+        const base = [d1[0], d1[2], d2[2], d2[0]];
+        return prim.plane_xy(base, z);
+    });
+    return bases;
+}
 
-save([
-    al.geos_to_obj(squares, lib.lch(18, 0, 0)),
-    al.geo_to_obj(plane, lib.lch(17, 5, 2)),
-]);
-
-function save(objs: al.Obj[]) {
+export function save(objs: al.Obj[]) {
     const result = wf.objs_to_strings('./_obj/n006', objs);
     saver.save_objmtl(result);
 }
+
+export function main() {
+    const square = lib.floor_square(v3(0, 0, 3), 1);
+    //const geo_square = geo_rfloor_simple(square);
+
+    const composite = al.compose_v3map(seq.arith(4), [
+        _ => mx.trans_m4(v3(5, 0, 0)),
+        i => mx.rot_z_m4(ut.deg90 * i),
+    ])
+    const squares = al.duplicate_f(square, composite);
+    //const geo_squares = al.duplicate(geo_square, composite);
+    const geo_squares = squares.map(rf => geo_rfloor_simple(rf));
+    
+    const routes = squares.map((_, i) => lib.route_simple(
+        squares[i].connectors[0], 
+        squares[(i+1)%squares.length].connectors[3]));
+
+    const route_geos = routes.map(route => geo_route_planes(route, 24)).reduce((a, b) => a.concat(b));
+
+    const plane = prim2.plane(prim2.circle_i(24, 10), prim2.to_v3_xy(0));
+    
+    save([
+        al.geos_to_obj(geo_squares, lib.lch(18, 0, 0)),
+        al.geos_to_obj(route_geos, lib.lch(17, 0, 0)),
+        al.geo_to_obj(plane, lib.lch(17, 5, 17)),
+    ]);
+}
+
+export function test_build_curve1() {
+    const square1 = lib.floor_square(v3(0, 0, 0), 1);
+    const square2 = lib.floor_square(v3(5, 3, 0), 1);
+    const route1 = new lib.Route(square1.cn(0), square2.cn(3), lib.build_curve_arc);
+    const route2 = new lib.Route(square1.cn(1), square2.cn(1), lib.build_curve_simple);
+    save([
+        al.geos_to_obj(geo_route_planes(route1, 24), null),
+        al.geos_to_obj(geo_route_planes(route2, 24), null),
+    ]);
+}
+export function test_build_curve2() {
+}
+
+//main();
+test_build_curve1();
 

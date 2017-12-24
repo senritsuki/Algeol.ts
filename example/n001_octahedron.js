@@ -25,10 +25,10 @@ seq.range_step(-radius, radius, 1).forEach(function (x) {
         });
     });
 });
-var duplicater = al.compose(sq, [
+var duplicater = al.compose_v3map(sq, [
     function (v) { return mx.trans_m4(v); },
 ]);
-var octahedrons = al.duplicate_verts(octahedron.verts, duplicater)
+var octahedrons = al.duplicate_v3(octahedron.verts, duplicater)
     .map(function (v) { return new al.Geo(v, octahedron.faces); });
 wf.useBlenderCoordinateSystem();
 var data = wf.geos_to_strings('./_obj/n001_octahedron', octahedrons);

@@ -7,9 +7,11 @@ import * as cc from "../algorithm/color_converter";
 
 import * as al from "../geometry/geo";
 import * as geo_array from "../geometry/array";
+import { deg1 } from "../algorithm/utility";
 
 type V2 = vc.V2;
 type V3 = vc.V3;
+type V4 = vc.V4;
 const v3 = vc.v3;
 const v3_zero = vc.v3_zero;
 
@@ -107,41 +109,41 @@ export function to_xy_hexagon_basis_deg30(d_inner: number): V3[] {
  */
 export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
-    const maps = al.compose(z_rates, [
+    const maps = al.compose_v3map(z_rates, [
         v => mx.scale_m4([v.x(), v.y(), 1]),
         v => mx.trans_m4([0, 0, v.z()]),
     ]);
-    const polygons = al.duplicate_verts(xy_verts, maps);
+    const polygons = al.duplicate_v3(xy_verts, maps);
     return geo_array.prismArray(polygons);
 }
 
 export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
-    const maps = al.compose(z_rates, [
+    const maps = al.compose_v3map(z_rates, [
         v => mx.scale_m4([v.x(), v.x(), 1]),
         v => mx.rot_z_m4(v.y()),
         v => mx.trans_m4([0, 0, v.z()]),
     ]);
-    const polygons = al.duplicate_verts(xy_verts, maps);
+    const polygons = al.duplicate_v3(xy_verts, maps);
     return geo_array.prismArray(polygons);
 }
 
 export function xygeo_z_scale_rot(xy_verts: V3[], zsr_list: V3[]): al.Geo {
-    const maps = al.compose(zsr_list, [
+    const maps = al.compose_v3map(zsr_list, [
         zsr => mx.trans_m4([0, 0, zsr.x()]),
         zsr => mx.scale_m4([zsr.y(), zsr.y(), 1]),
         zsr => mx.rot_z_m4(zsr.z()),
     ]);
-    const polygons = al.duplicate_verts(xy_verts, maps);
+    const polygons = al.duplicate_v3(xy_verts, maps);
     return geo_array.prismArray(polygons);
 }
 
 
 export function duplicate_rot_z(xy_verts: V3[], count: number, deg: number): V3[] {
-    const maps = al.compose(seq.arith(count), [
+    const maps = al.compose_v3map(seq.arith(count), [
         i => mx.rot_z_m4(ut.deg_to_rad(i * deg)),
     ]);
-    const new_verts = al.duplicate_verts(xy_verts, maps);
+    const new_verts = al.duplicate_v3(xy_verts, maps);
     return geo_array.flatten(new_verts);
 }
 export function duplicate_rot_z_90_4(xy_verts: V3[]): V3[] {
@@ -158,7 +160,7 @@ export function v3_rot_z(v: V3, deg: number): V3 {
 }
 export function ray3_rot_z_scale(cd: cv.Ray3, deg: number, len: number): cv.Ray3 {
     const d = v3_rot_z(cd.d, deg).scalar(len);
-    return cv.cd(cd.c, d);
+    return cv.ray(cd.c, d);
 }
 
 
@@ -171,8 +173,8 @@ export class Connector implements al.IMap<Connector> {
     clone(): Connector {
         return new Connector(this.ray, this.width);
     }
-    map(f: (v: V3) => V3): Connector {
-        const ray = this.ray.map(f);
+    map(f: (v: V4) => V4): Connector {
+        const ray = cv.map_ray3(this.ray, f);
         return new Connector(ray, this.width);
     }
 
@@ -189,7 +191,7 @@ export class Connector implements al.IMap<Connector> {
 export function build_connector(o: V3, r: number, deg: number, width: number): Connector {
     const d = vc.polar_to_v3(r, ut.deg_to_rad(deg), 0);
     const c = o.add(d);
-    const cd = cv.cd(c, d);
+    const cd = cv.ray(c, d);
     return new Connector(cd, width);
 }
 
@@ -201,14 +203,17 @@ export abstract class FloorBase<T extends FloorBase<T>> implements al.IMap<T> {
 
     abstract clone(): T;
 
+    cn(i: number): Connector {
+        return this.connectors[i % this.connectors.length];
+    }
     clone_update(o: V3, connectors: Connector[]): T {
         const t = this.clone();
         t.o = o;
         t.connectors = connectors;
         return t;
     }
-    map(f: (v: V3) => V3): T {
-        const o = f(this.o);
+    map(f: (v: V4) => V4): T {
+        const o = vc.v4map_v3(this.o, 1, f);
         const connectors = this.connectors.map(c => c.map(f));
         return this.clone_update(o, connectors);
     }
@@ -217,39 +222,50 @@ export abstract class FloorBase<T extends FloorBase<T>> implements al.IMap<T> {
 export class RegularFloor extends FloorBase<RegularFloor> {
     constructor(
         o: V3,
+        connectors: Connector[],
         /** 頂点数 */
         public n: number,
         /** 内接円半径 */
         public ir: number,
-        /** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
-        public width_rate: number = 1.0,
         /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
         public deg_offset: number = 0,
     ) {
-        super(o, seq.arith(4).map(i => build_connector(
-            o, 
-            ir, 
-            i * 360 / n + deg_offset, 
-            ir * ut.tan_deg(180 / n) * width_rate,
-        )));
+        super(o, connectors);
     }
 
     clone(): RegularFloor {
-        return new RegularFloor(this.o, this.n, this.ir, this.width_rate, this.deg_offset);
+        return new RegularFloor(this.o, this.connectors, this.n, this.ir, this.deg_offset);
     }
     verts(): V3[] {
         const cr = this.ir / Math.cos(ut.deg180 / this.n);
-        const rad_start = ut.deg_to_rad(this.deg_offset);
-        const verts = seq.range(rad_start, rad_start + ut.pi2, this.n).map(rad => vc.polar_to_v3(cr, rad, 0));
+        const rad_start = ut.deg_to_rad(this.deg_offset + 180 / this.n);
+        const verts = seq.arith(this.n, rad_start, ut.pi2 / this.n).map(rad => vc.polar_to_v3(cr, rad, 0));
         return verts.map(v => v.add(this.o));
     }
 }
 
+export function floor_regular(
+    o: V3,
+    /** 頂点数 */
+    n: number,
+    /** 内接円半径 */
+    ir: number,
+    /** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
+    width_rate: number = 1.0,
+    /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
+    deg_offset: number = 0,
+): RegularFloor {
+    const width = ir * ut.tan_deg(180 / n) * width_rate;
+    const deg = (i: number) => i * 360 / n + deg_offset;
+    const connectors = seq.arith(n).map(i => build_connector(o, ir, deg(i), width));
+    return new RegularFloor(o, connectors, n, ir, deg_offset);
+}
+
 export function floor_square(o: V3, ir: number, width_rate: number = 1.0, deg_offset: number = 0): RegularFloor {
-    return new RegularFloor(o, 4, ir, width_rate, deg_offset);
+    return floor_regular(o, 4, ir, width_rate, deg_offset);
 }
 export function floor_hexa(o: V3, ir: number, width_rate: number = 1.0, deg_offset: number = 0): RegularFloor {
-    return new RegularFloor(o, 6, ir, width_rate, deg_offset);
+    return floor_regular(o, 6, ir, width_rate, deg_offset);
 }
 
 
@@ -297,6 +313,9 @@ export function build_curve_arc(c1: Connector, c2: Connector): cv.Curve3 {
     const ray1 = ray3_rot_z_scale(c1.ray, 90, 1);
     const ray2 = ray3_rot_z_scale(c2.ray, 90, 1);
     const oxy = calc_cross_point_v3(ray1, ray2);
+    console.log(ray1.toString());
+    console.log(ray2.toString());
+    console.log(oxy != null ? oxy.toString() : null);
     if (oxy == null) {
         return build_curve_simple(c1, c2);
     }
@@ -314,6 +333,21 @@ export class Route {
     ) {
         this.curve = builder(c1, c2);
     }
+
+    /** tに対応する左, 中央, 右, 方向 */
+    lcrd(t: number): V3[] {
+        const len1 = this.c1.width / 2;
+        const len2 = this.c2.width / 2;
+        const len = (1 - t) * len1 + t * len2;
+        const ray = this.curve.ray(t);
+        const l = cv.rot_ray3d_z(ray, ut.deg90).unit();
+        const r = cv.rot_ray3d_z(ray, -ut.deg90).unit();
+        return [l.p(len), ray.c,  r.p(len), ray.d];
+    }
+}
+
+export function route_simple(c1: Connector, c2: Connector): Route {
+    return new Route(c1, c2, build_curve_simple);
 }
 
 export function lch(l: number, c: number, h: number): al.Material {

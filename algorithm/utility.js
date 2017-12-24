@@ -1,7 +1,7 @@
 "use strict";
 // --------------------------------------------------------
 // 定数
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 /** Square Root of 2 - 2の平方根 (≒ 1.414) */
 exports.r2 = Math.sqrt(2);
 /** Square Root of 3 - 3の平方根 (≒ 1.732) */
@@ -178,8 +178,10 @@ function format_n(n, f) {
 }
 exports.format_n = format_n;
 exports.format_02d = function (n) { return format_n(n, function (n) { return ('00' + n).slice(-2); }); };
+exports.format_03d = function (n) { return format_n(n, function (n) { return ('000' + n).slice(-3); }); };
 exports.format_01f = function (n) { return format_n(n, function (n) { return Math.floor(n) + "." + Math.floor(n * 10) % 10; }); };
 exports.format_02f = function (n) { return format_n(n, function (n) { return Math.floor(n) + "." + exports.format_02d(Math.floor(n * 100) % 100); }); };
+exports.format_03f = function (n) { return format_n(n, function (n) { return Math.floor(n) + "." + exports.format_03d(Math.floor(n * 1000) % 1000); }); };
 /** 非公開関数 */
 var priv;
 (function (priv) {

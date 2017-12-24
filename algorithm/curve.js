@@ -10,35 +10,59 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var ut = require("./utility");
 var seq = require("./sequence");
 var vc = require("./vector");
+var mx = require("./matrix");
 exports.E = 0.001;
 /** 位置ベクトルと方向ベクトルのペア */
 var Ray = (function () {
-    function Ray(c, d) {
+    function Ray(
+        /** 位置ベクトル */
+        c, 
+        /** 方向ベクトル */
+        d) {
         this.c = c;
         this.d = d;
     }
-    Ray.prototype.map = function (f) {
-        var c = f(this.c);
-        var d = f(this.d);
-        return new Ray(c, d);
-    };
+    /** c + td */
     Ray.prototype.p = function (t) {
         var d = this.d.scalar(t);
         return this.c.add(d);
     };
+    Ray.prototype.unit = function () {
+        var d = this.d.unit();
+        return new Ray(this.c, d);
+    };
+    Ray.prototype.toString = function () {
+        return "c:" + this.c.toString() + ", d:" + this.d.toString();
+    };
     return Ray;
 }());
 exports.Ray = Ray;
-function ray3_to_ray2(cd3) {
-    var c = vc.v3_to_v2(cd3.c);
-    var d = vc.v3_to_v2(cd3.d);
-    return cd(c, d);
+/** 位置ベクトルと方向ベクトルのペア */
+function ray(c, d) {
+    return new Ray(c, d);
+}
+exports.ray = ray;
+function ray3_to_ray2(ray3) {
+    var c = vc.v3_to_v2(ray3.c);
+    var d = vc.v3_to_v2(ray3.d);
+    return ray(c, d);
 }
 exports.ray3_to_ray2 = ray3_to_ray2;
+function rot_ray3d_z(ray3, rad) {
+    var d = mx.rot_z_m3(rad).map(ray3.d);
+    return ray(ray3.c, d);
+}
+exports.rot_ray3d_z = rot_ray3d_z;
+function map_ray3(ray3, f) {
+    var c = vc.v4map_v3(ray3.c, 1, f);
+    var d = vc.v4map_v3(ray3.c, 0, f);
+    return ray(c, d);
+}
+exports.map_ray3 = map_ray3;
 var CurveBase = (function () {
     function CurveBase(v) {
         this.v = v;
@@ -52,12 +76,12 @@ var CurveBase = (function () {
     CurveBase.prototype.controls = function () {
         return this.v.slice(0);
     };
-    CurveBase.prototype.cd = function (t, delta) {
+    CurveBase.prototype.ray = function (t, delta) {
         if (delta === void 0) { delta = exports.E; }
         var c = this.coord(t);
         var d1 = this.coord(t - delta);
         var d2 = this.coord(t + delta);
-        return cd(c, d2.sub(d1));
+        return new Ray(c, d2.sub(d1));
     };
     CurveBase.prototype.translate = function (fn) {
         var new_curve = this.clone();
@@ -264,7 +288,7 @@ var CurveArray = (function () {
         var c = this.coord(t);
         var d1 = this.coord(t - delta);
         var d2 = this.coord(t + delta);
-        return cd(c, d2.sub(d1));
+        return new Ray(c, d2.sub(d1));
     };
     CurveArray.prototype.start = function () {
         return this.coord(0);
@@ -286,11 +310,6 @@ var CurveArray = (function () {
     return CurveArray;
 }());
 exports.CurveArray = CurveArray;
-/** 位置ベクトルと方向ベクトルのペア */
-function cd(c, d) {
-    return new Ray(c, d);
-}
-exports.cd = cd;
 /** 直線 */
 function line(start, end) {
     return new Line(start, end);
@@ -366,7 +385,7 @@ function lines(verts) {
 }
 exports.lines = lines;
 /** ベジェ曲線で円弧を再現する際の制御点係数. 90度の場合: 0.5522847 */
-exports.bezier_arc_p = function (deg) { return 4 / 3 * Math.tan(ut.deg_to_rad(deg) / 4); };
+exports.bezier_arc_p = function (rad) { return 4 / 3 * Math.tan(rad / 4); };
 /** 三次ベジェのS字カーブ */
 function bezier3_interpolate_s(p0, p1, d) {
     var c0 = p0.scalar(2).add(p1).scalar(1 / 3).sub(d);

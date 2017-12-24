@@ -23,7 +23,7 @@ const goal = vc.v3(1, 5, 2);
 const geo_floor = prim.cuboid_vv([-1/2, -1/2, -1/8], [1/2, 1/2, 0]);
 const geo_stairstep = prim.cuboid_vv([-3/8, -1/16, -1/8], [3/8, 1/16, 0]);
 
-const floor_duplicater = al.compose([start, goal], [
+const floor_duplicater = al.compose_v3map([start, goal], [
     d => mx.trans_m4(d),
 ]);
 
@@ -39,12 +39,12 @@ const stair_step_num = Math.round(Math.abs(stair_goal.y() - stair_start.y()) * 8
 
 const stair_coords = seq.arith(stair_step_num + 1).map(i => stair_curve.coord(i / stair_step_num));
 
-const stairstep_duplicater = al.compose(stair_coords, [
+const stairstep_duplicater = al.compose_v3map(stair_coords, [
     d => mx.trans_m4(d),
 ]);
 
-const obj_floors = al.geos_to_obj(al.duplicate(geo_floor, floor_duplicater), lch5(19, 0, 0));
-const obj_stairsteps = al.geos_to_obj(al.duplicate(geo_stairstep, stairstep_duplicater), lch5(18, 1, 17));
+const obj_floors = al.geos_to_obj(al.duplicate_f(geo_floor, floor_duplicater), lch5(19, 0, 0));
+const obj_stairsteps = al.geos_to_obj(al.duplicate_f(geo_stairstep, stairstep_duplicater), lch5(18, 1, 17));
 
 const objs = [obj_floors, obj_stairsteps];
 
