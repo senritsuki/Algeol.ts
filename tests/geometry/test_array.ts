@@ -21,8 +21,8 @@ function save(name: string, geo: al.Geo): void {
 
 export function test_al() {
     al.duplicate_v3(
-        [vc.v3(0, 0, 0), vc.v3(1, 0, 0)],
-        al.m4s_to_v3maps([mx.trans_m4([1, 0, 0]), mx.trans_m4([2, 0, 0])])
+        [vc.v3(0, 0, 0), vc.v3(1, 0, 0)], 1,
+        al.m4s_to_v4maps([mx.trans_m4([1, 0, 0]), mx.trans_m4([2, 0, 0])])
     ).forEach(vv => vv.forEach(v => console.log(v)));
     al.compose_m4<number>([0, 1], [
         d => mx.trans_m4([d + 1, 0, 0]),
@@ -74,16 +74,16 @@ function test() {
             vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('prismRing',
         multi.prismRing(al.duplicate_v3(
-            prim.fn.circle.verts_i(4, 1),
-            al.compose_v3map<number>(seq.arith(4), [
+            prim.fn.circle.verts_i(4, 1), 1,
+            al.compose_v4map<number>(seq.arith(4), [
                 _d => mx.rot_x_m4(ut.deg90),
                 _d => mx.trans_m4([3, 0, 0]),
                 d => mx.rot_z_m4(ut.deg90 * d),
             ]))));
     save('antiprismRing',
         multi.antiprismRing(al.duplicate_v3(
-            prim.fn.circle.verts_i(4, 1),
-            al.compose_v3map<number>(seq.arith(8), [
+            prim.fn.circle.verts_i(4, 1), 1,
+            al.compose_v4map<number>(seq.arith(8), [
                 d => mx.rot_z_m4(ut.deg45 * d),
                 _d => mx.rot_x_m4(ut.deg90),
                 _d => mx.trans_m4([3, 0, 0]),

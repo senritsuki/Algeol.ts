@@ -1,6 +1,6 @@
 "use strict";
 /** Wavefront .obj, .mtl */
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("../algorithm/utility");
 exports.format_florts = function (nn) { return nn.map(function (n) { return ut.format_03f(n); }).join(' '); };
 exports.vert_to_str = function (v) { return 'v ' + v._v.join(' '); };

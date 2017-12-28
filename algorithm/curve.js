@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("./utility");
 var seq = require("./sequence");
 var vc = require("./vector");
@@ -36,7 +36,7 @@ var Ray = (function () {
         return new Ray(this.c, d);
     };
     Ray.prototype.toString = function () {
-        return "c:" + this.c.toString() + ", d:" + this.d.toString();
+        return "{ c: " + this.c.toString03f() + ", d: " + this.d.toString03f() + " }";
     };
     return Ray;
 }());
@@ -59,7 +59,7 @@ function rot_ray3d_z(ray3, rad) {
 exports.rot_ray3d_z = rot_ray3d_z;
 function map_ray3(ray3, f) {
     var c = vc.v4map_v3(ray3.c, 1, f);
-    var d = vc.v4map_v3(ray3.c, 0, f);
+    var d = vc.v4map_v3(ray3.d, 0, f);
     return ray(c, d);
 }
 exports.map_ray3 = map_ray3;
@@ -87,6 +87,9 @@ var CurveBase = (function () {
         var new_curve = this.clone();
         new_curve.v = this.v.map(function (d) { return fn(d); });
         return new_curve;
+    };
+    CurveBase.prototype.toString = function () {
+        return "[" + this.v.map(function (v) { return v.toString03f(); }).join(', ') + "]";
     };
     return CurveBase;
 }());

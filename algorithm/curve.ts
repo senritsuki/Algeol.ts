@@ -31,7 +31,7 @@ export class Ray<T extends vc.Vector<T>> {
         return new Ray(this.c, d);
     }
     toString(): string {
-        return `c:${this.c.toString()}, d:${this.d.toString()}`;
+        return `{ c: ${this.c.toString03f()}, d: ${this.d.toString03f()} }`;
     }
 }
 
@@ -58,7 +58,7 @@ export function rot_ray3d_z(ray3: Ray3, rad: number): Ray3 {
 
 export function map_ray3(ray3: Ray3, f: (v: V4) => V4): Ray3 {
     const c = vc.v4map_v3(ray3.c, 1, f);
-    const d = vc.v4map_v3(ray3.c, 0, f);
+    const d = vc.v4map_v3(ray3.d, 0, f);
     return ray(c, d);
 }
 
@@ -122,6 +122,10 @@ abstract class CurveBase<T extends vc.Vector<T>, U extends CurveC<T, U>> impleme
 
     abstract clone(): U;
     abstract coord(i: number): T;
+
+    toString(): string {
+        return `[${ this.v.map(v => v.toString03f()).join(', ') }]`;
+    }
 }
 
 /** (2次元ベクトル配列, 媒介変数) -> 2次元ベクトル を満たす任意の関数で定義される曲線 */

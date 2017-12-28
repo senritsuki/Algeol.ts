@@ -7,7 +7,6 @@ import * as cc from "../algorithm/color_converter";
 
 import * as al from "../geometry/geo";
 import * as geo_array from "../geometry/array";
-import { deg1 } from "../algorithm/utility";
 
 type V2 = vc.V2;
 type V3 = vc.V3;
@@ -109,42 +108,42 @@ export function to_xy_hexagon_basis_deg30(d_inner: number): V3[] {
  */
 export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
-    const maps = al.compose_v3map(z_rates, [
+    const maps = al.compose_v4map(z_rates, [
         v => mx.scale_m4([v.x(), v.y(), 1]),
         v => mx.trans_m4([0, 0, v.z()]),
     ]);
-    const polygons = al.duplicate_v3(xy_verts, maps);
+    const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return geo_array.prismArray(polygons);
 }
 
 export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
-    const maps = al.compose_v3map(z_rates, [
+    const maps = al.compose_v4map(z_rates, [
         v => mx.scale_m4([v.x(), v.x(), 1]),
         v => mx.rot_z_m4(v.y()),
         v => mx.trans_m4([0, 0, v.z()]),
     ]);
-    const polygons = al.duplicate_v3(xy_verts, maps);
+    const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return geo_array.prismArray(polygons);
 }
 
 export function xygeo_z_scale_rot(xy_verts: V3[], zsr_list: V3[]): al.Geo {
-    const maps = al.compose_v3map(zsr_list, [
+    const maps = al.compose_v4map(zsr_list, [
         zsr => mx.trans_m4([0, 0, zsr.x()]),
         zsr => mx.scale_m4([zsr.y(), zsr.y(), 1]),
         zsr => mx.rot_z_m4(zsr.z()),
     ]);
-    const polygons = al.duplicate_v3(xy_verts, maps);
+    const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return geo_array.prismArray(polygons);
 }
 
 
 export function duplicate_rot_z(xy_verts: V3[], count: number, deg: number): V3[] {
-    const maps = al.compose_v3map(seq.arith(count), [
+    const maps = al.compose_v4map(seq.arith(count), [
         i => mx.rot_z_m4(ut.deg_to_rad(i * deg)),
     ]);
-    const new_verts = al.duplicate_v3(xy_verts, maps);
-    return geo_array.flatten(new_verts);
+    const new_verts = al.duplicate_v3(xy_verts, 1, maps);
+    return geo_array.flatten(new_verts); 
 }
 export function duplicate_rot_z_90_4(xy_verts: V3[]): V3[] {
     return duplicate_rot_z(xy_verts, 4, 90);
@@ -185,6 +184,10 @@ export class Connector implements al.IMap<Connector> {
     /** コネクタ右端 */
     cr(): V3 {
         return ray3_rot_z_scale(this.ray, -90, this.width / 2).c;
+    }
+
+    toString(): string {
+        return `{ ray: ${this.ray.toString()}, width: ${this.width} }`;
     }
 }
 
@@ -299,11 +302,11 @@ export function calc_cross_point_v3(cd1: cv.Ray3, cd2: cv.Ray3): V2|null {
     return calc_cross_point(cd1_, cd2_);
 }
 
-export function build_curve_simple(c1: Connector, c2: Connector): cv.Curve3 {
+export function build_curve_simple(c1: Connector, c2: Connector, mid_distance: number|null): cv.Curve3 {
     const d = c2.ray.c.sub(c1.ray.c);
-    const len = d.length();
-    const mid1 = c1.ray.p(len/3);
-    const mid2 = c2.ray.p(len/3);
+    if (mid_distance == null) mid_distance = d.length() / 3;
+    const mid1 = c1.ray.p(mid_distance);
+    const mid2 = c2.ray.p(mid_distance);
     const controls = [c1.ray.c, mid1, mid2, c2.ray.c];
     return cv.bezier(controls);
 }
@@ -317,22 +320,18 @@ export function build_curve_arc(c1: Connector, c2: Connector): cv.Curve3 {
     console.log(ray2.toString());
     console.log(oxy != null ? oxy.toString() : null);
     if (oxy == null) {
-        return build_curve_simple(c1, c2);
+        return build_curve_simple(c1, c2, null);
     }
     const o = v3(oxy.x(), oxy.y(), oz);
     return cv.bezier3_interpolate_arc(c1.ray.c, c2.ray.c, o);
 }
 
 export class Route {
-    public curve: cv.Curve3;
-
     constructor(
         public c1: Connector,
         public c2: Connector,
-        builder: (c1: Connector, c2: Connector) => cv.Curve3,
-    ) {
-        this.curve = builder(c1, c2);
-    }
+        public curve: cv.Curve3,
+    ) {}
 
     /** tに対応する左, 中央, 右, 方向 */
     lcrd(t: number): V3[] {
@@ -346,8 +345,11 @@ export class Route {
     }
 }
 
-export function route_simple(c1: Connector, c2: Connector): Route {
-    return new Route(c1, c2, build_curve_simple);
+export function route_simple(c1: Connector, c2: Connector, mid: number|null): Route {
+    return new Route(c1, c2, build_curve_simple(c1, c2, mid));
+}
+export function route_arc(c1: Connector, c2: Connector): Route {
+    return new Route(c1, c2, build_curve_arc(c1, c2));
 }
 
 export function lch(l: number, c: number, h: number): al.Material {

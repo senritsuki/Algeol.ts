@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("../algorithm/utility");
 var seq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
@@ -117,40 +117,40 @@ exports.to_xy_hexagon_basis_deg30 = to_xy_hexagon_basis_deg30;
  */
 function xygeo_scale_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
-    var maps = al.compose_v3map(z_rates, [
+    var maps = al.compose_v4map(z_rates, [
         function (v) { return mx.scale_m4([v.x(), v.y(), 1]); },
         function (v) { return mx.trans_m4([0, 0, v.z()]); },
     ]);
-    var polygons = al.duplicate_v3(xy_verts, maps);
+    var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return geo_array.prismArray(polygons);
 }
 exports.xygeo_scale_trans = xygeo_scale_trans;
 function xygeo_scale_rot_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
-    var maps = al.compose_v3map(z_rates, [
+    var maps = al.compose_v4map(z_rates, [
         function (v) { return mx.scale_m4([v.x(), v.x(), 1]); },
         function (v) { return mx.rot_z_m4(v.y()); },
         function (v) { return mx.trans_m4([0, 0, v.z()]); },
     ]);
-    var polygons = al.duplicate_v3(xy_verts, maps);
+    var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return geo_array.prismArray(polygons);
 }
 exports.xygeo_scale_rot_trans = xygeo_scale_rot_trans;
 function xygeo_z_scale_rot(xy_verts, zsr_list) {
-    var maps = al.compose_v3map(zsr_list, [
+    var maps = al.compose_v4map(zsr_list, [
         function (zsr) { return mx.trans_m4([0, 0, zsr.x()]); },
         function (zsr) { return mx.scale_m4([zsr.y(), zsr.y(), 1]); },
         function (zsr) { return mx.rot_z_m4(zsr.z()); },
     ]);
-    var polygons = al.duplicate_v3(xy_verts, maps);
+    var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return geo_array.prismArray(polygons);
 }
 exports.xygeo_z_scale_rot = xygeo_z_scale_rot;
 function duplicate_rot_z(xy_verts, count, deg) {
-    var maps = al.compose_v3map(seq.arith(count), [
+    var maps = al.compose_v4map(seq.arith(count), [
         function (i) { return mx.rot_z_m4(ut.deg_to_rad(i * deg)); },
     ]);
-    var new_verts = al.duplicate_v3(xy_verts, maps);
+    var new_verts = al.duplicate_v3(xy_verts, 1, maps);
     return geo_array.flatten(new_verts);
 }
 exports.duplicate_rot_z = duplicate_rot_z;
@@ -190,6 +190,9 @@ var Connector = (function () {
     /** コネクタ右端 */
     Connector.prototype.cr = function () {
         return ray3_rot_z_scale(this.ray, -90, this.width / 2).c;
+    };
+    Connector.prototype.toString = function () {
+        return "{ ray: " + this.ray.toString() + ", width: " + this.width + " }";
     };
     return Connector;
 }());
@@ -311,11 +314,12 @@ function calc_cross_point_v3(cd1, cd2) {
     return calc_cross_point(cd1_, cd2_);
 }
 exports.calc_cross_point_v3 = calc_cross_point_v3;
-function build_curve_simple(c1, c2) {
+function build_curve_simple(c1, c2, mid_distance) {
     var d = c2.ray.c.sub(c1.ray.c);
-    var len = d.length();
-    var mid1 = c1.ray.p(len / 3);
-    var mid2 = c2.ray.p(len / 3);
+    if (mid_distance == null)
+        mid_distance = d.length() / 3;
+    var mid1 = c1.ray.p(mid_distance);
+    var mid2 = c2.ray.p(mid_distance);
     var controls = [c1.ray.c, mid1, mid2, c2.ray.c];
     return cv.bezier(controls);
 }
@@ -329,17 +333,17 @@ function build_curve_arc(c1, c2) {
     console.log(ray2.toString());
     console.log(oxy != null ? oxy.toString() : null);
     if (oxy == null) {
-        return build_curve_simple(c1, c2);
+        return build_curve_simple(c1, c2, null);
     }
     var o = v3(oxy.x(), oxy.y(), oz);
     return cv.bezier3_interpolate_arc(c1.ray.c, c2.ray.c, o);
 }
 exports.build_curve_arc = build_curve_arc;
 var Route = (function () {
-    function Route(c1, c2, builder) {
+    function Route(c1, c2, curve) {
         this.c1 = c1;
         this.c2 = c2;
-        this.curve = builder(c1, c2);
+        this.curve = curve;
     }
     /** tに対応する左, 中央, 右, 方向 */
     Route.prototype.lcrd = function (t) {
@@ -354,10 +358,14 @@ var Route = (function () {
     return Route;
 }());
 exports.Route = Route;
-function route_simple(c1, c2) {
-    return new Route(c1, c2, build_curve_simple);
+function route_simple(c1, c2, mid) {
+    return new Route(c1, c2, build_curve_simple(c1, c2, mid));
 }
 exports.route_simple = route_simple;
+function route_arc(c1, c2) {
+    return new Route(c1, c2, build_curve_arc(c1, c2));
+}
+exports.route_arc = route_arc;
 function lch(l, c, h) {
     var name = "lch" + ut.format_02d(l) + ut.format_02d(c) + ut.format_02d(h);
     var lch = cc.clamp01(cc.lch_to_rgb01([l * 5, c * 5, h * 15]));

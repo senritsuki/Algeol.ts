@@ -1,6 +1,6 @@
 "use strict";
 /** Vector - ベクトル */
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 /** 配列の単項演算を行い、新しい配列を返す */
 function op1(a, dim, fn) {
     var v = new Array(dim);
@@ -90,6 +90,7 @@ var V2Impl = (function () {
         this.cp = function (dist) { return cp2(_this._v, exports.to_array_if(dist)); };
         this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
         this.toString = function () { return "[" + _this._v.join(', ') + "]"; };
+        this.toString03f = function () { return "[" + _this._v.map(function (n) { return Math.round(n * 1000) / 1000; }).join(', ') + "]"; };
         this._v = [x, y];
     }
     V2Impl.fm_array = function (v) {
@@ -119,6 +120,7 @@ var V3Impl = (function () {
         this.cp = function (dist) { return V3Impl.fm_array(cp3(_this._v, exports.to_array_if(dist))); };
         this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
         this.toString = function () { return "[" + _this._v.join(', ') + "]"; };
+        this.toString03f = function () { return "[" + _this._v.map(function (n) { return Math.round(n * 1000) / 1000; }).join(', ') + "]"; };
         this._v = [x, y, z];
     }
     V3Impl.fm_array = function (v) {
@@ -148,6 +150,7 @@ var V4Impl = (function () {
         this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
         this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
         this.toString = function () { return "[" + _this._v.join(', ') + "]"; };
+        this.toString03f = function () { return "[" + _this._v.map(function (n) { return Math.round(n * 1000) / 1000; }).join(', ') + "]"; };
         this._v = [x, y, z, w];
     }
     V4Impl.fm_array = function (v) {

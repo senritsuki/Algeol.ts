@@ -1,6 +1,6 @@
 "use strict";
 /** Sequence - 数列 */
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("./utility");
 /**
  * Arithmetic Sequence - 等差数列

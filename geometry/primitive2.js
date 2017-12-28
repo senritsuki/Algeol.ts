@@ -1,6 +1,6 @@
 "use strict";
 /** プリミティブオブジェクト */
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var al = require("./geo");
 var ut = require("../algorithm/utility");
 var sq = require("../algorithm/sequence");

@@ -114,8 +114,8 @@ export namespace node {
             vc.v3(1.5, 0.5, 0), 
             vc.v3(nr25 / ut.r2, nr25 / ut.r2, 0),
             vc.v3(0.5, 1.5, 0),
-        ],
-        al.compose_v3map<number>(seq.arith(4),
+        ], 1,
+        al.compose_v4map<number>(seq.arith(4),
             [d => mx.rot_z_m4(ut.deg90 * d)]
         )
     ).reduce((a, b) => a.concat(b), <vc.V3[]>[]);
@@ -123,8 +123,8 @@ export namespace node {
     export const vxyFloor6 = al.duplicate_v3([
             vc.v3(1.5, -0.5, 0),
             vc.v3(1.5, 0.5, 0),
-        ],
-        al.compose_v3map<number>(seq.arith(6),
+        ], 1,
+        al.compose_v4map<number>(seq.arith(6),
             [d => mx.rot_z_m4(ut.deg60 * d)]
         )
     ).reduce((a, b) => a.concat(b), <vc.V3[]>[]);
@@ -138,10 +138,10 @@ export namespace node {
     const gRing = extrudeZZ(vRing, -nRingD, nRingD);
     const mapRingFloor = (v: vc.V3) => mx.trans_m4([0, 0, -nRingD]).mul(mx.scale_m4([1, 1, 1.5])).map_v3(v, 1);
     const mapRingArch = (v: vc.V3) => mx.trans_m4([0, 0, nColumnH - nArchWallHeight]).mul(mx.scale_m4([1, 1, 0.25])).map_v3(v, 1)
-    export const g4Rings = al.duplicate_f(gRing, al.compose_v3map<number>(
+    export const g4Rings = al.duplicate_f(gRing, al.compose_v4map<number>(
         seq.arith(vxyFloor4.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rot_z_atan2_m4(vxyFloor4[i])]));
-    export const g6Rings = al.duplicate_f(gRing, al.compose_v3map<number>(
+    export const g6Rings = al.duplicate_f(gRing, al.compose_v4map<number>(
         seq.arith(vxyFloor6.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rot_z_atan2_m4(vxyFloor6[i])]));
     export const g4FloorRings = g4Rings.map(g => g.map3(v => mapRingFloor(v)));
@@ -154,18 +154,18 @@ export namespace node {
     export const g6BottomRings = g6FloorRings.map(g => g.map3(v => v.sub(vc.v3(0, 0, nUnderFloorD))));
 
     const gColumn = antiprism(4, rpzl(4, 1 / 16, 1 / 32, seq.arith(7, 0, (nColumnH - 0.25) / 6)));
-    export const g4Columns = al.duplicate_f(gColumn, al.compose_v3map<number>(
+    export const g4Columns = al.duplicate_f(gColumn, al.compose_v4map<number>(
         seq.arith(vxyFloor4.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rot_z_atan2_m4(vxyFloor4[i])]));
-    export const g6Columns = al.duplicate_f(gColumn, al.compose_v3map<number>(
+    export const g6Columns = al.duplicate_f(gColumn, al.compose_v4map<number>(
         seq.arith(vxyFloor6.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rot_z_atan2_m4(vxyFloor6[i])]));
 
     const gColumnUnder = antiprism(4, rpzl(4, 1 / 16, 1 / 32, seq.arith(7, -nUnderFloorD, (nUnderFloorD - 0.25) / 6)));
-    export const g4ColumnUnders = al.duplicate_f(gColumnUnder, al.compose_v3map<number>(
+    export const g4ColumnUnders = al.duplicate_f(gColumnUnder, al.compose_v4map<number>(
         seq.arith(vxyFloor4.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rot_z_atan2_m4(vxyFloor4[i])]));
-    export const g6ColumnUnders = al.duplicate_f(gColumnUnder, al.compose_v3map<number>(
+    export const g6ColumnUnders = al.duplicate_f(gColumnUnder, al.compose_v4map<number>(
         seq.arith(vxyFloor6.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, 0]), i => rot_z_atan2_m4(vxyFloor6[i])]));
 
@@ -196,10 +196,10 @@ export namespace node {
     export const g6RoofAm = multi.prismArray_pyramid(mapsRoofA.map(m => vxyFloor6.map(v => m.map_v3(v, 1))), vc.v3(0, 0, nColumnH + nRoofH));
 
     const gRoofAs = prim.pyramid(4, 1 / 12, nRoofH / 4);
-    export const g4RoofAs = al.duplicate_f(gRoofAs, al.compose_v3map<number>(
+    export const g4RoofAs = al.duplicate_f(gRoofAs, al.compose_v4map<number>(
         seq.arith(vxyFloor4.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, nColumnH]), i => rot_z_atan2_m4(vxyFloor4[i])]));
-    export const g6RoofAs = al.duplicate_f(gRoofAs, al.compose_v3map<number>(
+    export const g6RoofAs = al.duplicate_f(gRoofAs, al.compose_v4map<number>(
         seq.arith(vxyFloor6.length),
         [_ => mx.trans_m4([nr25 * nInner, 0, nColumnH]), i => rot_z_atan2_m4(vxyFloor6[i])]));
 
@@ -222,17 +222,17 @@ export namespace node {
     const seq6Obj1 = seq.arith(vxyFloor6.length).filter(i => i % 2 != 1);
     const seq6Obj2 = seq.arith(vxyFloor6.length).filter(i => i % 2 == 1);
 
-    export const g4RoofC1 = al.duplicate_f(gCrys, al.compose_v3map<number>(seq.arith(vxyFloor4.length),
+    export const g4RoofC1 = al.duplicate_f(gCrys, al.compose_v4map<number>(seq.arith(vxyFloor4.length),
         [i => mx.scale_m4([1, 1, (2 + i % 3) / 2]), _ => mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]), i => rot_z_atan2_m4(vxyFloor4[i])]));
-    export const g4RoofC2 = al.duplicate_f(gObj1, al.compose_v3map<number>(seq4Obj1,
+    export const g4RoofC2 = al.duplicate_f(gObj1, al.compose_v4map<number>(seq4Obj1,
         [i => mx.trans_m4([nr25 * nInner, 0, (2 + i % 3) / 2 + nFloorD / 2]), i => rot_z_atan2_m4(vxyFloor4[i])]));
-    export const g4RoofC3 = al.duplicate_f(gObj2, al.compose_v3map<number>(seq4Obj2,
+    export const g4RoofC3 = al.duplicate_f(gObj2, al.compose_v4map<number>(seq4Obj2,
         [i => mx.trans_m4([nr25 * nInner, 0, (2 + i % 3) / 2 + nFloorD / 2]), i => rot_z_atan2_m4(vxyFloor4[i])]));
-    export const g6RoofC1 = al.duplicate_f(gCrys, al.compose_v3map<number>(seq.arith(vxyFloor6.length),
+    export const g6RoofC1 = al.duplicate_f(gCrys, al.compose_v4map<number>(seq.arith(vxyFloor6.length),
         [i => mx.scale_m4([1, 1, (2 + 2 * (i % 2)) / 2]), _ => mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]), i => rot_z_atan2_m4(vxyFloor6[i])]));
-    export const g6RoofC2 = al.duplicate_f(gObj1, al.compose_v3map<number>(seq6Obj1,
+    export const g6RoofC2 = al.duplicate_f(gObj1, al.compose_v4map<number>(seq6Obj1,
         [i => mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]), i => rot_z_atan2_m4(vxyFloor6[i])]));
-    export const g6RoofC3 = al.duplicate_f(gObj2, al.compose_v3map<number>(seq6Obj2,
+    export const g6RoofC3 = al.duplicate_f(gObj2, al.compose_v4map<number>(seq6Obj2,
         [i => mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]), i => rot_z_atan2_m4(vxyFloor6[i])]));
 
     const mapsBottom = al.compose_m4<vc.V2>(
@@ -448,7 +448,7 @@ export function geoColumn(
 
 export function dupl(geo: al.Geo, c: cv.Curve3, ii: number[]): al.Geo[] {
     return al.duplicate_f(geo,
-        al.compose_v3map(ii.map(i => c.ray(i)), [
+        al.compose_v4map(ii.map(i => c.ray(i)), [
             d => mx.rot_yz_x_m4(d.d.hadamart(vc.v3(1, 1, 0))),
             d => mx.trans_v3_m4(d.c),
         ]));
@@ -457,7 +457,7 @@ export function dupl(geo: al.Geo, c: cv.Curve3, ii: number[]): al.Geo[] {
 export function hexaObj() {
     al.duplicate_f(
         prim.bipyramid(4, 0.25, 0.5, 0.5),
-        al.compose_v3map<number>(seq.arith(4), [
+        al.compose_v4map<number>(seq.arith(4), [
             _ => mx.rot_x_m4(ut.deg90),
             _ => mx.trans_m4([3, 0, 0]),
             d => mx.rot_z_m4(ut.deg90 * d),

@@ -1,6 +1,6 @@
 "use strict";
 /** プリミティブオブジェクト */
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("../algorithm/utility");
 var sq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");

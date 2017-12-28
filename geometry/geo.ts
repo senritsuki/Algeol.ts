@@ -107,12 +107,12 @@ export function geo_to_obj(geo: Geo, material: Material|null, name: string|null=
 }
 
 export function geos_to_obj(geos: Geo[], material: Material|null, name: string|null=null): Obj {
-    return _merge_geos(geos, name, _ => material);
+    return _geos_to_obj(geos, name, _ => material);
 }
-export function merge_geos_materials(geos: Geo[], materials: Material[]=[], name: string|null=null): Obj {
-    return _merge_geos(geos, name, i => materials[i]);
+export function geos_mats_to_obj(geos: Geo[], materials: Material[], name: string|null=null): Obj {
+    return _geos_to_obj(geos, name, i => materials[i]);
 }
-function _merge_geos(geos: Geo[], name: string|null, f_material: (i: number) => Material|null): Obj {
+function _geos_to_obj(geos: Geo[], name: string|null, f_material: (i: number) => Material|null): Obj {
     let verts: V3[] = [];
     let faces: FaceGroup[] = [];
     let index = 0;
@@ -128,6 +128,17 @@ function _merge_geos(geos: Geo[], name: string|null, f_material: (i: number) => 
     return new Obj(name, verts, faces);
 }
 
+export function merge_geos(geos: Geo[]): Geo {
+    let verts: V3[] = [];
+    let faces: number[][] = [];
+    let index = 0;
+    geos.forEach(geo => {
+        verts = verts.concat(geo.verts);
+        faces = faces.concat(geo.faces.map(f => f.map(i => i + index)));
+        index += geo.verts.length;
+    });
+    return new Geo(verts, faces);
+}
 export function merge_objs(objs: Obj[], name: string|null=null): Obj {
     let verts: V3[] = [];
     let faces: FaceGroup[] = [];
@@ -152,13 +163,13 @@ export function m4s_to_v4maps(mm: M4[]): Array<(v: V4) => V4> {
 
 
 /** 写像配列を用いたジオメトリ・オブジェクト配列複製 */
-export function duplicate_f<T extends IMap<T>>(obj: T, v3maps: Array<(v: V3) => V3>): T[] {
-    return v3maps.map(f => obj.map(v => vc.v3map_v4(v, f)));
+export function duplicate_f<T extends IMap<T>>(obj: T, v4maps: Array<(v: V4) => V4>): T[] {
+    return v4maps.map(f => obj.map(v => f(v)));
 }
 
 /** 写像配列を用いた3次元ベクトル配列複製 */
-export function duplicate_v3(verts: V3[], v3maps: Array<(v: V3) => V3>): V3[][] {
-    return v3maps.map(m => verts.map(m));
+export function duplicate_v3(verts: V3[], w: number, v4maps: Array<(v: V4) => V4>): V3[][] {
+    return v4maps.map(m => verts.map(v => vc.v4map_v3(v, w, m)));
 }
 
 /** 任意のデータ配列を用いた合成写像の生成 */

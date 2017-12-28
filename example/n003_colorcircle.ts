@@ -12,7 +12,7 @@ const step = 360 / num;
 const geo = prim.prism(12, 0.5, 1.0);
 const sq = seq.arith(num);
 
-const duplicater = al.compose_v3map(sq, [
+const duplicater = al.compose_v4map(sq, [
     _ => mx.trans_m4([0, 5, 0]),
     n => mx.rot_z_m4(ut.deg_to_rad(-n * step)),
 ]);
@@ -23,7 +23,7 @@ const lch = ut.compose_2f(cc.lch_to_rgb01, (nn: number[]) => cc.clamp(nn, 0, 1))
 
 const materials = sq.map(n => new al.Material(`c1510${ut.format_02d(n)}`, lch([75, 50, n*step])));
 
-const obj = al.merge_geos_materials(geos, materials);
+const obj = al.geos_mats_to_obj(geos, materials);
 
 const result = wf.objs_to_strings('./_obj/n003_colorcircle', [obj]);
 

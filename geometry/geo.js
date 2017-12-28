@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("../algorithm/vector");
 var mx = require("../algorithm/matrix");
 function shift_offset(face, index_offset) {
@@ -115,16 +115,15 @@ function geo_to_obj(geo, material, name) {
 exports.geo_to_obj = geo_to_obj;
 function geos_to_obj(geos, material, name) {
     if (name === void 0) { name = null; }
-    return _merge_geos(geos, name, function (_) { return material; });
+    return _geos_to_obj(geos, name, function (_) { return material; });
 }
 exports.geos_to_obj = geos_to_obj;
-function merge_geos_materials(geos, materials, name) {
-    if (materials === void 0) { materials = []; }
+function geos_mats_to_obj(geos, materials, name) {
     if (name === void 0) { name = null; }
-    return _merge_geos(geos, name, function (i) { return materials[i]; });
+    return _geos_to_obj(geos, name, function (i) { return materials[i]; });
 }
-exports.merge_geos_materials = merge_geos_materials;
-function _merge_geos(geos, name, f_material) {
+exports.geos_mats_to_obj = geos_mats_to_obj;
+function _geos_to_obj(geos, name, f_material) {
     var verts = [];
     var faces = [];
     var index = 0;
@@ -139,6 +138,18 @@ function _merge_geos(geos, name, f_material) {
     });
     return new Obj(name, verts, faces);
 }
+function merge_geos(geos) {
+    var verts = [];
+    var faces = [];
+    var index = 0;
+    geos.forEach(function (geo) {
+        verts = verts.concat(geo.verts);
+        faces = faces.concat(geo.faces.map(function (f) { return f.map(function (i) { return i + index; }); }));
+        index += geo.verts.length;
+    });
+    return new Geo(verts, faces);
+}
+exports.merge_geos = merge_geos;
 function merge_objs(objs, name) {
     if (name === void 0) { name = null; }
     var verts = [];
@@ -163,13 +174,13 @@ function m4s_to_v4maps(mm) {
 }
 exports.m4s_to_v4maps = m4s_to_v4maps;
 /** 写像配列を用いたジオメトリ・オブジェクト配列複製 */
-function duplicate_f(obj, v3maps) {
-    return v3maps.map(function (f) { return obj.map(function (v) { return vc.v3map_v4(v, f); }); });
+function duplicate_f(obj, v4maps) {
+    return v4maps.map(function (f) { return obj.map(function (v) { return f(v); }); });
 }
 exports.duplicate_f = duplicate_f;
 /** 写像配列を用いた3次元ベクトル配列複製 */
-function duplicate_v3(verts, v3maps) {
-    return v3maps.map(function (m) { return verts.map(m); });
+function duplicate_v3(verts, w, v4maps) {
+    return v4maps.map(function (m) { return verts.map(function (v) { return vc.v4map_v3(v, w, m); }); });
 }
 exports.duplicate_v3 = duplicate_v3;
 /** 任意のデータ配列を用いた合成写像の生成 */

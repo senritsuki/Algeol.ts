@@ -20,7 +20,7 @@ var start = vc.v3(0, 0, 0);
 var goal = vc.v3(1, 5, 2);
 var geo_floor = prim.cuboid_vv([-1 / 2, -1 / 2, -1 / 8], [1 / 2, 1 / 2, 0]);
 var geo_stairstep = prim.cuboid_vv([-3 / 8, -1 / 16, -1 / 8], [3 / 8, 1 / 16, 0]);
-var floor_duplicater = al.compose_v3map([start, goal], [
+var floor_duplicater = al.compose_v4map([start, goal], [
     function (d) { return mx.trans_m4(d); },
 ]);
 var stair_start = start.add([0, 1 / 2, 0]);
@@ -31,7 +31,7 @@ var stair_mid2 = stair_goal.scalar(2).add(stair_start).scalar(1 / 3).add([xd / 3
 var stair_curve = cv.bezier([stair_start, stair_mid1, stair_mid2, stair_goal]);
 var stair_step_num = Math.round(Math.abs(stair_goal.y() - stair_start.y()) * 8);
 var stair_coords = seq.arith(stair_step_num + 1).map(function (i) { return stair_curve.coord(i / stair_step_num); });
-var stairstep_duplicater = al.compose_v3map(stair_coords, [
+var stairstep_duplicater = al.compose_v4map(stair_coords, [
     function (d) { return mx.trans_m4(d); },
 ]);
 var obj_floors = al.geos_to_obj(al.duplicate_f(geo_floor, floor_duplicater), lch5(19, 0, 0));

@@ -1,6 +1,6 @@
 "use strict";
 // Square Matrix 正方行列
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("./utility");
 var vc = require("./vector");
 /**

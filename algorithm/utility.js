@@ -1,7 +1,7 @@
 "use strict";
 // --------------------------------------------------------
 // 定数
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 /** Square Root of 2 - 2の平方根 (≒ 1.414) */
 exports.r2 = Math.sqrt(2);
 /** Square Root of 3 - 3の平方根 (≒ 1.732) */

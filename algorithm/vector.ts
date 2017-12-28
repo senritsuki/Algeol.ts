@@ -89,6 +89,9 @@ export interface Vector<T extends Vector<T>> {
     ip(dist: T|number[]): number;
     /** 二項演算: 二つの方向ベクトルのなす角 */
     angle(dist: T|number[]): number;
+
+    toString(): string;
+    toString03f(): string;
 }
 
 /** 2D Vector - 2次元ベクトル */
@@ -139,6 +142,7 @@ class V2Impl implements V2 {
     angle = (dist: V2Impl|number[]): number => angle(this._v, to_array_if(dist));
 
     toString = (): string => `[${this._v.join(', ')}]`;
+    toString03f = (): string => `[${this._v.map(n => Math.round(n*1000)/1000).join(', ')}]`;
 }
 
 /** 3D Vector - 3次元ベクトル */
@@ -191,6 +195,7 @@ class V3Impl implements V3 {
     angle = (dist: V3Impl|number[]): number => angle(this._v, to_array_if(dist));
 
     toString = (): string => `[${this._v.join(', ')}]`;
+    toString03f = (): string => `[${this._v.map(n => Math.round(n*1000)/1000).join(', ')}]`;
 }
 
 /** 4D Vector - 4次元ベクトル */
@@ -242,6 +247,7 @@ class V4Impl implements V4 {
     angle = (dist: V4Impl|number[]): number => angle(this._v, to_array_if(dist));
 
     toString = (): string => `[${this._v.join(', ')}]`;
+    toString03f = (): string => `[${this._v.map(n => Math.round(n*1000)/1000).join(', ')}]`;
 }
 
 
