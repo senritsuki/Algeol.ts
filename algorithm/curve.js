@@ -401,10 +401,14 @@ exports.bezier3_interpolate_s = bezier3_interpolate_s;
 function bezier3_interpolate_arc(p0, p1, o) {
     var d0 = p0.sub(o);
     var d1 = p1.sub(o);
+    d0._v[2] = 0;
+    d1._v[2] = 0;
     var rad = d0.angle(d1);
-    var n = exports.bezier_arc_p(rad);
-    var c0 = p0.add(d1.scalar(n));
-    var c1 = p1.add(d0.scalar(n));
+    var n = exports.bezier_arc_p(rad) * d0.length();
+    var e0 = mx.rot_z_m3(ut.deg90).map(d0).unit().scalar(n);
+    var e1 = mx.rot_z_m3(-ut.deg90).map(d1).unit().scalar(n);
+    var c0 = p0.add(e0);
+    var c1 = p1.add(e1);
     var controls = [p0, c0, c1, p1];
     return bezier(controls);
 }

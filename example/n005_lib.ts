@@ -6,7 +6,8 @@ import * as cv from "../algorithm/curve";
 import * as cc from "../algorithm/color_converter";
 
 import * as al from "../geometry/geo";
-import * as geo_array from "../geometry/array";
+import * as prim from '../geometry/primitive';
+import * as prima from "../geometry/array";
 
 type V2 = vc.V2;
 type V3 = vc.V3;
@@ -59,10 +60,10 @@ export function xzgeo_arch_bar(outer_dx: number, outer_dy: number, inner_dx: num
  * @param y0 
  * @param y1 
  */
-export function xzgeo_extract(xzgeo: al.Geo, y0: number, y1: number): al.Geo {
+export function xzgeo_extrude(xzgeo: al.Geo, y0: number, y1: number): al.Geo {
     const verts_0 = xzgeo.verts.map(v => v.add([0, y0, 0]));
     const verts_1 = xzgeo.verts.map(v => v.add([0, y1, 0]));
-    return geo_array.prismArray([verts_0, verts_1]);
+    return prima.prismArray([verts_0, verts_1]);
 }
 
 export function to_xy_square(o: V3, dx: V3, dy: V3): V3[] {
@@ -113,7 +114,7 @@ export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (t: number) 
         v => mx.trans_m4([0, 0, v.z()]),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
-    return geo_array.prismArray(polygons);
+    return prima.prismArray(polygons);
 }
 
 export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
@@ -124,7 +125,7 @@ export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: numb
         v => mx.trans_m4([0, 0, v.z()]),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
-    return geo_array.prismArray(polygons);
+    return prima.prismArray(polygons);
 }
 
 export function xygeo_z_scale_rot(xy_verts: V3[], zsr_list: V3[]): al.Geo {
@@ -134,7 +135,7 @@ export function xygeo_z_scale_rot(xy_verts: V3[], zsr_list: V3[]): al.Geo {
         zsr => mx.rot_z_m4(zsr.z()),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
-    return geo_array.prismArray(polygons);
+    return prima.prismArray(polygons);
 }
 
 
@@ -143,7 +144,7 @@ export function duplicate_rot_z(xy_verts: V3[], count: number, deg: number): V3[
         i => mx.rot_z_m4(ut.deg_to_rad(i * deg)),
     ]);
     const new_verts = al.duplicate_v3(xy_verts, 1, maps);
-    return geo_array.flatten(new_verts); 
+    return prima.flatten(new_verts); 
 }
 export function duplicate_rot_z_90_4(xy_verts: V3[]): V3[] {
     return duplicate_rot_z(xy_verts, 4, 90);
@@ -206,7 +207,7 @@ export abstract class FloorBase<T extends FloorBase<T>> implements al.IMap<T> {
 
     abstract clone(): T;
 
-    cn(i: number): Connector {
+    con(i: number): Connector {
         return this.connectors[i % this.connectors.length];
     }
     clone_update(o: V3, connectors: Connector[]): T {
@@ -228,20 +229,27 @@ export class RegularFloor extends FloorBase<RegularFloor> {
         connectors: Connector[],
         /** 頂点数 */
         public n: number,
-        /** 内接円半径 */
-        public ir: number,
-        /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
-        public deg_offset: number = 0,
+        /** 内接円半径, 頂点の開始角度（0ならx軸正, 90ならy軸正） */
+        public base: V3 = vc.v3_unit_x,
     ) {
         super(o, connectors);
     }
 
     clone(): RegularFloor {
-        return new RegularFloor(this.o, this.connectors, this.n, this.ir, this.deg_offset);
+        return new RegularFloor(this.o, this.connectors, this.n, this.base);
+    }
+    ir(): number {
+        return this.base.length();
+    }
+    map(f: (v: V4) => V4): RegularFloor {
+        const new_floor = super.map(f);
+        new_floor.base = vc.v4map_v3(this.base, 0, f);
+        return new_floor;
     }
     verts(): V3[] {
-        const cr = this.ir / Math.cos(ut.deg180 / this.n);
-        const rad_start = ut.deg_to_rad(this.deg_offset + 180 / this.n);
+        const rad_offset = Math.atan2(this.base.y(), this.base.x());
+        const cr = this.ir() / Math.cos(ut.deg180 / this.n);
+        const rad_start = rad_offset + ut.deg180  / this.n;
         const verts = seq.arith(this.n, rad_start, ut.pi2 / this.n).map(rad => vc.polar_to_v3(cr, rad, 0));
         return verts.map(v => v.add(this.o));
     }
@@ -261,7 +269,8 @@ export function floor_regular(
     const width = ir * ut.tan_deg(180 / n) * width_rate;
     const deg = (i: number) => i * 360 / n + deg_offset;
     const connectors = seq.arith(n).map(i => build_connector(o, ir, deg(i), width));
-    return new RegularFloor(o, connectors, n, ir, deg_offset);
+    const deg_base = vc.polar_to_v3(ir, ut.deg_to_rad(deg_offset), 0);
+    return new RegularFloor(o, connectors, n, deg_base);
 }
 
 export function floor_square(o: V3, ir: number, width_rate: number = 1.0, deg_offset: number = 0): RegularFloor {
@@ -316,9 +325,6 @@ export function build_curve_arc(c1: Connector, c2: Connector): cv.Curve3 {
     const ray1 = ray3_rot_z_scale(c1.ray, 90, 1);
     const ray2 = ray3_rot_z_scale(c2.ray, 90, 1);
     const oxy = calc_cross_point_v3(ray1, ray2);
-    console.log(ray1.toString());
-    console.log(ray2.toString());
-    console.log(oxy != null ? oxy.toString() : null);
     if (oxy == null) {
         return build_curve_simple(c1, c2, null);
     }
@@ -339,13 +345,17 @@ export class Route {
         const len2 = this.c2.width / 2;
         const len = (1 - t) * len1 + t * len2;
         const ray = this.curve.ray(t);
-        const l = cv.rot_ray3d_z(ray, ut.deg90).unit();
-        const r = cv.rot_ray3d_z(ray, -ut.deg90).unit();
+        let l = cv.rot_ray3d_z(ray, ut.deg90);
+        let r = cv.rot_ray3d_z(ray, -ut.deg90);
+        l.d._v[2] = 0;
+        r.d._v[2] = 0;
+        l = l.unit();
+        r = r.unit();
         return [l.p(len), ray.c,  r.p(len), ray.d];
     }
 }
 
-export function route_simple(c1: Connector, c2: Connector, mid: number|null): Route {
+export function route_curve(c1: Connector, c2: Connector, mid: number|null): Route {
     return new Route(c1, c2, build_curve_simple(c1, c2, mid));
 }
 export function route_arc(c1: Connector, c2: Connector): Route {
@@ -356,4 +366,46 @@ export function lch(l: number, c: number, h: number): al.Material {
     const name = `lch${ut.format_02d(l)}${ut.format_02d(c)}${ut.format_02d(h)}`;
     const lch = cc.clamp01(cc.lch_to_rgb01([l*5, c*5, h*15]));
     return new al.Material(name, lch);
+}
+
+
+let BottomZ = -100;
+
+export function config_bottom_z(n: number) {
+    BottomZ = n;
+}
+
+export function geo_rfloor_simple(floor: RegularFloor): al.Geo {
+    const o = v3(floor.o.x(), floor.o.y(), 0);
+    const verts = floor.verts().map(v => v.sub(o));
+    const geo = xygeo_z_scale_rot(verts, [
+        v3(0, 1, 0),
+        v3(-1/8, 1, 0),
+        v3(-1, 1/8, 0),
+        v3(BottomZ, 1/8, 0),
+    ]);
+    return al.translate(geo, o);
+}
+
+export function geo_route_planes(route: Route, n: number): al.Geo {
+    const lcrd = seq.range(0, 1, n + 1).map(t => route.lcrd(t));
+    const bases = seq.arith(n).map(i => {
+        const d1 = lcrd[i];
+        const d2 = lcrd[i+1];
+        const z = d1[1].z();
+        const base = [d1[0], d1[2], d2[2], d2[0]];
+        return prim.plane_xy(base, z);
+    });
+    return al.merge_geos(bases);
+}
+export function geo_route_stairs(route: Route, n: number, d: number): al.Geo {
+    const lcrd = seq.range(0, 1, n + 1).map(t => route.lcrd(t));
+    const bases = seq.arith(n).map(i => {
+        const d1 = lcrd[i];
+        const d2 = lcrd[i+1];
+        const z = (d1[1].z() + d2[1].z()) / 2;
+        const base = [d1[0], d1[2], d2[2], d2[0]].map(v => v3(v.x(), v.y(), z));
+        return prima.extrude(base, v3(0, 0, -d), v3(0, 0, 0));
+    });
+    return al.merge_geos(bases);
 }

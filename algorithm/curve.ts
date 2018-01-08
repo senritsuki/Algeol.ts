@@ -431,13 +431,17 @@ export function bezier3_interpolate_s<T extends vc.Vector<T>>(p0: T, p1: T, d: T
     return bezier(controls);
 }
 /** 三次ベジェの楕円弧カーブ */
-export function bezier3_interpolate_arc<T extends vc.Vector<T>>(p0: T, p1: T, o: T): Curve<T> {
+export function bezier3_interpolate_arc(p0: V3, p1: V3, o: V3): Curve3 {
     const d0 = p0.sub(o);
     const d1 = p1.sub(o);
+    d0._v[2] = 0;
+    d1._v[2] = 0;
     const rad = d0.angle(d1);
-    const n = bezier_arc_p(rad);
-    const c0 = p0.add(d1.scalar(n));
-    const c1 = p1.add(d0.scalar(n));
+    const n = bezier_arc_p(rad) * d0.length();
+    const e0 = mx.rot_z_m3(ut.deg90).map(d0).unit().scalar(n);
+    const e1 = mx.rot_z_m3(-ut.deg90).map(d1).unit().scalar(n);
+    const c0 = p0.add(e0);
+    const c1 = p1.add(e1);
     const controls = [p0, c0, c1, p1];
     return bezier(controls);
 }
