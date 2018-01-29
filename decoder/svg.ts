@@ -16,21 +16,21 @@ export function svg(inner: string, width: number, height: number, viewbox_width:
 export function curve_line(line: cv.Curve2, stroke: string, strokeWidth: number): string {
     const c1 = line.start();
     const c2 = line.end();
-    return `<line stroke="${stroke}" stroke-width="${strokeWidth}" x1="${c1.x()}" y1="${c1.y()}" x2="${c2.x()}" y2="${c2.y()}" />`;
+    return `<line stroke="${stroke}" stroke-width="${strokeWidth}" x1="${c1.x}" y1="${c1.y}" x2="${c2.x}" y2="${c2.y}" />`;
 }
 
 /** (連続直線) -> <path> */
 export function curveArray_path(lines: cv.CurveArray2, fill: string, stroke: string, strokeWidth: number, z: boolean): string {
     const strs: string[] = [];
     const c0 = lines.start();
-    strs.push(`M ${c0.x()} ${c0.y()}`);
+    strs.push(`M ${c0.x} ${c0.y}`);
     seq.arith(lines.curveNum(), 1)
         .map(i => lines.coord(i))
-        .forEach(v => strs.push(`L ${v.x()} ${v.y()}`));
+        .forEach(v => strs.push(`L ${v.x} ${v.y}`));
     return `<path fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" d="${strs.join(' ') + (z ? ' z' : '')}" />`;
 }
 
 /** (3次元ベクトル(x=cx, y=cy, z=r)) -> <circle> */
 export function v_circle(v: vc.V3): string {
-    return `<circle cx="${v.x()}" cy="${v.y()}" r="${v.z()}" />`;
+    return `<circle cx="${v.x}" cy="${v.y}" r="${v.z}" />`;
 }

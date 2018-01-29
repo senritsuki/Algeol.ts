@@ -29,13 +29,13 @@ const floor_duplicater = al.compose_v4map([start, goal], [
 
 const stair_start = start.add([0, 1/2, 0]);
 const stair_goal = goal.add([0, -1/2, 0]);
-const xd = stair_goal.x() - stair_start.x();
+const xd = stair_goal.x - stair_start.x;
 const stair_mid1 = stair_start.scalar(2).add(stair_goal).scalar(1/3).sub([xd/3, 0, 0]);
 const stair_mid2 = stair_goal.scalar(2).add(stair_start).scalar(1/3).add([xd/3, 0, 0]);
 
 const stair_curve = cv.bezier([stair_start, stair_mid1, stair_mid2, stair_goal]);
 
-const stair_step_num = Math.round(Math.abs(stair_goal.y() - stair_start.y()) * 8);
+const stair_step_num = Math.round(Math.abs(stair_goal.y - stair_start.y) * 8);
 
 const stair_coords = seq.arith(stair_step_num + 1).map(i => stair_curve.coord(i / stair_step_num));
 

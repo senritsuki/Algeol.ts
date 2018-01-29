@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("./vector");
 var mx = require("./matrix");
-var ProjectionImpl = (function () {
+var ProjectionImpl = /** @class */ (function () {
     function ProjectionImpl(_mx, _lambda) {
         this._mx = _mx;
         this._lambda = _lambda;
@@ -14,14 +14,14 @@ var ProjectionImpl = (function () {
 }());
 /** Parallel Projection - 平行投影 */
 function parallel(m, scale) {
-    return new ProjectionImpl(m, function (v) { return v.hadamart([scale, scale, 1]); });
+    return new ProjectionImpl(m, function (v) { return v.el_mul([scale, scale, 1]); });
 }
 exports.parallel = parallel;
 /** Perspective Projection - 透視投影 */
 function perspective(m, scale, tan, near) {
     if (near === void 0) { near = 1; }
     var c = scale * tan;
-    return new ProjectionImpl(m, function (v) { return c >= near ? v.hadamart(vc.v3(c / v.z(), c / v.z(), 1)) : v; });
+    return new ProjectionImpl(m, function (v) { return c >= near ? v.el_mul(vc.v3(c / v.z, c / v.z, 1)) : v; });
 }
 exports.perspective = perspective;
 /** x軸方向のプロジェクタをxy平面、奥行きzに変換 */

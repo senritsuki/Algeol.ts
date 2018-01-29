@@ -30,13 +30,17 @@ export function sub(a: number[], b: number[]): number[] {
 export function scalar(a: number[], n: number): number[] {
     return op1(a, a.length, (n1) => n1 * n);
 }
-/** 要素ごとの積, アダマール積 */
-export function hadamart(a: number[], b: number[]): number[] {
+/** 要素ごとの乗算 */
+export function el_mul(a: number[], b: number[]): number[] {
     return op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 * n2);
+}
+/** 要素ごとの除算 */
+export function el_div(a: number[], b: number[]): number[] {
+    return op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 / n2);
 }
 /** Inner Product, Dot Product 内積 */
 export function ip(a: number[], b: number[]): number {
-    return hadamart(a, b).reduce((a, b) => a + b);
+    return el_mul(a, b).reduce((a, b) => a + b);
 }
 /** Cross Product 2-D 外積（二次元） */
 export function cp2(a: number[], b: number[]): number {
@@ -81,8 +85,10 @@ export interface Vector<T extends Vector<T>> {
     add(dist: T|number[]): T;
     /** 二項演算: 減算 */
     sub(dist: T|number[]): T;
-    /** 二項演算: 要素同士の積 */
-    hadamart(dist: T|number[]): T;
+    /** 二項演算: 要素同士の乗算 */
+    el_mul(dist: T|number[]): T;
+    /** 二項演算: 要素同士の除算 */
+    el_div(dist: T|number[]): T;
     /** 二項演算: スカラー倍 */
     scalar(n: number): T;
     /** 二項演算: 内積 */
@@ -96,8 +102,8 @@ export interface Vector<T extends Vector<T>> {
 
 /** 2D Vector - 2次元ベクトル */
 export interface V2 extends Vector<V2Impl> {
-    x(): number;
-    y(): number;
+    x: number;
+    y: number;
 
     /** 二項演算: 外積 */
     cp(dist: V2Impl|number[]): number;
@@ -119,11 +125,13 @@ class V2Impl implements V2 {
     }
 
     // 取得
+    get x(): number { return this._v[0]; }
+    get y(): number { return this._v[1]; }
+    set x(n: number) { this._v[0] = n; }
+    set y(n: number) { this._v[1] = n; }
 
     array = (): number[] => this._v.slice(0);
-    clone = (): V2Impl => new V2Impl(this.x(), this.y());
-    x = (): number => this._v[0];
-    y = (): number => this._v[1];
+    clone = (): V2Impl => new V2Impl(this.x, this.y);
 
     // 単項演算
 
@@ -135,7 +143,8 @@ class V2Impl implements V2 {
 
     add = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(add(this._v, to_array_if(dist)));
     sub = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(sub(this._v, to_array_if(dist)));
-    hadamart = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(hadamart(this._v, to_array_if(dist)));
+    el_mul = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(el_mul(this._v, to_array_if(dist)));
+    el_div = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(el_div(this._v, to_array_if(dist)));
     scalar = (n: number): V2Impl => V2Impl.fm_array(scalar(this._v, n));
     ip = (dist: V2Impl|number[]): number => ip(this.array(), to_array_if(dist));
     cp = (dist: V2Impl|number[]): number => cp2(this._v, to_array_if(dist));
@@ -147,9 +156,9 @@ class V2Impl implements V2 {
 
 /** 3D Vector - 3次元ベクトル */
 export interface V3 extends Vector<V3Impl> {
-    x(): number;
-    y(): number;
-    z(): number;
+    x: number;
+    y: number;
+    z: number;
 
     /** 二項演算: 外積 */
     cp(dist: V3|number[]): V3;
@@ -177,18 +186,22 @@ class V3Impl implements V3 {
     unit = (): V3Impl => this.scalar(1 / this.length());
 
     // 取得
+    get x(): number { return this._v[0]; }
+    get y(): number { return this._v[1]; }
+    get z(): number { return this._v[2]; }
+    set x(n: number) { this._v[0] = n; }
+    set y(n: number) { this._v[1] = n; }
+    set z(n: number) { this._v[2] = n; }
 
     array = (): number[] => this._v.slice(0);
-    clone = (): V3Impl => new V3Impl(this.x(), this.y(), this.z());
-    x = (): number => this._v[0];
-    y = (): number => this._v[1];
-    z = (): number => this._v[2];
+    clone = (): V3Impl => new V3Impl(this.x, this.y, this.z);
 
     // 二項演算
 
     add = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(add(this._v, to_array_if(dist)));
     sub = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(sub(this._v, to_array_if(dist)));
-    hadamart = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(hadamart(this._v, to_array_if(dist)));
+    el_mul = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(el_mul(this._v, to_array_if(dist)));
+    el_div = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(el_div(this._v, to_array_if(dist)));
     scalar = (n: number): V3Impl => V3Impl.fm_array(scalar(this._v, n));
     ip = (dist: V3Impl|number[]): number => ip(this.array(), to_array_if(dist));
     cp = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(cp3(this._v, to_array_if(dist)));
@@ -200,10 +213,10 @@ class V3Impl implements V3 {
 
 /** 4D Vector - 4次元ベクトル */
 export interface V4 extends Vector<V4Impl> {
-    x(): number;
-    y(): number;
-    z(): number;
-    w(): number;
+    x: number;
+    y: number;
+    z: number;
+    w: number;
 }
 
 class V4Impl implements V4 {
@@ -223,13 +236,17 @@ class V4Impl implements V4 {
     }
 
     // 取得
+    get x(): number { return this._v[0]; }
+    get y(): number { return this._v[1]; }
+    get z(): number { return this._v[2]; }
+    get w(): number { return this._v[3]; }
+    set x(n: number) { this._v[0] = n; }
+    set y(n: number) { this._v[1] = n; }
+    set z(n: number) { this._v[2] = n; }
+    set w(n: number) { this._v[3] = n; }
 
     array = (): number[] => this._v.slice(0);
-    clone = (): V4Impl => new V4Impl(this.x(), this.y(), this.z(), this.w());
-    x = (): number => this._v[0];
-    y = (): number => this._v[1];
-    z = (): number => this._v[2];
-    w = (): number => this._v[3];
+    clone = (): V4Impl => new V4Impl(this.x, this.y, this.z, this.w);
 
     // 単項演算
 
@@ -241,7 +258,8 @@ class V4Impl implements V4 {
 
     add = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(add(this._v, to_array_if(dist)));
     sub = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(sub(this._v, to_array_if(dist)));
-    hadamart = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(hadamart(this._v, to_array_if(dist)));
+    el_mul = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(el_mul(this._v, to_array_if(dist)));
+    el_div = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(el_div(this._v, to_array_if(dist)));
     scalar = (n: number): V4Impl => V4Impl.fm_array(scalar(this._v, n));
     ip = (dist: V4Impl|number[]): number => ip(this.array(), to_array_if(dist));
     angle = (dist: V4Impl|number[]): number => angle(this._v, to_array_if(dist));
@@ -252,7 +270,9 @@ class V4Impl implements V4 {
 
 
 export const to_array_if = <T extends Vector<T>>(n: T|number[]): number[] => n instanceof Array ? n : n._v;
+export const to_v2_if = (v: V2|number[]): V2 => v instanceof Array ? array_to_v2(v) : v;
 export const to_v3_if = (v: V3|number[]): V3 => v instanceof Array ? array_to_v3(v) : v;
+export const to_v4_if = (v: V4|number[]): V4 => v instanceof Array ? array_to_v4(v) : v;
 
 
 // --------------------------------------------------------
@@ -366,7 +386,7 @@ export const v4_to_v3 = (v4: V4): V3 => V3Impl.fm_array(v4._v);
 
 
 export function v3map_v4(v: V4, f: (v: V3) => V3): V4 {
-    const w = v.w();
+    const w = v.w;
     const v_1 = v4_to_v3(v);
     const v_2 = f(v_1);
     const v_3 = v3_to_v4(v_2, w);

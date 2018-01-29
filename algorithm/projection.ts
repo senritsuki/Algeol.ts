@@ -18,12 +18,12 @@ class ProjectionImpl implements Projection {
 
 /** Parallel Projection - 平行投影 */
 export function parallel(m: mx.M4, scale: number): Projection {
-    return new ProjectionImpl(m, v => v.hadamart([scale, scale, 1]));
+    return new ProjectionImpl(m, v => v.el_mul([scale, scale, 1]));
 }
 /** Perspective Projection - 透視投影 */
 export function perspective(m: mx.M4, scale: number, tan: number, near: number = 1): Projection {
     const c = scale * tan;
-    return new ProjectionImpl(m, v => c >= near ? v.hadamart(vc.v3(c / v.z(), c / v.z(), 1)) : v);
+    return new ProjectionImpl(m, v => c >= near ? v.el_mul(vc.v3(c / v.z, c / v.z, 1)) : v);
 }
 
 

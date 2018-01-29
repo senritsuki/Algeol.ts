@@ -14,7 +14,7 @@ export let face_to_str = (f: number[]): string => 'f ' + f.join(' ');
  * [1, 2, 3] -> 'v 1 2 3'
  */
 export function useOpenGLCoordinateSystem(): void {
-    vert_to_str = (v: vc.V3): string => ['v', v.x(), v.y(), v.z()].join(' ');
+    vert_to_str = (v: vc.V3): string => ['v', v.x, v.y, v.z].join(' ');
 }
 
 /**
@@ -22,7 +22,7 @@ export function useOpenGLCoordinateSystem(): void {
  * [1, 2, 3] -> 'v 1 3 -2'
  */
 export function useBlenderCoordinateSystem(): void {
-    vert_to_str = (v: vc.V3): string => 'v ' + format_florts([v.x(), v.z(), -v.y()]);
+    vert_to_str = (v: vc.V3): string => 'v ' + format_florts([v.x, v.z, -v.y]);
 }
 
 export interface ObjString {

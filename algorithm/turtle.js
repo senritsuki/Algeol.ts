@@ -16,7 +16,7 @@ var vc = require("./vector");
 var cv = require("./curve");
 var priv;
 (function (priv) {
-    var TLTupleImpl = (function () {
+    var TLTupleImpl = /** @class */ (function () {
         function TLTupleImpl(turtle, line) {
             this.turtle = turtle;
             this.line = line;
@@ -24,7 +24,7 @@ var priv;
         return TLTupleImpl;
     }());
     priv.TLTupleImpl = TLTupleImpl;
-    var TurtleImpl = (function () {
+    var TurtleImpl = /** @class */ (function () {
         function TurtleImpl(_coord) {
             this._coord = _coord;
         }
@@ -34,7 +34,7 @@ var priv;
         return TurtleImpl;
     }());
     priv.TurtleImpl = TurtleImpl;
-    var TurtleDImpl = (function (_super) {
+    var TurtleDImpl = /** @class */ (function (_super) {
         __extends(TurtleDImpl, _super);
         function TurtleDImpl(_coord, _degree) {
             var _this = _super.call(this, _coord) || this;
@@ -61,7 +61,7 @@ var priv;
         return TurtleDImpl;
     }(TurtleImpl));
     priv.TurtleDImpl = TurtleDImpl;
-    var TurtleVImpl = (function (_super) {
+    var TurtleVImpl = /** @class */ (function (_super) {
         __extends(TurtleVImpl, _super);
         function TurtleVImpl(_coord, _dir) {
             var _this = _super.call(this, _coord) || this;

@@ -25,11 +25,11 @@ var floor_duplicater = al.compose_v4map([start, goal], [
 ]);
 var stair_start = start.add([0, 1 / 2, 0]);
 var stair_goal = goal.add([0, -1 / 2, 0]);
-var xd = stair_goal.x() - stair_start.x();
+var xd = stair_goal.x - stair_start.x;
 var stair_mid1 = stair_start.scalar(2).add(stair_goal).scalar(1 / 3).sub([xd / 3, 0, 0]);
 var stair_mid2 = stair_goal.scalar(2).add(stair_start).scalar(1 / 3).add([xd / 3, 0, 0]);
 var stair_curve = cv.bezier([stair_start, stair_mid1, stair_mid2, stair_goal]);
-var stair_step_num = Math.round(Math.abs(stair_goal.y() - stair_start.y()) * 8);
+var stair_step_num = Math.round(Math.abs(stair_goal.y - stair_start.y) * 8);
 var stair_coords = seq.arith(stair_step_num + 1).map(function (i) { return stair_curve.coord(i / stair_step_num); });
 var stairstep_duplicater = al.compose_v4map(stair_coords, [
     function (d) { return mx.trans_m4(d); },

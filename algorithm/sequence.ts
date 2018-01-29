@@ -49,6 +49,18 @@ export function range(first: number, last: number, count: number): number[] {
     }
     return seq;
 }
+/** 
+ * (4, 10, 3) -> [4, 6, 8]
+ */
+export function range_wo_last(first: number, last: number, count: number): number[] {
+    const seq: number[] = new Array(count);
+    for (let i = 0; i < count; i++) {
+        const r = i / count;    // 0.0 ... (count-1) / count
+        const n = (1 - r) * first + r * last;
+        seq[i] = n;
+    }
+    return seq;
+}
 
 /**
  * Recurrence Relation - 初期値1つの漸化式による数列

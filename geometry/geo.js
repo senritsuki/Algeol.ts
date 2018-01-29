@@ -40,7 +40,7 @@ function scale(geo, v) {
     return apply(geo, mx.scale_m4(v));
 }
 exports.scale = scale;
-var MapBase = (function () {
+var MapBase = /** @class */ (function () {
     function MapBase(verts) {
         this.verts = verts;
     }
@@ -58,7 +58,7 @@ var MapBase = (function () {
     return MapBase;
 }());
 exports.MapBase = MapBase;
-var Geo = (function (_super) {
+var Geo = /** @class */ (function (_super) {
     __extends(Geo, _super);
     function Geo(verts, faces) {
         var _this = _super.call(this, verts) || this;
@@ -71,7 +71,7 @@ var Geo = (function (_super) {
     return Geo;
 }(MapBase));
 exports.Geo = Geo;
-var Material = (function () {
+var Material = /** @class */ (function () {
     function Material(name, diffuse) {
         if (diffuse === void 0) { diffuse = null; }
         this.name = name;
@@ -80,7 +80,7 @@ var Material = (function () {
     return Material;
 }());
 exports.Material = Material;
-var FaceGroup = (function () {
+var FaceGroup = /** @class */ (function () {
     function FaceGroup(name, faces, material) {
         if (material === void 0) { material = null; }
         this.name = name;
@@ -94,7 +94,7 @@ var FaceGroup = (function () {
     return FaceGroup;
 }());
 exports.FaceGroup = FaceGroup;
-var Obj = (function (_super) {
+var Obj = /** @class */ (function (_super) {
     __extends(Obj, _super);
     function Obj(name, verts, faces) {
         var _this = _super.call(this, verts) || this;

@@ -66,10 +66,10 @@ export function circle_c(n_gonal: number, r: number, t: number = 0): V2[] {
 }
 
 export function to_v3_xy(z: number = 0): (v: V2) => V3 {
-    return v => v3(v.x(), v.y(), z);
+    return v => v3(v.x, v.y, z);
 }
 export function to_v3_xz(y: number = 0): (v: V2) => V3 {
-    return v => v3(v.x(), y, v.y());
+    return v => v3(v.x, y, v.y);
 }
 
 export function plane(verts: V2[], f: (v: V2) => V3): al.Geo {

@@ -30,7 +30,7 @@ export function fz_circle(n: number, height: number): (i: number) => number {
 export function route_arc_o(c1: lib.Connector, c2: lib.Connector): lib.Route {
     const p1 = c1.ray.c;
     const p2 = c2.ray.c;
-    const o = v3(0, 0, (p1.z() + p2.z()) / 2)
+    const o = v3(0, 0, (p1.z + p2.z) / 2)
     return new lib.Route(c1, c2, cv.bezier3_interpolate_arc(p1, p2, o));
 }
 

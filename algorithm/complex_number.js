@@ -2,7 +2,7 @@
 // Complex Number - 複素数・二元数
 Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("./vector");
-var ComplexNumberImpl = (function () {
+var ComplexNumberImpl = /** @class */ (function () {
     function ComplexNumberImpl(real, imag) {
         this._v = [real, imag];
     }
@@ -68,7 +68,7 @@ var ComplexNumberImpl = (function () {
         return this.mul(new ComplexNumberImpl(v[0], v[1])).array();
     };
     ComplexNumberImpl.prototype.map_v2 = function (v) {
-        return this.mul(new ComplexNumberImpl(v.x(), v.y())).v2();
+        return this.mul(new ComplexNumberImpl(v.x, v.y)).v2();
     };
     ComplexNumberImpl.prototype.map_v2ar = function (vl) {
         var _this = this;
@@ -88,7 +88,7 @@ function ar_cn(v) {
 exports.ar_cn = ar_cn;
 /** (実部xと虚部yからなる2次元ベクトル) -> 複素数 */
 function v2_cn(v) {
-    return new ComplexNumberImpl(v.x(), v.y());
+    return new ComplexNumberImpl(v.x, v.y);
 }
 exports.v2_cn = v2_cn;
 /** (極形式の長さ, 極形式の偏角(radian)) -> 複素数 */

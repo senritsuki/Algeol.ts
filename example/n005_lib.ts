@@ -110,8 +110,8 @@ export function to_xy_hexagon_basis_deg30(d_inner: number): V3[] {
 export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
     const maps = al.compose_v4map(z_rates, [
-        v => mx.scale_m4([v.x(), v.y(), 1]),
-        v => mx.trans_m4([0, 0, v.z()]),
+        v => mx.scale_m4([v.x, v.y, 1]),
+        v => mx.trans_m4([0, 0, v.z]),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -120,9 +120,9 @@ export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (t: number) 
 export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Geo {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
     const maps = al.compose_v4map(z_rates, [
-        v => mx.scale_m4([v.x(), v.x(), 1]),
-        v => mx.rot_z_m4(v.y()),
-        v => mx.trans_m4([0, 0, v.z()]),
+        v => mx.scale_m4([v.x, v.x, 1]),
+        v => mx.rot_z_m4(v.y),
+        v => mx.trans_m4([0, 0, v.z]),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -130,9 +130,9 @@ export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: numb
 
 export function xygeo_z_scale_rot(xy_verts: V3[], zsr_list: V3[]): al.Geo {
     const maps = al.compose_v4map(zsr_list, [
-        zsr => mx.trans_m4([0, 0, zsr.x()]),
-        zsr => mx.scale_m4([zsr.y(), zsr.y(), 1]),
-        zsr => mx.rot_z_m4(zsr.z()),
+        zsr => mx.trans_m4([0, 0, zsr.x]),
+        zsr => mx.scale_m4([zsr.y, zsr.y, 1]),
+        zsr => mx.rot_z_m4(zsr.z),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -247,7 +247,7 @@ export class RegularFloor extends FloorBase<RegularFloor> {
         return new_floor;
     }
     verts(): V3[] {
-        const rad_offset = Math.atan2(this.base.y(), this.base.x());
+        const rad_offset = Math.atan2(this.base.y, this.base.x);
         const cr = this.ir() / Math.cos(ut.deg180 / this.n);
         const rad_start = rad_offset + ut.deg180  / this.n;
         const verts = seq.arith(this.n, rad_start, ut.pi2 / this.n).map(rad => vc.polar_to_v3(cr, rad, 0));
@@ -321,14 +321,14 @@ export function build_curve_simple(c1: Connector, c2: Connector, mid_distance: n
 }
 
 export function build_curve_arc(c1: Connector, c2: Connector): cv.Curve3 {
-    const oz = (c1.ray.c.z() + c2.ray.c.z()) / 2;
+    const oz = (c1.ray.c.z + c2.ray.c.z) / 2;
     const ray1 = ray3_rot_z_scale(c1.ray, 90, 1);
     const ray2 = ray3_rot_z_scale(c2.ray, 90, 1);
     const oxy = calc_cross_point_v3(ray1, ray2);
     if (oxy == null) {
         return build_curve_simple(c1, c2, null);
     }
-    const o = v3(oxy.x(), oxy.y(), oz);
+    const o = v3(oxy.x, oxy.y, oz);
     return cv.bezier3_interpolate_arc(c1.ray.c, c2.ray.c, o);
 }
 
@@ -376,7 +376,7 @@ export function config_bottom_z(n: number) {
 }
 
 export function geo_rfloor_simple(floor: RegularFloor): al.Geo {
-    const o = v3(floor.o.x(), floor.o.y(), 0);
+    const o = v3(floor.o.x, floor.o.y, 0);
     const verts = floor.verts().map(v => v.sub(o));
     const geo = xygeo_z_scale_rot(verts, [
         v3(0, 1, 0),
@@ -392,7 +392,7 @@ export function geo_route_planes(route: Route, n: number): al.Geo {
     const bases = seq.arith(n).map(i => {
         const d1 = lcrd[i];
         const d2 = lcrd[i+1];
-        const z = d1[1].z();
+        const z = d1[1].z;
         const base = [d1[0], d1[2], d2[2], d2[0]];
         return prim.plane_xy(base, z);
     });
@@ -403,8 +403,8 @@ export function geo_route_stairs(route: Route, n: number, d: number): al.Geo {
     const bases = seq.arith(n).map(i => {
         const d1 = lcrd[i];
         const d2 = lcrd[i+1];
-        const z = (d1[1].z() + d2[1].z()) / 2;
-        const base = [d1[0], d1[2], d2[2], d2[0]].map(v => v3(v.x(), v.y(), z));
+        const z = (d1[1].z + d2[1].z) / 2;
+        const base = [d1[0], d1[2], d2[2], d2[0]].map(v => v3(v.x, v.y, z));
         return prima.extrude(base, v3(0, 0, -d), v3(0, 0, 0));
     });
     return al.merge_geos(bases);

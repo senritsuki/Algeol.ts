@@ -10,7 +10,7 @@ exports.face_to_str = function (f) { return 'f ' + f.join(' '); };
  * [1, 2, 3] -> 'v 1 2 3'
  */
 function useOpenGLCoordinateSystem() {
-    exports.vert_to_str = function (v) { return ['v', v.x(), v.y(), v.z()].join(' '); };
+    exports.vert_to_str = function (v) { return ['v', v.x, v.y, v.z].join(' '); };
 }
 exports.useOpenGLCoordinateSystem = useOpenGLCoordinateSystem;
 /**
@@ -18,7 +18,7 @@ exports.useOpenGLCoordinateSystem = useOpenGLCoordinateSystem;
  * [1, 2, 3] -> 'v 1 3 -2'
  */
 function useBlenderCoordinateSystem() {
-    exports.vert_to_str = function (v) { return 'v ' + exports.format_florts([v.x(), v.z(), -v.y()]); };
+    exports.vert_to_str = function (v) { return 'v ' + exports.format_florts([v.x, v.z, -v.y]); };
 }
 exports.useBlenderCoordinateSystem = useBlenderCoordinateSystem;
 function geos_to_strings(name, geos) {

@@ -78,7 +78,7 @@ function map(m1, v1) {
     return v;
 }
 exports.map = map;
-var M2Impl = (function () {
+var M2Impl = /** @class */ (function () {
     function M2Impl(rows) {
         this._m = clone(rows, M2Impl.Dim, M2Impl.Dim);
     }
@@ -99,7 +99,7 @@ var M2Impl = (function () {
     M2Impl.Dim = 2;
     return M2Impl;
 }());
-var M3Impl = (function () {
+var M3Impl = /** @class */ (function () {
     function M3Impl(rows) {
         this._m = clone(rows, M3Impl.Dim, M3Impl.Dim);
     }
@@ -120,7 +120,7 @@ var M3Impl = (function () {
     M3Impl.Dim = 3;
     return M3Impl;
 }());
-var M4Impl = (function () {
+var M4Impl = /** @class */ (function () {
     function M4Impl(rows) {
         this._m = clone(rows, M4Impl.Dim, M4Impl.Dim);
     }
@@ -289,9 +289,9 @@ function rot_z_m4(rad) {
 exports.rot_z_m4 = rot_z_m4;
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
 function rot_yz_x_m3(v3) {
-    var x = v3.x();
-    var y = v3.y();
-    var z = v3.z();
+    var x = v3.x;
+    var y = v3.y;
+    var z = v3.z;
     var radY = -Math.atan2(z, Math.sqrt(x * x + y * y));
     var radZ = Math.atan2(y, x);
     var mxRotY = rot_y_m3(radY);
@@ -306,9 +306,9 @@ function rot_yz_x_m4(v3) {
 exports.rot_yz_x_m4 = rot_yz_x_m4;
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
 function rot_yz_z_m3(v3) {
-    var x = v3.x();
-    var y = v3.y();
-    var z = v3.z();
+    var x = v3.x;
+    var y = v3.y;
+    var z = v3.z;
     var radY = ut.deg90 - Math.atan2(z, Math.sqrt(x * x + y * y));
     var radZ = Math.atan2(y, x);
     var mxRotY = rot_y_m3(radY);
@@ -345,7 +345,13 @@ function rot_inv_xyz_m4(radX, radY, radZ) {
     return m3_m4(rot_inv_xyz_m3(radX, radY, radZ));
 }
 exports.rot_inv_xyz_m4 = rot_inv_xyz_m4;
-function compose_left(mm) {
+/** 行列を合成する */
+function compose(mm) {
     return mm.reduce(function (a, b) { return b.mul(a); });
 }
-exports.compose_left = compose_left;
+exports.compose = compose;
+/** 行列を逆順に合成する */
+function compose_rev(mm) {
+    return mm.reduce(function (a, b) { return a.mul(b); });
+}
+exports.compose_rev = compose_rev;

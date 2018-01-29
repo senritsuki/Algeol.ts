@@ -119,8 +119,8 @@ exports.to_xy_hexagon_basis_deg30 = to_xy_hexagon_basis_deg30;
 function xygeo_scale_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
     var maps = al.compose_v4map(z_rates, [
-        function (v) { return mx.scale_m4([v.x(), v.y(), 1]); },
-        function (v) { return mx.trans_m4([0, 0, v.z()]); },
+        function (v) { return mx.scale_m4([v.x, v.y, 1]); },
+        function (v) { return mx.trans_m4([0, 0, v.z]); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -129,9 +129,9 @@ exports.xygeo_scale_trans = xygeo_scale_trans;
 function xygeo_scale_rot_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
     var maps = al.compose_v4map(z_rates, [
-        function (v) { return mx.scale_m4([v.x(), v.x(), 1]); },
-        function (v) { return mx.rot_z_m4(v.y()); },
-        function (v) { return mx.trans_m4([0, 0, v.z()]); },
+        function (v) { return mx.scale_m4([v.x, v.x, 1]); },
+        function (v) { return mx.rot_z_m4(v.y); },
+        function (v) { return mx.trans_m4([0, 0, v.z]); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -139,9 +139,9 @@ function xygeo_scale_rot_trans(xy_verts, z_num, z) {
 exports.xygeo_scale_rot_trans = xygeo_scale_rot_trans;
 function xygeo_z_scale_rot(xy_verts, zsr_list) {
     var maps = al.compose_v4map(zsr_list, [
-        function (zsr) { return mx.trans_m4([0, 0, zsr.x()]); },
-        function (zsr) { return mx.scale_m4([zsr.y(), zsr.y(), 1]); },
-        function (zsr) { return mx.rot_z_m4(zsr.z()); },
+        function (zsr) { return mx.trans_m4([0, 0, zsr.x]); },
+        function (zsr) { return mx.scale_m4([zsr.y, zsr.y, 1]); },
+        function (zsr) { return mx.rot_z_m4(zsr.z); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -172,7 +172,7 @@ function ray3_rot_z_scale(cd, deg, len) {
     return cv.ray(cd.c, d);
 }
 exports.ray3_rot_z_scale = ray3_rot_z_scale;
-var Connector = (function () {
+var Connector = /** @class */ (function () {
     function Connector(ray, width) {
         this.ray = ray;
         this.width = width;
@@ -205,7 +205,7 @@ function build_connector(o, r, deg, width) {
     return new Connector(cd, width);
 }
 exports.build_connector = build_connector;
-var FloorBase = (function () {
+var FloorBase = /** @class */ (function () {
     function FloorBase(o, connectors) {
         this.o = o;
         this.connectors = connectors;
@@ -227,7 +227,7 @@ var FloorBase = (function () {
     return FloorBase;
 }());
 exports.FloorBase = FloorBase;
-var RegularFloor = (function (_super) {
+var RegularFloor = /** @class */ (function (_super) {
     __extends(RegularFloor, _super);
     function RegularFloor(o, connectors, 
         /** 頂点数 */
@@ -253,7 +253,7 @@ var RegularFloor = (function (_super) {
     };
     RegularFloor.prototype.verts = function () {
         var _this = this;
-        var rad_offset = Math.atan2(this.base.y(), this.base.x());
+        var rad_offset = Math.atan2(this.base.y, this.base.x);
         var cr = this.ir() / Math.cos(ut.deg180 / this.n);
         var rad_start = rad_offset + ut.deg180 / this.n;
         var verts = seq.arith(this.n, rad_start, ut.pi2 / this.n).map(function (rad) { return vc.polar_to_v3(cr, rad, 0); });
@@ -333,18 +333,18 @@ function build_curve_simple(c1, c2, mid_distance) {
 }
 exports.build_curve_simple = build_curve_simple;
 function build_curve_arc(c1, c2) {
-    var oz = (c1.ray.c.z() + c2.ray.c.z()) / 2;
+    var oz = (c1.ray.c.z + c2.ray.c.z) / 2;
     var ray1 = ray3_rot_z_scale(c1.ray, 90, 1);
     var ray2 = ray3_rot_z_scale(c2.ray, 90, 1);
     var oxy = calc_cross_point_v3(ray1, ray2);
     if (oxy == null) {
         return build_curve_simple(c1, c2, null);
     }
-    var o = v3(oxy.x(), oxy.y(), oz);
+    var o = v3(oxy.x, oxy.y, oz);
     return cv.bezier3_interpolate_arc(c1.ray.c, c2.ray.c, o);
 }
 exports.build_curve_arc = build_curve_arc;
-var Route = (function () {
+var Route = /** @class */ (function () {
     function Route(c1, c2, curve) {
         this.c1 = c1;
         this.c2 = c2;
@@ -387,7 +387,7 @@ function config_bottom_z(n) {
 }
 exports.config_bottom_z = config_bottom_z;
 function geo_rfloor_simple(floor) {
-    var o = v3(floor.o.x(), floor.o.y(), 0);
+    var o = v3(floor.o.x, floor.o.y, 0);
     var verts = floor.verts().map(function (v) { return v.sub(o); });
     var geo = xygeo_z_scale_rot(verts, [
         v3(0, 1, 0),
@@ -403,7 +403,7 @@ function geo_route_planes(route, n) {
     var bases = seq.arith(n).map(function (i) {
         var d1 = lcrd[i];
         var d2 = lcrd[i + 1];
-        var z = d1[1].z();
+        var z = d1[1].z;
         var base = [d1[0], d1[2], d2[2], d2[0]];
         return prim.plane_xy(base, z);
     });
@@ -415,8 +415,8 @@ function geo_route_stairs(route, n, d) {
     var bases = seq.arith(n).map(function (i) {
         var d1 = lcrd[i];
         var d2 = lcrd[i + 1];
-        var z = (d1[1].z() + d2[1].z()) / 2;
-        var base = [d1[0], d1[2], d2[2], d2[0]].map(function (v) { return v3(v.x(), v.y(), z); });
+        var z = (d1[1].z + d2[1].z) / 2;
+        var base = [d1[0], d1[2], d2[2], d2[0]].map(function (v) { return v3(v.x, v.y, z); });
         return prima.extrude(base, v3(0, 0, -d), v3(0, 0, 0));
     });
     return al.merge_geos(bases);

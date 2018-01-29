@@ -27,7 +27,7 @@ exports.fz_circle = fz_circle;
 function route_arc_o(c1, c2) {
     var p1 = c1.ray.c;
     var p2 = c2.ray.c;
-    var o = v3(0, 0, (p1.z() + p2.z()) / 2);
+    var o = v3(0, 0, (p1.z + p2.z) / 2);
     return new lib.Route(c1, c2, cv.bezier3_interpolate_arc(p1, p2, o));
 }
 exports.route_arc_o = route_arc_o;

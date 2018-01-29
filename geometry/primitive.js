@@ -347,7 +347,7 @@ var fn;
     })(bipyramid = fn.bipyramid || (fn.bipyramid = {}));
 })(fn = exports.fn || (exports.fn = {}));
 function plane_xy(verts, z) {
-    var verts2 = verts.map(function (v) { return vc.v3(v.x(), v.y(), z); });
+    var verts2 = verts.map(function (v) { return vc.v3(v.x, v.y, z); });
     return geometry(verts2, [verts.map(function (_, i) { return i; })]);
 }
 exports.plane_xy = plane_xy;
@@ -448,7 +448,7 @@ function cuboid_vv(v1, v2) {
     v2 = v2 instanceof Array ? vc.array_to_v3(v2) : v2;
     var center = v1.add(v2).scalar(0.5);
     var d = v2.sub(center);
-    return al.translate(cuboid(d.x(), d.y(), d.z()), center);
+    return al.translate(cuboid(d.x, d.y, d.z), center);
 }
 exports.cuboid_vv = cuboid_vv;
 function trimesh(index, f) {

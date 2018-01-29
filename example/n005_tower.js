@@ -9,7 +9,7 @@ var cv = require("../algorithm/curve");
 var prim = require("../geometry/primitive");
 var multi = require("../geometry/array");
 /** ? */
-var RPZ = (function () {
+var RPZ = /** @class */ (function () {
     function RPZ(r, p, z) {
         this.r = r;
         this.p = p;
@@ -131,7 +131,7 @@ var node;
     ], 1, al.compose_v4map(seq.arith(6), [function (d) { return mx.rot_z_m4(ut.deg60 * d); }])).reduce(function (a, b) { return a.concat(b); }, []);
     node.g4Floor = extrudeZZ(node.vxyFloor4, -nFloorD, 0);
     node.g6Floor = extrudeZZ(node.vxyFloor6, -nFloorD, 0);
-    var rot_z_atan2_m4 = function (v) { return mx.rot_z_m4(Math.atan2(v.y(), v.x())); };
+    var rot_z_atan2_m4 = function (v) { return mx.rot_z_m4(Math.atan2(v.y, v.x)); };
     var vRing = prim.fn.circle.verts_i(6, nRingR);
     var gRing = extrudeZZ(vRing, -nRingD, nRingD);
     var mapRingFloor = function (v) { return mx.trans_m4([0, 0, -nRingD]).mul(mx.scale_m4([1, 1, 1.5])).map_v3(v, 1); };
@@ -159,25 +159,25 @@ var node;
     var mapVPair6 = mapVPair(node.vxyFloor6, vArchOffset);
     node.g4ArchBars = seq.arith(node.vxyFloor4.length)
         .map(function (i) { return mapVPair4(i); })
-        .map(function (v) { return gArchBar(v.v1.hadamart(vInner), v.v2.hadamart(vInner), nArchHeight); });
+        .map(function (v) { return gArchBar(v.v1.el_mul(vInner), v.v2.el_mul(vInner), nArchHeight); });
     node.g6ArchBars = seq.arith(node.vxyFloor6.length)
         .map(function (i) { return mapVPair6(i); })
-        .map(function (v) { return gArchBar(v.v1.hadamart(vInner), v.v2.hadamart(vInner), nArchHeight); });
+        .map(function (v) { return gArchBar(v.v1.el_mul(vInner), v.v2.el_mul(vInner), nArchHeight); });
     node.g4ArchWalls = seq.arith(node.vxyFloor4.length)
         .map(function (i) { return mapVPair4(i); })
-        .map(function (v) { return gArchWall(v.v1.hadamart(vInner), v.v2.hadamart(vInner), nArchHeight, nArchWallHeight); });
+        .map(function (v) { return gArchWall(v.v1.el_mul(vInner), v.v2.el_mul(vInner), nArchHeight, nArchWallHeight); });
     node.g6ArchWalls = seq.arith(node.vxyFloor6.length)
         .map(function (i) { return mapVPair6(i); })
-        .map(function (v) { return gArchWall(v.v1.hadamart(vInner), v.v2.hadamart(vInner), nArchHeight, nArchWallHeight); });
+        .map(function (v) { return gArchWall(v.v1.el_mul(vInner), v.v2.el_mul(vInner), nArchHeight, nArchWallHeight); });
     node.g4RoofBase = node.g4Floor.map3(function (v) { return v.add(vc.v3(0, 0, nColumnH)); });
     node.g6RoofBase = node.g6Floor.map3(function (v) { return v.add(vc.v3(0, 0, nColumnH)); });
-    var mapsRoofA = al.compose_m4([vc.v2(1, nColumnH), vc.v2(0.625, nColumnH + 0.75), vc.v2(1 / 64, nColumnH + nRoofH * 0.875)], [function (d) { return mx.scale_m4([d.x(), d.x(), 1]); }, function (d) { return mx.trans_m4([0, 0, d.y()]); }]);
+    var mapsRoofA = al.compose_m4([vc.v2(1, nColumnH), vc.v2(0.625, nColumnH + 0.75), vc.v2(1 / 64, nColumnH + nRoofH * 0.875)], [function (d) { return mx.scale_m4([d.x, d.x, 1]); }, function (d) { return mx.trans_m4([0, 0, d.y]); }]);
     node.g4RoofAm = multi.prismArray_pyramid(mapsRoofA.map(function (m) { return node.vxyFloor4.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nRoofH));
     node.g6RoofAm = multi.prismArray_pyramid(mapsRoofA.map(function (m) { return node.vxyFloor6.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nRoofH));
     var gRoofAs = prim.pyramid(4, 1 / 12, nRoofH / 4);
     node.g4RoofAs = al.duplicate_f(gRoofAs, al.compose_v4map(seq.arith(node.vxyFloor4.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, nColumnH]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor4[i]); }]));
     node.g6RoofAs = al.duplicate_f(gRoofAs, al.compose_v4map(seq.arith(node.vxyFloor6.length), [function (_) { return mx.trans_m4([nr25 * nInner, 0, nColumnH]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
-    var mapsRoofB = al.compose_m4(seq.arith(12, 0, ut.deg90 / 12).map(function (rad) { return vc.v2(Math.cos(rad), nColumnH + nr25 * Math.sin(rad)); }), [function (d) { return mx.scale_m4([d.x(), d.x(), 1]); }, function (d) { return mx.trans_m4([0, 0, d.y()]); }]);
+    var mapsRoofB = al.compose_m4(seq.arith(12, 0, ut.deg90 / 12).map(function (rad) { return vc.v2(Math.cos(rad), nColumnH + nr25 * Math.sin(rad)); }), [function (d) { return mx.scale_m4([d.x, d.x, 1]); }, function (d) { return mx.trans_m4([0, 0, d.y]); }]);
     node.g4RoofB = multi.prismArray_pyramid(mapsRoofB.map(function (m) { return node.vxyFloor4.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nr25));
     node.g6RoofB = multi.prismArray_pyramid(mapsRoofB.map(function (m) { return node.vxyFloor6.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, nColumnH + nr25));
     var nObjR = nRingR * 1.5;
@@ -198,7 +198,7 @@ var node;
     node.g6RoofC1 = al.duplicate_f(gCrys, al.compose_v4map(seq.arith(node.vxyFloor6.length), [function (i) { return mx.scale_m4([1, 1, (2 + 2 * (i % 2)) / 2]); }, function (_) { return mx.trans_m4([nr25 * nInner, 0, nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
     node.g6RoofC2 = al.duplicate_f(gObj1, al.compose_v4map(seq6Obj1, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
     node.g6RoofC3 = al.duplicate_f(gObj2, al.compose_v4map(seq6Obj2, [function (i) { return mx.trans_m4([nr25 * nInner, 0, (2 + 2 * (i % 2)) / 2 + nFloorD / 2]); }, function (i) { return rot_z_atan2_m4(node.vxyFloor6[i]); }]));
-    var mapsBottom = al.compose_m4([vc.v2(1, 0), vc.v2(1, -0.25), vc.v2(0.75, -0.5), vc.v2(0.5, -1.5), vc.v2(0.25, -6), vc.v2(1 / 16, -30)].map(function (v) { return v.sub(vc.v2(0, nUnderFloorD)); }), [function (d) { return mx.scale_m4([d.x(), d.x(), 1]); }, function (d) { return mx.trans_m4([0, 0, d.y()]); }]);
+    var mapsBottom = al.compose_m4([vc.v2(1, 0), vc.v2(1, -0.25), vc.v2(0.75, -0.5), vc.v2(0.5, -1.5), vc.v2(0.25, -6), vc.v2(1 / 16, -30)].map(function (v) { return v.sub(vc.v2(0, nUnderFloorD)); }), [function (d) { return mx.scale_m4([d.x, d.x, 1]); }, function (d) { return mx.trans_m4([0, 0, d.y]); }]);
     node.g4Bottom = multi.prismArray_pyramid(mapsBottom.map(function (m) { return node.vxyFloor4.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, -256));
     node.g6Bottom = multi.prismArray_pyramid(mapsBottom.map(function (m) { return node.vxyFloor6.map(function (v) { return m.map_v3(v, 1); }); }), vc.v3(0, 0, -256));
     node.gdFloor4 = [
@@ -311,8 +311,8 @@ var link;
     function shortenHorizontal(c, r) {
         var v1 = c.coord(0);
         var v2 = c.coord(1);
-        var v1z = vc.v3(v1.x(), v1.y(), 0);
-        var v2z = vc.v3(v2.x(), v2.y(), 0);
+        var v1z = vc.v3(v1.x, v1.y, 0);
+        var v2z = vc.v3(v2.x, v2.y, 0);
         var dirH = v2z.sub(v1z).unit().scalar(r);
         var v1r = v1.add(dirH);
         var v2r = v2.sub(dirH);
@@ -324,13 +324,13 @@ var link;
         var v1 = cs.coord(0);
         var v2 = cs.coord(1);
         var dir = v2.sub(v1);
-        var dirH = vc.v3(dir.x(), dir.y(), 0);
+        var dirH = vc.v3(dir.x, dir.y, 0);
         //const dh = dirH.length();
-        //const dv = dir.z();
+        //const dv = dir.z;
         var count = gdStairSteps.length;
-        var seqZ = seq.arith(count, 1).map(function (i) { return (v1.z() * (count + 1 - i) + v2.z() * i) / (count + 1); });
+        var seqZ = seq.arith(count, 1).map(function (i) { return (v1.z * (count + 1 - i) + v2.z * i) / (count + 1); });
         var mRotZ = mx.rot_yz_x_m4(dirH);
-        var mTransV1 = mx.trans_v3_m4(vc.v3(v1.x(), v1.y(), 0));
+        var mTransV1 = mx.trans_v3_m4(vc.v3(v1.x, v1.y, 0));
         var maps = al.compose_v3map(seq.arith(count), [
             function (i) { return mx.trans_m4([0, 0, seqZ[i]]); },
             function (_) { return mRotZ; },
@@ -354,10 +354,10 @@ function gdLinkHorizontal(c, geoXp) {
     var v1 = c.coord(0);
     var v2 = c.coord(1);
     var dir = v2.sub(v1);
-    var dirH = vc.v3(dir.x(), dir.y(), 0);
+    var dirH = vc.v3(dir.x, dir.y, 0);
     var dh = dirH.length();
-    //const dv = dir.z();
-    var m = mx.compose_left([
+    //const dv = dir.z;
+    var m = mx.compose([
         mx.scale_m4([dh, 1, 1]),
         mx.rot_yz_x_m4(dirH),
         mx.trans_v3_m4(v1),
@@ -402,7 +402,7 @@ function geoColumn(r, h, dim, countColumn, hBase, rBaseT, rColumn, vCircle) {
 exports.geoColumn = geoColumn;
 function dupl(geo, c, ii) {
     return al.duplicate_f(geo, al.compose_v4map(ii.map(function (i) { return c.ray(i); }), [
-        function (d) { return mx.rot_yz_x_m4(d.d.hadamart(vc.v3(1, 1, 0))); },
+        function (d) { return mx.rot_yz_x_m4(d.d.el_mul(vc.v3(1, 1, 0))); },
         function (d) { return mx.trans_v3_m4(d.c); },
     ]));
 }

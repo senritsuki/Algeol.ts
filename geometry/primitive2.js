@@ -70,12 +70,12 @@ function circle_c(n_gonal, r, t) {
 exports.circle_c = circle_c;
 function to_v3_xy(z) {
     if (z === void 0) { z = 0; }
-    return function (v) { return v3(v.x(), v.y(), z); };
+    return function (v) { return v3(v.x, v.y, z); };
 }
 exports.to_v3_xy = to_v3_xy;
 function to_v3_xz(y) {
     if (y === void 0) { y = 0; }
-    return function (v) { return v3(v.x(), y, v.y()); };
+    return function (v) { return v3(v.x, y, v.y); };
 }
 exports.to_v3_xz = to_v3_xz;
 function plane(verts, f) {

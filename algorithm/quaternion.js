@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("./vector");
 var mx = require("./matrix");
-var QuaternionImpl = (function () {
+var QuaternionImpl = /** @class */ (function () {
     function QuaternionImpl(real, imag) {
         this._v = [real, imag[0], imag[1], imag[2]];
     }

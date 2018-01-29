@@ -314,7 +314,7 @@ export namespace fn {
 }
 
 export function plane_xy(verts: V3[], z: number): al.Geo {
-    const verts2 = verts.map(v => vc.v3(v.x(), v.y(), z));
+    const verts2 = verts.map(v => vc.v3(v.x, v.y, z));
     return geometry(verts2, [verts.map((_, i) => i)]);
 }
 
@@ -407,7 +407,7 @@ export function cuboid_vv(v1: number[]|V3, v2: number[]|V3): al.Geo {
     v2 = v2 instanceof Array ? vc.array_to_v3(v2) : v2;
     const center = v1.add(v2).scalar(0.5);
     const d = v2.sub(center);
-    return al.translate(cuboid(d.x(), d.y(), d.z()), center);
+    return al.translate(cuboid(d.x, d.y, d.z), center);
 }
 
 export function trimesh(index: number[][], f: (i: number, j: number) => V3): al.Geo {

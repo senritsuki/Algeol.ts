@@ -56,6 +56,19 @@ function range(first, last, count) {
 }
 exports.range = range;
 /**
+ * (4, 10, 3) -> [4, 6, 8]
+ */
+function range_wo_last(first, last, count) {
+    var seq = new Array(count);
+    for (var i = 0; i < count; i++) {
+        var r = i / count; // 0.0 ... (count-1) / count
+        var n = (1 - r) * first + r * last;
+        seq[i] = n;
+    }
+    return seq;
+}
+exports.range_wo_last = range_wo_last;
+/**
  * Recurrence Relation - 初期値1つの漸化式による数列
  * (3, 1, n=>n+1) -> [1, 2, 3]
  * (4, 2, n=>n*2) -> [2, 4, 8, 16]

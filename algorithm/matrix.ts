@@ -327,9 +327,9 @@ export function rot_z_m4(rad: number): M4 {
 
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
 export function rot_yz_x_m3(v3: vc.V3): M3 {
-    const x = v3.x();
-    const y = v3.y();
-    const z = v3.z();
+    const x = v3.x;
+    const y = v3.y;
+    const z = v3.z;
     const radY = -Math.atan2(z, Math.sqrt(x * x + y * y));
     const radZ = Math.atan2(y, x);
     const mxRotY = rot_y_m3(radY);
@@ -343,9 +343,9 @@ export function rot_yz_x_m4(v3: vc.V3): M4 {
 
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
 export function rot_yz_z_m3(v3: vc.V3): M3 {
-    const x = v3.x();
-    const y = v3.y();
-    const z = v3.z();
+    const x = v3.x;
+    const y = v3.y;
+    const z = v3.z;
     const radY = ut.deg90 - Math.atan2(z, Math.sqrt(x * x + y * y));
     const radZ = Math.atan2(y, x);
     const mxRotY = rot_y_m3(radY);
@@ -381,6 +381,12 @@ export function rot_inv_xyz_m4(radX: number, radY: number, radZ: number): M4 {
 }
 
 
-export function compose_left<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
+/** 行列を合成する */
+export function compose<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
     return mm.reduce((a, b) => b.mul(a));
 }
+/** 行列を逆順に合成する */
+export function compose_rev<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
+    return mm.reduce((a, b) => a.mul(b));
+}
+

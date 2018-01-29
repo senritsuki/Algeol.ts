@@ -134,7 +134,7 @@ class ComplexNumberImpl implements ComplexNumber {
         return this.mul(new ComplexNumberImpl(v[0], v[1])).array();
     }
     map_v2(v: vc.V2): vc.V2 {
-        return this.mul(new ComplexNumberImpl(v.x(), v.y())).v2();
+        return this.mul(new ComplexNumberImpl(v.x, v.y)).v2();
     }
     map_v2ar(vl: vc.V2[]): vc.V2[] {
         return vl.map(v => this.map_v2(v));
@@ -151,7 +151,7 @@ export function ar_cn(v: number[]): ComplexNumber {
 }
 /** (実部xと虚部yからなる2次元ベクトル) -> 複素数 */
 export function v2_cn(v: vc.V2): ComplexNumber {
-    return new ComplexNumberImpl(v.x(), v.y());
+    return new ComplexNumberImpl(v.x, v.y);
 }
 /** (極形式の長さ, 極形式の偏角(radian)) -> 複素数 */
 export function polar_cn(r: number, rad: number): ComplexNumber {

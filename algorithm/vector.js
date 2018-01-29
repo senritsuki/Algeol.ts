@@ -34,14 +34,19 @@ function scalar(a, n) {
     return op1(a, a.length, function (n1) { return n1 * n; });
 }
 exports.scalar = scalar;
-/** 要素ごとの積, アダマール積 */
-function hadamart(a, b) {
+/** 要素ごとの乗算 */
+function el_mul(a, b) {
     return op2(a, b, Math.min(a.length, b.length), function (n1, n2) { return n1 * n2; });
 }
-exports.hadamart = hadamart;
+exports.el_mul = el_mul;
+/** 要素ごとの除算 */
+function el_div(a, b) {
+    return op2(a, b, Math.min(a.length, b.length), function (n1, n2) { return n1 / n2; });
+}
+exports.el_div = el_div;
 /** Inner Product, Dot Product 内積 */
 function ip(a, b) {
-    return hadamart(a, b).reduce(function (a, b) { return a + b; });
+    return el_mul(a, b).reduce(function (a, b) { return a + b; });
 }
 exports.ip = ip;
 /** Cross Product 2-D 外積（二次元） */
@@ -69,14 +74,11 @@ function angle(a, b) {
 }
 exports.angle = angle;
 /** 2D Vector - 2次元ベクトル */
-var V2Impl = (function () {
+var V2Impl = /** @class */ (function () {
     function V2Impl(x, y) {
         var _this = this;
-        // 取得
         this.array = function () { return _this._v.slice(0); };
-        this.clone = function () { return new V2Impl(_this.x(), _this.y()); };
-        this.x = function () { return _this._v[0]; };
-        this.y = function () { return _this._v[1]; };
+        this.clone = function () { return new V2Impl(_this.x, _this.y); };
         // 単項演算
         this.unit = function () { return _this.scalar(1 / _this.length()); };
         this.length2 = function () { return _this.ip(_this); };
@@ -84,7 +86,8 @@ var V2Impl = (function () {
         // 二項演算
         this.add = function (dist) { return V2Impl.fm_array(add(_this._v, exports.to_array_if(dist))); };
         this.sub = function (dist) { return V2Impl.fm_array(sub(_this._v, exports.to_array_if(dist))); };
-        this.hadamart = function (dist) { return V2Impl.fm_array(hadamart(_this._v, exports.to_array_if(dist))); };
+        this.el_mul = function (dist) { return V2Impl.fm_array(el_mul(_this._v, exports.to_array_if(dist))); };
+        this.el_div = function (dist) { return V2Impl.fm_array(el_div(_this._v, exports.to_array_if(dist))); };
         this.scalar = function (n) { return V2Impl.fm_array(scalar(_this._v, n)); };
         this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
         this.cp = function (dist) { return cp2(_this._v, exports.to_array_if(dist)); };
@@ -96,25 +99,35 @@ var V2Impl = (function () {
     V2Impl.fm_array = function (v) {
         return new V2Impl(v[0], v[1]);
     };
+    Object.defineProperty(V2Impl.prototype, "x", {
+        // 取得
+        get: function () { return this._v[0]; },
+        set: function (n) { this._v[0] = n; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(V2Impl.prototype, "y", {
+        get: function () { return this._v[1]; },
+        set: function (n) { this._v[1] = n; },
+        enumerable: true,
+        configurable: true
+    });
     return V2Impl;
 }());
-var V3Impl = (function () {
+var V3Impl = /** @class */ (function () {
     function V3Impl(x, y, z) {
         var _this = this;
         // 単項演算
         this.length2 = function () { return _this.ip(_this); };
         this.length = function () { return Math.sqrt(_this.length2()); };
         this.unit = function () { return _this.scalar(1 / _this.length()); };
-        // 取得
         this.array = function () { return _this._v.slice(0); };
-        this.clone = function () { return new V3Impl(_this.x(), _this.y(), _this.z()); };
-        this.x = function () { return _this._v[0]; };
-        this.y = function () { return _this._v[1]; };
-        this.z = function () { return _this._v[2]; };
+        this.clone = function () { return new V3Impl(_this.x, _this.y, _this.z); };
         // 二項演算
         this.add = function (dist) { return V3Impl.fm_array(add(_this._v, exports.to_array_if(dist))); };
         this.sub = function (dist) { return V3Impl.fm_array(sub(_this._v, exports.to_array_if(dist))); };
-        this.hadamart = function (dist) { return V3Impl.fm_array(hadamart(_this._v, exports.to_array_if(dist))); };
+        this.el_mul = function (dist) { return V3Impl.fm_array(el_mul(_this._v, exports.to_array_if(dist))); };
+        this.el_div = function (dist) { return V3Impl.fm_array(el_div(_this._v, exports.to_array_if(dist))); };
         this.scalar = function (n) { return V3Impl.fm_array(scalar(_this._v, n)); };
         this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
         this.cp = function (dist) { return V3Impl.fm_array(cp3(_this._v, exports.to_array_if(dist))); };
@@ -126,18 +139,32 @@ var V3Impl = (function () {
     V3Impl.fm_array = function (v) {
         return new V3Impl(v[0], v[1], v[2]);
     };
+    Object.defineProperty(V3Impl.prototype, "x", {
+        // 取得
+        get: function () { return this._v[0]; },
+        set: function (n) { this._v[0] = n; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(V3Impl.prototype, "y", {
+        get: function () { return this._v[1]; },
+        set: function (n) { this._v[1] = n; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(V3Impl.prototype, "z", {
+        get: function () { return this._v[2]; },
+        set: function (n) { this._v[2] = n; },
+        enumerable: true,
+        configurable: true
+    });
     return V3Impl;
 }());
-var V4Impl = (function () {
+var V4Impl = /** @class */ (function () {
     function V4Impl(x, y, z, w) {
         var _this = this;
-        // 取得
         this.array = function () { return _this._v.slice(0); };
-        this.clone = function () { return new V4Impl(_this.x(), _this.y(), _this.z(), _this.w()); };
-        this.x = function () { return _this._v[0]; };
-        this.y = function () { return _this._v[1]; };
-        this.z = function () { return _this._v[2]; };
-        this.w = function () { return _this._v[3]; };
+        this.clone = function () { return new V4Impl(_this.x, _this.y, _this.z, _this.w); };
         // 単項演算
         this.unit = function () { return _this.scalar(1 / _this.length()); };
         this.length2 = function () { return _this.ip(_this); };
@@ -145,7 +172,8 @@ var V4Impl = (function () {
         // 二項演算
         this.add = function (dist) { return V4Impl.fm_array(add(_this._v, exports.to_array_if(dist))); };
         this.sub = function (dist) { return V4Impl.fm_array(sub(_this._v, exports.to_array_if(dist))); };
-        this.hadamart = function (dist) { return V4Impl.fm_array(hadamart(_this._v, exports.to_array_if(dist))); };
+        this.el_mul = function (dist) { return V4Impl.fm_array(el_mul(_this._v, exports.to_array_if(dist))); };
+        this.el_div = function (dist) { return V4Impl.fm_array(el_div(_this._v, exports.to_array_if(dist))); };
         this.scalar = function (n) { return V4Impl.fm_array(scalar(_this._v, n)); };
         this.ip = function (dist) { return ip(_this.array(), exports.to_array_if(dist)); };
         this.angle = function (dist) { return angle(_this._v, exports.to_array_if(dist)); };
@@ -156,10 +184,37 @@ var V4Impl = (function () {
     V4Impl.fm_array = function (v) {
         return new V4Impl(v[0], v[1], v[2], v[3]);
     };
+    Object.defineProperty(V4Impl.prototype, "x", {
+        // 取得
+        get: function () { return this._v[0]; },
+        set: function (n) { this._v[0] = n; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(V4Impl.prototype, "y", {
+        get: function () { return this._v[1]; },
+        set: function (n) { this._v[1] = n; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(V4Impl.prototype, "z", {
+        get: function () { return this._v[2]; },
+        set: function (n) { this._v[2] = n; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(V4Impl.prototype, "w", {
+        get: function () { return this._v[3]; },
+        set: function (n) { this._v[3] = n; },
+        enumerable: true,
+        configurable: true
+    });
     return V4Impl;
 }());
 exports.to_array_if = function (n) { return n instanceof Array ? n : n._v; };
+exports.to_v2_if = function (v) { return v instanceof Array ? exports.array_to_v2(v) : v; };
 exports.to_v3_if = function (v) { return v instanceof Array ? exports.array_to_v3(v) : v; };
+exports.to_v4_if = function (v) { return v instanceof Array ? exports.array_to_v4(v) : v; };
 // --------------------------------------------------------
 // 直交座標系による生成
 /** (x成分, y成分) -> 2次元ベクトル */
@@ -261,7 +316,7 @@ exports.v3_to_v4 = function (v3, w) { return V4Impl.fm_array(v3._v.concat(w)); }
  */
 exports.v4_to_v3 = function (v4) { return V3Impl.fm_array(v4._v); };
 function v3map_v4(v, f) {
-    var w = v.w();
+    var w = v.w;
     var v_1 = exports.v4_to_v3(v);
     var v_2 = f(v_1);
     var v_3 = exports.v3_to_v4(v_2, w);
