@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var seq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
 var mx = require("../algorithm/matrix");
-var al = require("../geometry/geo");
-var prim = require("../geometry/primitive");
+var al = require("../geometry/surface_core");
+var prim = require("../geometry/primitive_surface");
 var wf = require("../decoder/wavefront");
 var octahedron = prim.octahedron(0.5);
 var radius = 9;
@@ -26,10 +26,10 @@ seq.range_step(-radius, radius, 1).forEach(function (x) {
     });
 });
 var duplicater = al.compose_v4map(sq, [
-    function (v) { return mx.trans_m4(v); },
+    function (v) { return mx.affine3_trans(v); },
 ]);
 var octahedrons = al.duplicate_v3(octahedron.verts, 1, duplicater)
-    .map(function (v) { return new al.Geo(v, octahedron.faces); });
+    .map(function (v) { return new al.Surfaces(v, octahedron.faces); });
 wf.useBlenderCoordinateSystem();
 var data = wf.geos_to_strings('./_obj/n001_octahedron', octahedrons);
 var fs = require('fs');

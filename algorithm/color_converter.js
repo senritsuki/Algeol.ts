@@ -1,4 +1,5 @@
 "use strict";
+/** Color Converter - 色変換 */
 Object.defineProperty(exports, "__esModule", { value: true });
 var etc;
 (function (etc) {
@@ -303,6 +304,6 @@ exports.rgb255_to_lch = etc.composite_2f(exports.rgb255_to_lab, lab_to_lch);
 exports.lch_to_rgb255 = etc.composite_2f(lch_to_lab, exports.lab_to_rgb255);
 exports.rgb01_to_lch = etc.composite_2f(exports.rgb01_to_lab, lab_to_lch);
 exports.lch_to_rgb01 = etc.composite_2f(lch_to_lab, exports.lab_to_rgb01);
-exports.clamp = function (nn, min, max) { return nn.map(function (n) { return n < min ? min : n > max ? max : n; }); };
-exports.clamp01 = function (nn) { return exports.clamp(nn, 0, 1); };
-exports.clamp255 = function (nn) { return exports.clamp(nn, 0, 255); };
+var clamp = function (nn, min, max) { return nn.map(function (n) { return n < min ? min : n > max ? max : n; }); };
+exports.clamp01 = function (nn) { return clamp(nn, 0, 1); };
+exports.clamp255 = function (nn) { return clamp(nn, 0, 255); };

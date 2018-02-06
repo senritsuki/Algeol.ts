@@ -1,4 +1,5 @@
-﻿
+﻿/** Projection - 投影 */
+
 import * as vc from "./vector";
 import * as mx from "./matrix";
 

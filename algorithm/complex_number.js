@@ -1,5 +1,5 @@
 "use strict";
-// Complex Number - 複素数・二元数
+/** Complex Number - 複素数・二元数 */
 Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("./vector");
 var ComplexNumberImpl = /** @class */ (function () {
@@ -24,7 +24,7 @@ var ComplexNumberImpl = /** @class */ (function () {
         return new ComplexNumberImpl(this.r(), -this.i());
     };
     ComplexNumberImpl.prototype.abs2 = function () {
-        return vc.ip(this._v, this._v);
+        return vc.v_ip(this._v, this._v);
     };
     ComplexNumberImpl.prototype.abs = function () {
         return Math.sqrt(this.abs2());
@@ -47,11 +47,11 @@ var ComplexNumberImpl = /** @class */ (function () {
     };
     // 二項演算
     ComplexNumberImpl.prototype.add = function (dist) {
-        var v = vc.add(this._v, dist._v);
+        var v = vc.v_add(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     ComplexNumberImpl.prototype.sub = function (dist) {
-        var v = vc.sub(this._v, dist._v);
+        var v = vc.v_sub(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     ComplexNumberImpl.prototype.mul = function (dist) {
@@ -60,7 +60,7 @@ var ComplexNumberImpl = /** @class */ (function () {
         return new ComplexNumberImpl(r, i);
     };
     ComplexNumberImpl.prototype.scalar = function (n) {
-        var v = vc.scalar(this._v, n);
+        var v = vc.v_scalar(this._v, n);
         return new ComplexNumberImpl(v[0], v[1]);
     };
     // 写像

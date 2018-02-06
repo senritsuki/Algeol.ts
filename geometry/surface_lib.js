@@ -1,9 +1,10 @@
 "use strict";
 /** 複合オブジェクト */
 Object.defineProperty(exports, "__esModule", { value: true });
-var al = require("./geo");
+var al = require("./surface_core");
 var seq = require("../algorithm/sequence");
-var geometry = function (verts, faces) { return new al.Geo(verts, faces); };
+var vc = require("../algorithm/vector");
+var geometry = function (verts, faces) { return new al.Surfaces(verts, faces); };
 /** 二次元配列の一次元化 */
 function flatten(polygons) {
     return polygons
@@ -123,9 +124,49 @@ function antiprismRing(polygons) {
 }
 exports.antiprismRing = antiprismRing;
 /** 押し出し */
-function extrude(polygon, v1, v2) {
+function extrude3(polygon, v1, v2) {
     var p1 = polygon.map(function (v) { return v.add(v1); });
     var p2 = polygon.map(function (v) { return v.add(v2); });
     return prismArray([p1, p2]);
 }
-exports.extrude = extrude;
+exports.extrude3 = extrude3;
+/** 押し出し */
+function extrude3_cone(polygon, v1) {
+    return prismArray_pyramid([polygon], v1);
+}
+exports.extrude3_cone = extrude3_cone;
+/** 押し出し */
+function extrude3_bicone(polygon, v1, v2) {
+    return prismArray_bipyramid([polygon], v1, v2);
+}
+exports.extrude3_bicone = extrude3_bicone;
+/** 押し出し */
+function extrude2(verts, z) {
+    var len = verts.length;
+    var new_verts_1 = verts.map(function (v) { return vc.v2_to_v3(v, 0); });
+    var new_verts_2 = verts.map(function (v) { return vc.v2_to_v3(v, z); });
+    var new_verts = new_verts_1.concat(new_verts_2);
+    var new_face_1 = seq.arith(len);
+    var new_face_2 = seq.arith(len, len);
+    var new_side_faces = seq.arith(len).map(function (n) { return [n, (n + 1) % len, len + (n + 1) % len, len + n]; });
+    var new_faces = [];
+    new_faces.push(new_face_1);
+    new_faces.push(new_face_2);
+    new_side_faces.forEach(function (f) { return new_faces.push(f); });
+    return geometry(new_verts, new_faces);
+}
+exports.extrude2 = extrude2;
+/** 押し出し */
+function extrude2_cone(verts, z) {
+    var len = verts.length;
+    var new_verts_1 = verts.map(function (v) { return vc.v2_to_v3(v, 0); });
+    var new_verts_2 = vc.v3(0, 0, z);
+    var new_verts = new_verts_1.concat(new_verts_2);
+    var new_face_1 = seq.arith(len);
+    var new_side_faces = seq.arith(len).map(function (n) { return [n, (n + 1) % len, len]; });
+    var new_faces = [];
+    new_faces.push(new_face_1);
+    new_side_faces.forEach(function (f) { return new_faces.push(f); });
+    return geometry(new_verts, new_faces);
+}
+exports.extrude2_cone = extrude2_cone;

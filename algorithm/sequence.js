@@ -127,7 +127,7 @@ function binomial_coefficients(n) {
 }
 exports.binomial_coefficients = binomial_coefficients;
 /**
- * Bernstein basis polynomials - n次バーンスタイン基底関数により得られる数列
+ * Bernstein Basis Coefficients - n次バーンスタイン基底関数により得られる係数の数列
  * (2, 0/4) -> [1, 0, 0]
  * (2, 1/4) -> [9/16, 6/16, 1/16]
  * (2, 2/4) -> [1/4, 2/4, 1/4]
@@ -139,8 +139,7 @@ exports.binomial_coefficients = binomial_coefficients;
  * (3, 3/4) -> [1/64, 9/64, 27/64, 27/64]
  * (3, 4/4) -> [0, 0, 0, 1]
  */
-function bernstein_basis(n, t) {
-    //return binomial_coefficients(n).map((d, i) => d * ut.pow(1 - t, n - i) * ut.pow(t, i));
+function bernstein_basis_coefficients(n, t) {
     return arith(n + 1).map(function (i) { return ut.bernstein_basis(n, i, t); });
 }
-exports.bernstein_basis = bernstein_basis;
+exports.bernstein_basis_coefficients = bernstein_basis_coefficients;

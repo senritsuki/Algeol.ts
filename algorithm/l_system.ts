@@ -1,4 +1,4 @@
-﻿/** L-system, Lindenmayer system */
+﻿/** L-system (Lindenmayer system) */
 
 import * as vc from './vector';
 import * as cv from './curve';

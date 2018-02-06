@@ -1,4 +1,5 @@
 "use strict";
+/** Projection - 投影 */
 Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("./vector");
 var mx = require("./matrix");

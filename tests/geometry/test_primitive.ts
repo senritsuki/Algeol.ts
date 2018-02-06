@@ -1,12 +1,12 @@
 ﻿declare const require: any;
 const fs = require('fs');
 
-import * as al from "../../geometry/geo";
-import * as prim from "../../geometry/primitive";
+import * as al from "../../geometry/surface_core";
+import * as prim from "../../geometry/primitive_surface";
 import * as wo from "../../decoder/wavefront";
 
 
-function save(name: string, geo: al.Geo): void {
+function save(name: string, geo: al.Surfaces): void {
     const dir = 'test_geo_primitive/'
     const data = wo.geos_to_strings(name, [geo]);
     const path = dir + data.objfile;

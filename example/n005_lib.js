@@ -16,14 +16,14 @@ var vc = require("../algorithm/vector");
 var mx = require("../algorithm/matrix");
 var cv = require("../algorithm/curve");
 var cc = require("../algorithm/color_converter");
-var al = require("../geometry/geo");
-var prim = require("../geometry/primitive");
-var prima = require("../geometry/array");
+var al = require("../geometry/surface_core");
+var prim = require("../geometry/primitive_surface");
+var prima = require("../geometry/surface_lib");
 var v3 = vc.v3;
 var v3_zero = vc.v3_zero;
 function verts_to_one_face_geo(verts) {
     var faces = verts.map(function (_, i) { return i; });
-    return new al.Geo(verts, [faces]);
+    return new al.Surfaces(verts, [faces]);
 }
 function arch_wall(o, outer_dx, outer_dy, inner_dx, inner_dy, inner_v_num) {
     var p1 = o.add(outer_dx);
@@ -120,7 +120,7 @@ function xygeo_scale_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
     var maps = al.compose_v4map(z_rates, [
         function (v) { return mx.scale_m4([v.x, v.y, 1]); },
-        function (v) { return mx.trans_m4([0, 0, v.z]); },
+        function (v) { return mx.affine3_trans([0, 0, v.z]); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -130,8 +130,8 @@ function xygeo_scale_rot_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
     var maps = al.compose_v4map(z_rates, [
         function (v) { return mx.scale_m4([v.x, v.x, 1]); },
-        function (v) { return mx.rot_z_m4(v.y); },
-        function (v) { return mx.trans_m4([0, 0, v.z]); },
+        function (v) { return mx.affine3_rot_z(v.y); },
+        function (v) { return mx.affine3_trans([0, 0, v.z]); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -139,9 +139,9 @@ function xygeo_scale_rot_trans(xy_verts, z_num, z) {
 exports.xygeo_scale_rot_trans = xygeo_scale_rot_trans;
 function xygeo_z_scale_rot(xy_verts, zsr_list) {
     var maps = al.compose_v4map(zsr_list, [
-        function (zsr) { return mx.trans_m4([0, 0, zsr.x]); },
+        function (zsr) { return mx.affine3_trans([0, 0, zsr.x]); },
         function (zsr) { return mx.scale_m4([zsr.y, zsr.y, 1]); },
-        function (zsr) { return mx.rot_z_m4(zsr.z); },
+        function (zsr) { return mx.affine3_rot_z(zsr.z); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -149,7 +149,7 @@ function xygeo_z_scale_rot(xy_verts, zsr_list) {
 exports.xygeo_z_scale_rot = xygeo_z_scale_rot;
 function duplicate_rot_z(xy_verts, count, deg) {
     var maps = al.compose_v4map(seq.arith(count), [
-        function (i) { return mx.rot_z_m4(ut.deg_to_rad(i * deg)); },
+        function (i) { return mx.affine3_rot_z(ut.deg_to_rad(i * deg)); },
     ]);
     var new_verts = al.duplicate_v3(xy_verts, 1, maps);
     return prima.flatten(new_verts);
@@ -164,7 +164,7 @@ function duplicate_rot_z_120_3(xy_verts) {
 }
 exports.duplicate_rot_z_120_3 = duplicate_rot_z_120_3;
 function v3_rot_z(v, deg) {
-    return mx.rot_z_m3(ut.deg_to_rad(deg)).map(v);
+    return mx.m3_rot_z(ut.deg_to_rad(deg)).map(v);
 }
 exports.v3_rot_z = v3_rot_z;
 function ray3_rot_z_scale(cd, deg, len) {
@@ -407,7 +407,7 @@ function geo_route_planes(route, n) {
         var base = [d1[0], d1[2], d2[2], d2[0]];
         return prim.plane_xy(base, z);
     });
-    return al.merge_geos(bases);
+    return al.concat_surfaces(bases);
 }
 exports.geo_route_planes = geo_route_planes;
 function geo_route_stairs(route, n, d) {
@@ -417,8 +417,8 @@ function geo_route_stairs(route, n, d) {
         var d2 = lcrd[i + 1];
         var z = (d1[1].z + d2[1].z) / 2;
         var base = [d1[0], d1[2], d2[2], d2[0]].map(function (v) { return v3(v.x, v.y, z); });
-        return prima.extrude(base, v3(0, 0, -d), v3(0, 0, 0));
+        return prima.extrude3(base, v3(0, 0, -d), v3(0, 0, 0));
     });
-    return al.merge_geos(bases);
+    return al.concat_surfaces(bases);
 }
 exports.geo_route_stairs = geo_route_stairs;

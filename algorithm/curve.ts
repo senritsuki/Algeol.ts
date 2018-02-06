@@ -1,4 +1,4 @@
-﻿/** Curve with Parametric Equation - パラメトリック方程式による曲線 */
+﻿/** Curve, Parametric Equation - パラメトリック方程式による曲線 */
 
 import * as ut from "./utility";
 import * as seq from "./sequence";
@@ -52,7 +52,7 @@ export function ray3_to_ray2(ray3: Ray3): Ray2 {
 }
 
 export function rot_ray3d_z(ray3: Ray3, rad: number): Ray3 {
-    const d = mx.rot_z_m3(rad).map(ray3.d);
+    const d = mx.m3_rot_z(rad).map(ray3.d);
     return ray(ray3.c, d);
 }
 
@@ -438,10 +438,37 @@ export function bezier3_interpolate_arc(p0: V3, p1: V3, o: V3): Curve3 {
     d1._v[2] = 0;
     const rad = d0.angle(d1);
     const n = bezier_arc_p(rad) * d0.length();
-    const e0 = mx.rot_z_m3(ut.deg90).map(d0).unit().scalar(n);
-    const e1 = mx.rot_z_m3(-ut.deg90).map(d1).unit().scalar(n);
+    const e0 = mx.m3_rot_z(ut.deg90).map(d0).unit().scalar(n);
+    const e1 = mx.m3_rot_z(-ut.deg90).map(d1).unit().scalar(n);
     const c0 = p0.add(e0);
     const c1 = p1.add(e1);
     const controls = [p0, c0, c1, p1];
     return bezier(controls);
+}
+
+
+/** 2点間の距離 */
+export function distance<V extends vc.Vector<V>>(p1: V, p2: V): number {
+    return p2.sub(p1).length();
+}
+
+/** 点と直線の距離 */
+export function distance_lp<V extends vc.Vector<V>, R extends Ray<V>>(ray: R, p: V): number {
+    const r1 = ray.d;
+    const r2 = p.sub(ray.c);
+    const cos = r1.ip(r2) / (r1.length() * r2.length());    // 余弦定理
+    const rad = Math.acos(cos);
+    const d = r1.length() * Math.sin(rad);
+    return d;
+}
+
+/** 点と線分の距離 */
+export function distance_sp<V extends vc.Vector<V>>(s1: V, s2: V, p: V): number {
+    const d1 = s2.sub(s1);
+    const s1p = p.sub(s1);
+    if (d1.ip(s1p) < 0) return s1p.length();
+    const d2 = s1.sub(s2);
+    const s2p = p.sub(s2);
+    if (d2.ip(s2p) < 0) return s2p.length();
+    return distance_lp(ray(s1, d1), p);
 }

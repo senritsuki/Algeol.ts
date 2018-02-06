@@ -4,7 +4,7 @@ import * as vc from "../algorithm/vector";
 import * as mx from "../algorithm/matrix";
 import * as cv from "../algorithm/curve";
 
-import * as al from '../geometry/geo';
+import * as al from '../geometry/surface_core';
 import * as lib from './n005_lib';
 
 import * as wf from '../decoder/wavefront';
@@ -14,7 +14,7 @@ const v3 = vc.v3;
 
 lib.config_bottom_z(-500);
 
-export function save(objs: al.Obj[]) {
+export function save(objs: al.SurfaceGroups[]) {
     saver.save_objmtl(wf.objs_to_strings('./_obj/n007', objs));
 }
 
@@ -39,8 +39,8 @@ type FloorRouteDuplicator = (floor: lib.RegularFloor) => [lib.RegularFloor[], li
 export function dupl_circle(n: number, r: number, fz: (i: number) => number, con1: number, con2: number): FloorRouteDuplicator {
     return floor => {
         const floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            i => mx.trans_m4(v3(0, r, fz(i))),
-            i => mx.rot_z_m4(ut.deg360 / n * -i),
+            i => mx.affine3_trans(v3(0, r, fz(i))),
+            i => mx.affine3_rot_z(ut.deg360 / n * -i),
         ]));
         const routes = floors.map((_, i) => lib.route_arc(
             at(floors, i+1).con(con2),
@@ -57,8 +57,8 @@ export function dupl_arc(n: number, r: number, deg1: number, deg2: number, fz: (
     const rad_d = ut.deg_to_rad((deg2 - deg1) / (n - 1));
     return floor => {
         const floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            i => mx.trans_m4(v3(0, r, fz(i))),
-            i => mx.rot_z_m4(rad_1 + rad_d * i),
+            i => mx.affine3_trans(v3(0, r, fz(i))),
+            i => mx.affine3_rot_z(rad_1 + rad_d * i),
         ]));
         const routes = floors.map((_, i) => lib.route_arc(
             at(floors, i).con(con1),
@@ -73,9 +73,9 @@ export const dupl_arc_hexa = (n: number, r: number, deg1: number, deg2: number, 
 export function dupl_lines(n: number, r: number, fz: (i: number) => number, con1: number, con2: number): FloorRouteDuplicator {
     return floor => {
         const floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            _ => mx.rot_z_m4(ut.deg180 / floor.n),
-            i => mx.trans_m4(v3(0, r, fz(i))),
-            i => mx.rot_z_m4(ut.deg360 / n * -i),
+            _ => mx.affine3_rot_z(ut.deg180 / floor.n),
+            i => mx.affine3_trans(v3(0, r, fz(i))),
+            i => mx.affine3_rot_z(ut.deg360 / n * -i),
         ]));
         const routes = floors.map((_, i) => lib.route_curve(
             at(floors, i+1).con(con2),
@@ -89,19 +89,19 @@ export const dupl_lines_square = (n: number, r: number, fz: (i: number) => numbe
 export const dupl_lines_hexa = (n: number, r: number, fz: (i: number) => number) => dupl_lines(n, r, fz, 5, 3);
 
 
-export function floor_simple(): (floor: lib.RegularFloor) => al.Geo {
+export function floor_simple(): (floor: lib.RegularFloor) => al.Surfaces {
     return floor => lib.geo_rfloor_simple(floor);
 }
-export function route_arc(n: number, d: number): (route: lib.Route) => al.Geo {
+export function route_arc(n: number, d: number): (route: lib.Route) => al.Surfaces {
     return route => lib.geo_route_stairs(route, n, d);
 }
 
 export function geo_floors_routes(
     floor: lib.RegularFloor, 
     dupl: FloorRouteDuplicator,
-    geo_floor: (floor: lib.RegularFloor) => al.Geo,
-    geo_route: (route: lib.Route) => al.Geo,
-): [al.Geo[], al.Geo[]] {
+    geo_floor: (floor: lib.RegularFloor) => al.Surfaces,
+    geo_route: (route: lib.Route) => al.Surfaces,
+): [al.Surfaces[], al.Surfaces[]] {
     const floor_route = dupl(floor);
     const geo_floors = floor_route[0].map(floor => geo_floor(floor));
     const geo_routes = floor_route[1].map(route => geo_route(route));
@@ -120,10 +120,10 @@ export function main() {
     const m_route = lib.lch(20, 0, 11);
 
     save([
-        al.geos_to_obj(fr_circle12[0], m_floor),
-        al.geos_to_obj(fr_circle12[1], m_route),
-        al.geos_to_obj(fr_circle4[0], m_floor),
-        al.geos_to_obj(fr_circle4[1], m_route),
+        al.merge_surfaces(fr_circle12[0], m_floor),
+        al.merge_surfaces(fr_circle12[1], m_route),
+        al.merge_surfaces(fr_circle4[0], m_floor),
+        al.merge_surfaces(fr_circle4[1], m_route),
     ]);
 }
 

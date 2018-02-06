@@ -1,5 +1,5 @@
 "use strict";
-/** Curve with Parametric Equation - パラメトリック方程式による曲線 */
+/** Curve, Parametric Equation - パラメトリック方程式による曲線 */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -53,7 +53,7 @@ function ray3_to_ray2(ray3) {
 }
 exports.ray3_to_ray2 = ray3_to_ray2;
 function rot_ray3d_z(ray3, rad) {
-    var d = mx.rot_z_m3(rad).map(ray3.d);
+    var d = mx.m3_rot_z(rad).map(ray3.d);
     return ray(ray3.c, d);
 }
 exports.rot_ray3d_z = rot_ray3d_z;
@@ -405,11 +405,39 @@ function bezier3_interpolate_arc(p0, p1, o) {
     d1._v[2] = 0;
     var rad = d0.angle(d1);
     var n = exports.bezier_arc_p(rad) * d0.length();
-    var e0 = mx.rot_z_m3(ut.deg90).map(d0).unit().scalar(n);
-    var e1 = mx.rot_z_m3(-ut.deg90).map(d1).unit().scalar(n);
+    var e0 = mx.m3_rot_z(ut.deg90).map(d0).unit().scalar(n);
+    var e1 = mx.m3_rot_z(-ut.deg90).map(d1).unit().scalar(n);
     var c0 = p0.add(e0);
     var c1 = p1.add(e1);
     var controls = [p0, c0, c1, p1];
     return bezier(controls);
 }
 exports.bezier3_interpolate_arc = bezier3_interpolate_arc;
+/** 2点間の距離 */
+function distance(p1, p2) {
+    return p2.sub(p1).length();
+}
+exports.distance = distance;
+/** 点と直線の距離 */
+function distance_lp(ray, p) {
+    var r1 = ray.d;
+    var r2 = p.sub(ray.c);
+    var cos = r1.ip(r2) / (r1.length() * r2.length()); // 余弦定理
+    var rad = Math.acos(cos);
+    var d = r1.length() * Math.sin(rad);
+    return d;
+}
+exports.distance_lp = distance_lp;
+/** 点と線分の距離 */
+function distance_sp(s1, s2, p) {
+    var d1 = s2.sub(s1);
+    var s1p = p.sub(s1);
+    if (d1.ip(s1p) < 0)
+        return s1p.length();
+    var d2 = s1.sub(s2);
+    var s2p = p.sub(s2);
+    if (d2.ip(s2p) < 0)
+        return s2p.length();
+    return distance_lp(ray(s1, d1), p);
+}
+exports.distance_sp = distance_sp;

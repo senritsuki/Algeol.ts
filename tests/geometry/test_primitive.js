@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require('fs');
-var prim = require("../../geometry/primitive");
+var prim = require("../../geometry/primitive_surface");
 var wo = require("../../decoder/wavefront");
 function save(name, geo) {
     var dir = 'test_geo_primitive/';

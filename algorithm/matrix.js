@@ -1,5 +1,15 @@
 "use strict";
-// Square Matrix 正方行列
+/** Matrix - 行列 */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ut = require("./utility");
 var vc = require("./vector");
@@ -10,7 +20,7 @@ var vc = require("./vector");
  * @param orderC    列数
  * @return          複製された行列
  */
-function clone(m1, orderR, orderC) {
+function m_clone(m1, orderR, orderC) {
     var m = new Array(orderR);
     for (var r = 0; r < orderR; r++) {
         m[r] = new Array(orderC);
@@ -20,25 +30,12 @@ function clone(m1, orderR, orderC) {
     }
     return m;
 }
-exports.clone = clone;
-/** Transpose - 転置
-    (行列) -> 行列の転置結果を表す2次元配列 */
-function transpose(m1) {
-    var orderRC = m1.length;
-    var orderCR = m1[0].length;
-    var m = new Array(orderCR);
-    for (var cr = 0; cr < orderCR; cr++) {
-        m[cr] = new Array(orderRC);
-        for (var rc = 0; rc < orderRC; rc++) {
-            m[cr][rc] = m1[rc][cr];
-        }
-    }
-    return m;
-}
-exports.transpose = transpose;
+exports.m_clone = m_clone;
+/** 二次元配列行列の転置 */
+var transpose = ut.transpose;
 /** Multiplication - 乗算
     (左辺行列, 右辺行列) -> 左辺行列*右辺行列の乗算結果を表す2次元配列 */
-function mul(m1, m2) {
+function m_mul(m1, m2) {
     var m2t = transpose(m2);
     var orderR = m1.length;
     var orderC = m2t.length;
@@ -46,104 +43,85 @@ function mul(m1, m2) {
     for (var r = 0; r < orderR; r++) {
         m[r] = new Array(orderC);
         for (var c = 0; c < orderC; c++) {
-            m[r][c] = vc.ip(m1[r], m2t[c]);
+            m[r][c] = vc.v_ip(m1[r], m2t[c]);
         }
     }
     return m;
 }
-exports.mul = mul;
-/** Scalar Product - スカラー倍
-    (行列, スカラー値) -> 行列*スカラー値の乗算結果を表す2次元配列 */
-function scalar(m1, n) {
-    var orderR = m1.length;
-    var orderC = m1[0].length;
-    var m = new Array(orderR);
-    for (var r = 0; r < orderR; r++) {
-        m[r] = new Array(orderC);
-        for (var c = 0; c < orderC; c++) {
-            m[r][c] = m1[r][c] * n;
-        }
-    }
-    return m;
-}
-exports.scalar = scalar;
+exports.m_mul = m_mul;
 /** Linear Mapping - 線形写像
     (左辺行列, 右辺ベクトル) -> 左辺行列*右辺ベクトルの演算結果を表す配列 */
-function map(m1, v1) {
+function m_map(m1, v1) {
     var orderR = m1.length;
     var v = new Array(orderR);
     for (var i = 0; i < orderR; i++) {
-        v[i] = vc.ip(m1[i], v1);
+        v[i] = vc.v_ip(m1[i], v1);
     }
     return v;
 }
-exports.map = map;
-var M2Impl = /** @class */ (function () {
+exports.m_map = m_map;
+var MatrixBase = /** @class */ (function () {
+    function MatrixBase(_m, _fm, _fv) {
+        this._m = _m;
+        this._fm = _fm;
+        this._fv = _fv;
+    }
+    MatrixBase.prototype.array_rows = function () {
+        return m_clone(this._m, this.dim(), this.dim());
+    };
+    MatrixBase.prototype.array_cols = function () {
+        return transpose(this._m);
+    };
+    MatrixBase.prototype.mul = function (dist) {
+        return this._fm(m_mul(this._m, dist._m));
+    };
+    MatrixBase.prototype.map = function (v) {
+        return this._fv(m_map(this._m, v._v));
+    };
+    return MatrixBase;
+}());
+var M2Impl = /** @class */ (function (_super) {
+    __extends(M2Impl, _super);
     function M2Impl(rows) {
-        this._m = clone(rows, M2Impl.Dim, M2Impl.Dim);
+        return _super.call(this, m_clone(rows, M2Impl.Dim, M2Impl.Dim), M2Impl.FromRows, vc.array_to_v2) || this;
     }
     M2Impl.FromRows = function (rows) { return new M2Impl(rows); };
     M2Impl.FromCols = function (cols) { return new M2Impl(transpose(cols)); };
-    M2Impl.prototype.array_rows = function () {
-        return clone(this._m, M2Impl.Dim, M2Impl.Dim);
-    };
-    M2Impl.prototype.array_cols = function () {
-        return transpose(this._m);
-    };
-    M2Impl.prototype.mul = function (dist) {
-        return M2Impl.FromRows(mul(this._m, dist._m));
-    };
-    M2Impl.prototype.map = function (v) {
-        return vc.array_to_v2(map(this._m, v._v));
+    M2Impl.prototype.dim = function () {
+        return M2Impl.Dim;
     };
     M2Impl.Dim = 2;
     return M2Impl;
-}());
-var M3Impl = /** @class */ (function () {
+}(MatrixBase));
+var M3Impl = /** @class */ (function (_super) {
+    __extends(M3Impl, _super);
     function M3Impl(rows) {
-        this._m = clone(rows, M3Impl.Dim, M3Impl.Dim);
+        return _super.call(this, m_clone(rows, M3Impl.Dim, M3Impl.Dim), M3Impl.FromRows, vc.array_to_v3) || this;
     }
     M3Impl.FromRows = function (rows) { return new M3Impl(rows); };
     M3Impl.FromCols = function (cols) { return new M3Impl(transpose(cols)); };
-    M3Impl.prototype.array_rows = function () {
-        return clone(this._m, M3Impl.Dim, M3Impl.Dim);
-    };
-    M3Impl.prototype.array_cols = function () {
-        return transpose(this._m);
-    };
-    M3Impl.prototype.mul = function (dist) {
-        return M3Impl.FromRows(mul(this._m, dist._m));
-    };
-    M3Impl.prototype.map = function (v) {
-        return vc.array_to_v3(map(this._m, v._v));
+    M3Impl.prototype.dim = function () {
+        return M3Impl.Dim;
     };
     M3Impl.Dim = 3;
     return M3Impl;
-}());
-var M4Impl = /** @class */ (function () {
+}(MatrixBase));
+var M4Impl = /** @class */ (function (_super) {
+    __extends(M4Impl, _super);
     function M4Impl(rows) {
-        this._m = clone(rows, M4Impl.Dim, M4Impl.Dim);
+        return _super.call(this, m_clone(rows, M4Impl.Dim, M4Impl.Dim), M4Impl.FromRows, vc.array_to_v4) || this;
     }
     M4Impl.FromRows = function (rows) { return new M4Impl(rows); };
     M4Impl.FromCols = function (cols) { return new M4Impl(transpose(cols)); };
-    M4Impl.prototype.array_rows = function () {
-        return clone(this._m, M4Impl.Dim, M4Impl.Dim);
-    };
-    M4Impl.prototype.array_cols = function () {
-        return transpose(this._m);
-    };
-    M4Impl.prototype.mul = function (dist) {
-        return M4Impl.FromRows(mul(this._m, dist._m));
-    };
-    M4Impl.prototype.map = function (v) {
-        return vc.array_to_v4(map(this._m, v._v));
+    M4Impl.prototype.dim = function () {
+        return M4Impl.Dim;
     };
     M4Impl.prototype.map_v3 = function (v, w) {
-        return vc.array_to_v3(map(this._m, v._v.concat(w)));
+        return vc.array_to_v3(m_map(this._m, v._v.concat(w)));
     };
     M4Impl.Dim = 4;
     return M4Impl;
-}());
+}(MatrixBase));
 /** ([列番号][行番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
 exports.cols_to_m2 = function (cols) { return M2Impl.FromCols(cols); };
 /** ([行番号][列番号]と表される2次元配列) -> 2次元正方行列オブジェクト */
@@ -178,29 +156,35 @@ exports.unit_m4 = M4Impl.FromRows([
     [0, 0, 0, 1],
 ]);
 /** (2次元正方行列) -> 3次元正方行列 */
-function m2_m3(m2) {
+function m2_to_m3(m2, v) {
+    if (v === void 0) { v = [0, 0]; }
     var m3rows = m2._m.map(function (row) { return row.concat(0); });
-    m3rows.push([0, 0, 1]);
+    v = vc.to_array_if(v);
+    v = v.slice(0, 2).concat(1);
+    m3rows.push(v);
     return M3Impl.FromRows(m3rows);
 }
-exports.m2_m3 = m2_m3;
+exports.m2_to_m3 = m2_to_m3;
 /** (3次元正方行列) -> 2次元正方行列 */
-function m3_m2(m3) {
+function m3_to_m2(m3) {
     return M2Impl.FromRows(m3._m);
 }
-exports.m3_m2 = m3_m2;
+exports.m3_to_m2 = m3_to_m2;
 /** (3次元正方行列) -> 4次元正方行列 */
-function m3_m4(m3) {
+function m3_to_m4(m3, v) {
+    if (v === void 0) { v = [0, 0, 0]; }
     var m4rows = m3._m.map(function (row) { return row.concat(0); });
-    m4rows.push([0, 0, 0, 1]);
+    v = vc.to_array_if(v);
+    v = v.slice(0, 3).concat(1);
+    m4rows.push(v);
     return M4Impl.FromRows(m4rows);
 }
-exports.m3_m4 = m3_m4;
+exports.m3_to_m4 = m3_to_m4;
 /** (4次元正方行列) -> 3次元正方行列 */
-function m4_m3(m4) {
+function m4_to_m3(m4) {
     return M3Impl.FromRows(m4._m);
 }
-exports.m4_m3 = m4_m3;
+exports.m4_to_m3 = m4_to_m3;
 /** 3次元ベクトル配列に対するアフィン写像
     (3次元ベクトル配列, 4次元正方行列, 4次元ベクトルのw成分) -> 変換後の3次元正方行列 */
 function map_m4_v3(vl, m4, w) {
@@ -209,7 +193,17 @@ function map_m4_v3(vl, m4, w) {
 }
 exports.map_m4_v3 = map_m4_v3;
 /** 平行移動写像 */
-function trans_m4(v) {
+function affine2_trans(v) {
+    v = v instanceof Array ? v : v._v;
+    return M3Impl.FromRows([
+        [1, 0, v[0]],
+        [0, 1, v[1]],
+        [0, 0, 1],
+    ]);
+}
+exports.affine2_trans = affine2_trans;
+/** 平行移動写像 */
+function affine3_trans(v) {
     v = v instanceof Array ? v : v._v;
     return M4Impl.FromRows([
         [1, 0, 0, v[0]],
@@ -218,12 +212,16 @@ function trans_m4(v) {
         [0, 0, 0, 1],
     ]);
 }
-exports.trans_m4 = trans_m4;
-/** 平行移動写像 */
-function trans_v3_m4(v3) {
-    return trans_m4(v3);
+exports.affine3_trans = affine3_trans;
+/** 拡大縮小写像 */
+function m2_scale(v) {
+    v = v instanceof Array ? v : v._v;
+    return M2Impl.FromRows([
+        [v[0], 0],
+        [0, v[1]],
+    ]);
 }
-exports.trans_v3_m4 = trans_v3_m4;
+exports.m2_scale = m2_scale;
 /** 拡大縮小写像 */
 function scale_m3(v) {
     v = v instanceof Array ? v : v._v;
@@ -236,11 +234,24 @@ function scale_m3(v) {
 exports.scale_m3 = scale_m3;
 /** 拡大縮小写像 */
 function scale_m4(v) {
-    return m3_m4(scale_m3(v));
+    return m3_to_m4(scale_m3(v));
 }
 exports.scale_m4 = scale_m4;
+/** 拡大縮小写像 */
+exports.affine2_scale = ut.compose_2f(m2_scale, m2_to_m3);
+/** 拡大縮小写像 */
+exports.affine3_scale = ut.compose_2f(scale_m3, m3_to_m4);
+function m2_rot(rad) {
+    var c = Math.cos(rad);
+    var s = Math.sin(rad);
+    return M2Impl.FromRows([
+        [c, -s],
+        [s, c],
+    ]);
+}
+exports.m2_rot = m2_rot;
 /** x軸回転写像 */
-function rot_x_m3(rad) {
+function m3_rot_x(rad) {
     var c = Math.cos(rad);
     var s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -249,14 +260,9 @@ function rot_x_m3(rad) {
         [0, s, c],
     ]);
 }
-exports.rot_x_m3 = rot_x_m3;
-/** x軸回転写像 */
-function rot_x_m4(rad) {
-    return m3_m4(rot_x_m3(rad));
-}
-exports.rot_x_m4 = rot_x_m4;
+exports.m3_rot_x = m3_rot_x;
 /** y軸回転写像 */
-function rot_y_m3(rad) {
+function m3_rot_y(rad) {
     var c = Math.cos(rad);
     var s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -265,14 +271,9 @@ function rot_y_m3(rad) {
         [-s, 0, c],
     ]);
 }
-exports.rot_y_m3 = rot_y_m3;
-/** y軸回転写像 */
-function rot_y_m4(rad) {
-    return m3_m4(rot_y_m3(rad));
-}
-exports.rot_y_m4 = rot_y_m4;
+exports.m3_rot_y = m3_rot_y;
 /** z軸回転写像 */
-function rot_z_m3(rad) {
+function m3_rot_z(rad) {
     var c = Math.cos(rad);
     var s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -281,12 +282,14 @@ function rot_z_m3(rad) {
         [0, 0, 1],
     ]);
 }
-exports.rot_z_m3 = rot_z_m3;
+exports.m3_rot_z = m3_rot_z;
+exports.affine2_rot = ut.compose_2f(m2_rot, m2_to_m3);
+/** x軸回転写像 */
+exports.affine3_rot_x = ut.compose_2f(m3_rot_x, m3_to_m4);
+/** y軸回転写像 */
+exports.affine3_rot_y = ut.compose_2f(m3_rot_y, m3_to_m4);
 /** z軸回転写像 */
-function rot_z_m4(rad) {
-    return m3_m4(rot_z_m3(rad));
-}
-exports.rot_z_m4 = rot_z_m4;
+exports.affine3_rot_z = ut.compose_2f(m3_rot_z, m3_to_m4);
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
 function rot_yz_x_m3(v3) {
     var x = v3.x;
@@ -294,16 +297,13 @@ function rot_yz_x_m3(v3) {
     var z = v3.z;
     var radY = -Math.atan2(z, Math.sqrt(x * x + y * y));
     var radZ = Math.atan2(y, x);
-    var mxRotY = rot_y_m3(radY);
-    var mxRotZ = rot_z_m3(radZ);
+    var mxRotY = m3_rot_y(radY);
+    var mxRotZ = m3_rot_z(radZ);
     return mxRotZ.mul(mxRotY);
 }
 exports.rot_yz_x_m3 = rot_yz_x_m3;
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
-function rot_yz_x_m4(v3) {
-    return m3_m4(rot_yz_x_m3(v3));
-}
-exports.rot_yz_x_m4 = rot_yz_x_m4;
+exports.rot_yz_x_m4 = ut.compose_2f(rot_yz_x_m3, m3_to_m4);
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
 function rot_yz_z_m3(v3) {
     var x = v3.x;
@@ -311,40 +311,31 @@ function rot_yz_z_m3(v3) {
     var z = v3.z;
     var radY = ut.deg90 - Math.atan2(z, Math.sqrt(x * x + y * y));
     var radZ = Math.atan2(y, x);
-    var mxRotY = rot_y_m3(radY);
-    var mxRotZ = rot_z_m3(radZ);
+    var mxRotY = m3_rot_y(radY);
+    var mxRotZ = m3_rot_z(radZ);
     return mxRotZ.mul(mxRotY);
 }
 exports.rot_yz_z_m3 = rot_yz_z_m3;
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
-function rot_yz_z_m4(v3) {
-    return m3_m4(rot_yz_z_m3(v3));
-}
-exports.rot_yz_z_m4 = rot_yz_z_m4;
+exports.rot_yz_z_m4 = ut.compose_2f(rot_yz_z_m3, m3_to_m4);
 /** オイラー角XYZの回転写像 */
-function rot_xyz_m3(radX, radY, radZ) {
-    return rot_x_m3(radX)
-        .mul(rot_y_m3(radY))
-        .mul(rot_z_m3(radZ));
+function rot_xyz_m3(rad_xyz) {
+    return m3_rot_x(rad_xyz[0])
+        .mul(m3_rot_y(rad_xyz[1]))
+        .mul(m3_rot_z(rad_xyz[2]));
 }
 exports.rot_xyz_m3 = rot_xyz_m3;
 /** オイラー角XYZの回転写像 */
-function rot_xyz_m4(radX, radY, radZ) {
-    return m3_m4(rot_xyz_m3(radX, radY, radZ));
-}
-exports.rot_xyz_m4 = rot_xyz_m4;
+exports.rot_xyz_m4 = ut.compose_2f(rot_xyz_m3, m3_to_m4);
 /** オイラー角XYZの逆回転写像 */
-function rot_inv_xyz_m3(radX, radY, radZ) {
-    return rot_z_m3(-radZ)
-        .mul(rot_y_m3(-radY))
-        .mul(rot_x_m3(-radX));
+function rot_inv_xyz_m3(rad_xyz) {
+    return m3_rot_z(-rad_xyz[2])
+        .mul(m3_rot_y(-rad_xyz[1]))
+        .mul(m3_rot_x(-rad_xyz[0]));
 }
 exports.rot_inv_xyz_m3 = rot_inv_xyz_m3;
 /** オイラー角XYZの回転写像 */
-function rot_inv_xyz_m4(radX, radY, radZ) {
-    return m3_m4(rot_inv_xyz_m3(radX, radY, radZ));
-}
-exports.rot_inv_xyz_m4 = rot_inv_xyz_m4;
+exports.rot_inv_xyz_m4 = ut.compose_2f(rot_inv_xyz_m3, m3_to_m4);
 /** 行列を合成する */
 function compose(mm) {
     return mm.reduce(function (a, b) { return b.mul(a); });
@@ -355,3 +346,13 @@ function compose_rev(mm) {
     return mm.reduce(function (a, b) { return a.mul(b); });
 }
 exports.compose_rev = compose_rev;
+/** ビュー変換行列 */
+function camera_matrix(pos, dir_front, dir_head) {
+    var dir_x = dir_front.cp(dir_head).unit();
+    var dir_y = dir_front.unit();
+    var dir_z = dir_head.unit();
+    var m3 = M3Impl.FromRows([dir_x._v, dir_y._v, dir_z._v]);
+    var m4 = m3_to_m4(m3, pos);
+    return m4;
+}
+exports.camera_matrix = camera_matrix;

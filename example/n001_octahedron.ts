@@ -1,8 +1,8 @@
 import * as seq from '../algorithm/sequence';
 import * as vc from '../algorithm/vector';
 import * as mx from '../algorithm/matrix';
-import * as al from '../geometry/geo';
-import * as prim from '../geometry/primitive';
+import * as al from '../geometry/surface_core';
+import * as prim from '../geometry/primitive_surface';
 import * as wf from '../decoder/wavefront';
 
 const octahedron = prim.octahedron(0.5);
@@ -25,11 +25,11 @@ seq.range_step(-radius, radius, 1).forEach(x => {
 });
 
 const duplicater = al.compose_v4map(sq, [
-    v => mx.trans_m4(v),
+    v => mx.affine3_trans(v),
 ]);
 
 const octahedrons = al.duplicate_v3(octahedron.verts, 1, duplicater)
-    .map(v => new al.Geo(v, octahedron.faces));
+    .map(v => new al.Surfaces(v, octahedron.faces));
 
 wf.useBlenderCoordinateSystem();
 const data = wf.geos_to_strings('./_obj/n001_octahedron', octahedrons);

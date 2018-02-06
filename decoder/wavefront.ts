@@ -2,7 +2,7 @@
 
 import * as ut from "../algorithm/utility";
 import * as vc from "../algorithm/vector";
-import * as al from "../geometry/geo";
+import * as al from "../geometry/surface_core";
 
 
 export let format_florts = (nn: number[]): string => nn.map(n => ut.format_03f(n)).join(' ');
@@ -34,7 +34,7 @@ export interface ObjMtlString extends ObjString {
     mtlstrs: string[];
 }
 
-export function geos_to_strings(name: string, geos: al.Geo[]): ObjString {
+export function geos_to_strings(name: string, geos: al.Surfaces[]): ObjString {
     const objfile = name + '.obj';
 
     let objstrs: string[] = [];
@@ -53,7 +53,7 @@ export function geos_to_strings(name: string, geos: al.Geo[]): ObjString {
     return {objstrs, objfile};
 }
 
-export function objs_to_strings(name: string, objs: al.Obj[]): ObjMtlString {
+export function objs_to_strings(name: string, objs: al.SurfaceGroups[]): ObjMtlString {
     const objfile = name + '.obj';
     const mtlfile = name + '.mtl';
 

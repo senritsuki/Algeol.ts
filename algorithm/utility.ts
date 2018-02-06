@@ -1,45 +1,19 @@
-﻿
+﻿/** Utility - 便利な定数・関数 */
 
-// --------------------------------------------------------
-// 定数
+export * from './utility_const';
 
-/** Square Root of 2 - 2の平方根 (≒ 1.414) */
-export const r2 = Math.sqrt(2);
-/** Square Root of 3 - 3の平方根 (≒ 1.732) */
-export const r3 = Math.sqrt(3);
-/** Square Root of 5 - 5の平方根 (≒ 2.236) */
-export const r5 = Math.sqrt(5);
+import * as c from './utility_const';
 
-/** 円周率 (≒ 3.14) */
-export const pi = Math.PI;
-/** 円周率の2倍 (≒ 6.28) */
-export const pi2 = pi * 2;
-
-/** 弧度法における360度 (≒ 6.28) */
-export const deg360 = pi2;
-/** 弧度法における180度 (≒ 3.14) */
-export const deg180 = pi;
-/** 弧度法における90度 (≒ 1.57) */
-export const deg90 = pi / 2;
-/** 弧度法における60度 (≒ 1.05) */
-export const deg60 = pi / 3;
-/** 弧度法における45度 (≒ 0.79) */
-export const deg45 = pi / 4;
-/** 弧度法における30度 (≒ 0.52) */
-export const deg30 = pi / 6;
-/** 弧度法における15度 (≒ 0.26) */
-export const deg15 = pi / 12;
-/** 弧度法における5度 (≒ 0.087) */
-export const deg5 = pi / 36;
-/** 弧度法における1度 (≒ 0.01745) */
-export const deg1 = pi / 180;
-
-/** Golden Ratio - 黄金比 (≒ 1.618) */
-export const phi = (1 + r5) / 2;
-
-
-// --------------------------------------------------------
-// 関数
+export function normalize_rad(rad: number): number {
+    rad %= c.pi2;
+    if (c.pi2 < 0) rad += c.pi2;
+    return rad;
+}
+export function normalize_deg(deg: number): number {
+    deg %= 360;
+    if (deg < 0) deg += 360;
+    return deg;
+}
 
 /**
  * 度数法の角度を弧度法に変換
@@ -47,7 +21,7 @@ export const phi = (1 + r5) / 2;
  * (180) -> 3.14
  * (360) -> 6.28
  */
-export const deg_to_rad = (deg: number): number => pi2 * deg / 360;
+export const deg_to_rad = (deg: number): number => c.pi2 * deg / 360;
 
 /** 
  * 弧度法の角度を度数法に変換
@@ -55,7 +29,7 @@ export const deg_to_rad = (deg: number): number => pi2 * deg / 360;
  * (3.14) -> 180
  * (6.28) -> 360
  */
-export const rad_to_deg = (rad: number): number => 360 * rad / pi2;
+export const rad_to_deg = (rad: number): number => 360 * rad / c.pi2;
 
 /**
  * Factorial - 階乗
@@ -129,48 +103,6 @@ export function b_spline_basis(knot: float[], i: int, degree: int, t: float): fl
     }
 }
 
-/*
-# バーンスタイン基底関数
-def bernstein_basis(n: int, i: int, t: float) -> float:
-    return combination(n, i) * np.power(t, i) * np.power(1-t, n-i)
-
-# B-スプライン基底関数
-# @param n: 次数+1  3次曲線の場合は4
-def b_spline_basis(T: list, i: int, n: int, t: float) -> float:
-    if n <= 0:
-        if T[i] <= t and t < T[i+1]:
-            return 1.0
-        else:
-            return 0.0
-    else:
-        n1 = (t - T[i]) / (T[i+n] - T[i])
-        n2 = (T[i+n+1] - t) / (T[i+n+1] - T[i+1])
-        return n1 * b_spline_basis(T, i, n-1, t) + n2 * b_spline_basis(T, i+1, n-1, t)
-
-# ベジェ曲線
-# @param B: 制御点vのリスト  vはnp.arrayのベクトルとする
-# @param t: 時刻  値域は 0.0 .. 1.0
-# @return tに対応する位置v
-def besier(B: list, t: float) -> np.array:
-    N = len(B) - 1  # ベジェ曲線の次元 制御点が4つの場合、3次ベジェ曲線となる
-    p = np.array([0. for i in range(len(B[0]))])  # zero vector
-    for i in range(len(B)):
-        p += B[i] * bernstein_basis(N, i, t)
-    return p
-
-# B-スプライン曲線
-# @param P: 制御点vのリスト  vはnp.arrayのベクトルとする
-# @param T: ノットtのリスト  tは実数であり昇順であること T[i]<=T[i+1]
-# @param t: 時刻   値域は T[n] .. T[-n-1]  3次の場合、先頭と末尾の3つずつを除外するイメージ
-# @return tに対応する位置v
-def b_spline(P: list, T: list, t: float) -> np.array:
-    N = len(T) - len(P) - 1  # degree, ノット数T=制御点数P+次元数N+1
-    p = np.array([0. for i in range(len(P[0]))])  # zero vector
-    for i in range(len(P)):
-        p += P[i] * b_spline_basis(T, i, N, t)
-    return p
-*/
-
 /** 2関数の合成 */
 export const compose_2f = <R, S, T>(a: (r: R) => S, b: (s: S) => T): (r: R) => T => (r: R) => b(a(r));
 /** 3関数の合成 */
@@ -188,11 +120,16 @@ export function format_n(n: number, f: (n: number) => string): string {
     return b + f(n);
 }
 
+/** 1 -> '01' */
 export const format_02d = (n: number): string => format_n(n, n => ('00' + n).slice(-2));
+/** 1 -> '001' */
 export const format_03d = (n: number): string => format_n(n, n => ('000' + n).slice(-3));
 
+/** 3.1415 -> '3.1' */
 export const format_01f = (n: number): string => format_n(n, n => `${Math.floor(n)}.${Math.floor(n*10)%10}`);
+/** 3.1415 -> '3.14' */
 export const format_02f = (n: number): string => format_n(n, n => `${Math.floor(n)}.${format_02d(Math.floor(n*100)%100)}`);
+/** 3.1415 -> '3.141' */
 export const format_03f = (n: number): string => format_n(n, n => `${Math.floor(n)}.${format_03d(Math.floor(n*1000)%1000)}`);
 
 /** 非公開関数 */
@@ -215,3 +152,6 @@ export const cos_deg = compose_2f(deg_to_rad, Math.cos);
 /** タンジェント関数（引数は360で一周の度数法） */
 export const tan_deg = compose_2f(deg_to_rad, Math.tan);
 
+export function isin(min: number, max: number, n: number): boolean {
+    return min <= n && n <= max;
+}

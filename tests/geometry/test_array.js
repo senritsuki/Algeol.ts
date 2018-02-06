@@ -5,9 +5,9 @@ var ut = require("../../algorithm/utility");
 var seq = require("../../algorithm/sequence");
 var vc = require("../../algorithm/vector");
 var mx = require("../../algorithm/matrix");
-var al = require("../../geometry/geo");
-var prim = require("../../geometry/primitive");
-var multi = require("../../geometry/array");
+var al = require("../../geometry/surface_core");
+var prim = require("../../geometry/primitive_surface");
+var multi = require("../../geometry/surface_lib");
 var wo = require("../../decoder/wavefront");
 function save(name, geo) {
     var dir = 'test_geo_multi/';
@@ -17,11 +17,11 @@ function save(name, geo) {
     console.log('save: ' + path);
 }
 function test_al() {
-    al.duplicate_v3([vc.v3(0, 0, 0), vc.v3(1, 0, 0)], 1, al.m4s_to_v4maps([mx.trans_m4([1, 0, 0]), mx.trans_m4([2, 0, 0])])).forEach(function (vv) { return vv.forEach(function (v) { return console.log(v); }); });
+    al.duplicate_v3([vc.v3(0, 0, 0), vc.v3(1, 0, 0)], 1, al.m4s_to_v4maps([mx.affine3_trans([1, 0, 0]), mx.affine3_trans([2, 0, 0])])).forEach(function (vv) { return vv.forEach(function (v) { return console.log(v); }); });
     al.compose_m4([0, 1], [
-        function (d) { return mx.trans_m4([d + 1, 0, 0]); },
+        function (d) { return mx.affine3_trans([d + 1, 0, 0]); },
         function (_d) { return mx.scale_m4([2, 2, 2]); },
-        function (d) { return mx.trans_m4([0, d + 1, 0]); },
+        function (d) { return mx.affine3_trans([0, d + 1, 0]); },
     ]).forEach(function (m) { return console.log(m); });
 }
 exports.test_al = test_al;
@@ -59,15 +59,15 @@ function test() {
     save('prismArray_bipyramid', multi.prismArray_bipyramid(seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * Math.sin(rad), 0, 2 * -Math.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('antiprismArray_bipyramid', multi.antiprismArray_bipyramid(seq.arith(5, ut.deg30, ut.deg30).map(function (rad) { return prim.fn.circle.verts_i(12, 2 * Math.sin(rad), rad / 2, 2 * -Math.cos(rad)); }), vc.v3(0, 0, -2), vc.v3(0, 0, 2)));
     save('prismRing', multi.prismRing(al.duplicate_v3(prim.fn.circle.verts_i(4, 1), 1, al.compose_v4map(seq.arith(4), [
-        function (_d) { return mx.rot_x_m4(ut.deg90); },
-        function (_d) { return mx.trans_m4([3, 0, 0]); },
-        function (d) { return mx.rot_z_m4(ut.deg90 * d); },
+        function (_d) { return mx.affine3_rot_x(ut.deg90); },
+        function (_d) { return mx.affine3_trans([3, 0, 0]); },
+        function (d) { return mx.affine3_rot_z(ut.deg90 * d); },
     ]))));
     save('antiprismRing', multi.antiprismRing(al.duplicate_v3(prim.fn.circle.verts_i(4, 1), 1, al.compose_v4map(seq.arith(8), [
-        function (d) { return mx.rot_z_m4(ut.deg45 * d); },
-        function (_d) { return mx.rot_x_m4(ut.deg90); },
-        function (_d) { return mx.trans_m4([3, 0, 0]); },
-        function (d) { return mx.rot_z_m4(ut.deg45 * d); },
+        function (d) { return mx.affine3_rot_z(ut.deg45 * d); },
+        function (_d) { return mx.affine3_rot_x(ut.deg90); },
+        function (_d) { return mx.affine3_trans([3, 0, 0]); },
+        function (d) { return mx.affine3_rot_z(ut.deg45 * d); },
     ]))));
 }
 test();

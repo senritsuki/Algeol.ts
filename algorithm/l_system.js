@@ -1,5 +1,5 @@
 "use strict";
-/** L-system, Lindenmayer system */
+/** L-system (Lindenmayer system) */
 Object.defineProperty(exports, "__esModule", { value: true });
 var vc = require("./vector");
 var tt = require("./turtle");

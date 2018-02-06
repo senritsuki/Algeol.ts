@@ -2,7 +2,7 @@
 
 
 /** 配列の単項演算を行い、新しい配列を返す */
-export function op1(a: number[], dim: number, fn: (n1: number) => number): number[] {
+export function v_op1(a: number[], dim: number, fn: (n1: number) => number): number[] {
     const v: number[] = new Array(dim);
     for (let i = 0; i < dim; i++) {
         v[i] = fn(a[i]);
@@ -10,7 +10,7 @@ export function op1(a: number[], dim: number, fn: (n1: number) => number): numbe
     return v;
 }
 /** 配列同士の二項演算を行い、新しい配列を返す */
-export function op2(a: number[], b: number[], dim: number, fn: (n1: number, n2: number) => number): number[] {
+export function v_op2(a: number[], b: number[], dim: number, fn: (n1: number, n2: number) => number): number[] {
     const v: number[] = new Array(dim);
     for (let i = 0; i < dim; i++) {
         v[i] = fn(a[i], b[i]);
@@ -19,35 +19,35 @@ export function op2(a: number[], b: number[], dim: number, fn: (n1: number, n2: 
 }
 
 /** Addition 加算 */
-export function add(a: number[], b: number[]): number[] {
-    return op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 + n2);
+export function v_add(a: number[], b: number[]): number[] {
+    return v_op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 + n2);
 }
 /** Subtraction 減算 */
-export function sub(a: number[], b: number[]): number[] {
-    return op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 - n2);
+export function v_sub(a: number[], b: number[]): number[] {
+    return v_op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 - n2);
 }
 /** スカラー倍 */
-export function scalar(a: number[], n: number): number[] {
-    return op1(a, a.length, (n1) => n1 * n);
+export function v_scalar(a: number[], n: number): number[] {
+    return v_op1(a, a.length, (n1) => n1 * n);
 }
 /** 要素ごとの乗算 */
-export function el_mul(a: number[], b: number[]): number[] {
-    return op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 * n2);
+export function v_el_mul(a: number[], b: number[]): number[] {
+    return v_op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 * n2);
 }
 /** 要素ごとの除算 */
-export function el_div(a: number[], b: number[]): number[] {
-    return op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 / n2);
+export function v_el_div(a: number[], b: number[]): number[] {
+    return v_op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 / n2);
 }
 /** Inner Product, Dot Product 内積 */
-export function ip(a: number[], b: number[]): number {
-    return el_mul(a, b).reduce((a, b) => a + b);
+export function v_ip(a: number[], b: number[]): number {
+    return v_el_mul(a, b).reduce((a, b) => a + b);
 }
 /** Cross Product 2-D 外積（二次元） */
-export function cp2(a: number[], b: number[]): number {
+export function v_cp2(a: number[], b: number[]): number {
     return a[0] * b[1] - a[1] * b[0];
 }
 /** Cross Product 3-D 外積（三次元） */
-export function cp3(a: number[], b: number[]): number[] {
+export function v_cp3(a: number[], b: number[]): number[] {
     return [
         a[1] * b[2] - a[2] * b[1],
         a[2] * b[0] - a[0] * b[2],
@@ -55,31 +55,42 @@ export function cp3(a: number[], b: number[]): number[] {
     ];
 }
 /** 二つの方向ベクトルのなす角 radian */
-export function angle(a: number[], b: number[]): number {
+export function v_angle(a: number[], b: number[]): number {
     // 余弦定理 abs(a)*abs(b)*cos(rad) = ip(a,b) を用いればよい
-    const al = Math.sqrt(ip(a, a));
-    const bl = Math.sqrt(ip(b, b));
-    const i = ip(a, b);
+    const al = Math.sqrt(v_ip(a, a));
+    const bl = Math.sqrt(v_ip(b, b));
+    const i = v_ip(a, b);
     const rad = Math.acos(i / (al * bl));
     return rad;
 }
 
-
-export interface Vector<T extends Vector<T>> {
+/** ベクトルの次元によらない共通インターフェース */
+export interface VectorCommon {
     /** 生の値 */
     _v: number[];
 
+    /** 取得: 自身の次元 */
+    dim(): number;
     /** 取得: 自身のベクトルを表す数値配列. 複製を返す */
     array(): number[];
-    /** 取得: 複製 */
-    clone(): T;
 
-    /** 単項演算: 単位ベクトル化. clone() / length() と同値 */
-    unit(): T;
+    /** 文字列化 */
+    toString(): string;
+    /** 文字列化. 小数点第三位まで */
+    toString03f(): string;
+
     /** 単項演算: ベクトルの長さの2乗 */
     length2(): number;
     /** 単項演算: ベクトルの長さ */
     length(): number;
+}
+
+/** ベクトルの共通インターフェース */
+export interface Vector<T extends Vector<T>> extends VectorCommon {
+    /** 取得: 複製 */
+    clone(): T;
+    /** 単項演算: 単位ベクトル化. clone() / length() と同値 */
+    unit(): T;
 
     /** 二項演算: 加算 */
     add(dist: T|number[]): T;
@@ -95,67 +106,97 @@ export interface Vector<T extends Vector<T>> {
     ip(dist: T|number[]): number;
     /** 二項演算: 二つの方向ベクトルのなす角 */
     angle(dist: T|number[]): number;
+}
 
-    toString(): string;
-    toString03f(): string;
+class VectorBase<T extends Vector<T>> implements Vector<T> {
+    constructor(
+        public _v: number[],
+        public _f: (v: number[]) => T,
+    ) {}
+
+    dim(): number {
+        return this._v.length;
+    }
+    array(): number[] {
+        return this._v.slice(0);
+    }
+    toString(): string {
+        return `[${this._v.join(', ')}]`;
+    }
+    toString03f(): string {
+        return `[${this._v.map(n => Math.round(n*1000)/1000).join(', ')}]`;
+    }
+    length2(): number {
+        return v_ip(this._v, this._v);
+    }
+    length(): number {
+        return Math.sqrt(this.length2());
+    }
+
+    clone(): T {
+        return this._f(this._v);
+    }
+    unit(): T {
+        return this._f(v_scalar(this._v, 1 / this.length()));
+    }
+
+    add(dist: T|number[]): T {
+        return this._f(v_add(this._v, to_array_if(dist)));
+    }
+    sub(dist: T|number[]): T {
+        return this._f(v_sub(this._v, to_array_if(dist)));
+    }
+    el_mul(dist: T|number[]): T {
+        return this._f(v_el_mul(this._v, to_array_if(dist)));
+    }
+    el_div(dist: T|number[]): T {
+        return this._f(v_el_div(this._v, to_array_if(dist)));
+    }
+    scalar(n: number): T {
+        return this._f(v_scalar(this._v, n));
+    }
+    ip(dist: T|number[]): number {
+        return v_ip(this.array(), to_array_if(dist));
+    }
+    angle(dist: T|number[]): number {
+        return v_angle(this._v, to_array_if(dist));
+    }
 }
 
 /** 2D Vector - 2次元ベクトル */
-export interface V2 extends Vector<V2Impl> {
+export interface V2 extends Vector<V2> {
     x: number;
     y: number;
 
     /** 二項演算: 外積 */
-    cp(dist: V2Impl|number[]): number;
+    cp(dist: V2|number[]): number;
 }
 
 /** 2D Vector - 2次元ベクトル */
-class V2Impl implements V2 {
-    _v: number[];
-
+class V2Impl extends VectorBase<V2Impl> implements V2 {
     constructor(
         x: number,
         y: number,
     ) {
-        this._v = [x, y];
+        super([x, y], V2Impl.fm_array);
     }
 
     static fm_array(v: number[]): V2Impl {
         return new V2Impl(v[0], v[1]);
     }
 
-    // 取得
     get x(): number { return this._v[0]; }
     get y(): number { return this._v[1]; }
     set x(n: number) { this._v[0] = n; }
     set y(n: number) { this._v[1] = n; }
 
-    array = (): number[] => this._v.slice(0);
-    clone = (): V2Impl => new V2Impl(this.x, this.y);
-
-    // 単項演算
-
-    unit = (): V2Impl => this.scalar(1 / this.length());
-    length2 = (): number => this.ip(this);
-    length = (): number => Math.sqrt(this.length2());
-
-    // 二項演算
-
-    add = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(add(this._v, to_array_if(dist)));
-    sub = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(sub(this._v, to_array_if(dist)));
-    el_mul = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(el_mul(this._v, to_array_if(dist)));
-    el_div = (dist: V2Impl|number[]): V2Impl => V2Impl.fm_array(el_div(this._v, to_array_if(dist)));
-    scalar = (n: number): V2Impl => V2Impl.fm_array(scalar(this._v, n));
-    ip = (dist: V2Impl|number[]): number => ip(this.array(), to_array_if(dist));
-    cp = (dist: V2Impl|number[]): number => cp2(this._v, to_array_if(dist));
-    angle = (dist: V2Impl|number[]): number => angle(this._v, to_array_if(dist));
-
-    toString = (): string => `[${this._v.join(', ')}]`;
-    toString03f = (): string => `[${this._v.map(n => Math.round(n*1000)/1000).join(', ')}]`;
+    cp(dist: V2Impl|number[]): number {
+        return v_cp2(this._v, to_array_if(dist));
+    }
 }
 
 /** 3D Vector - 3次元ベクトル */
-export interface V3 extends Vector<V3Impl> {
+export interface V3 extends Vector<V3> {
     x: number;
     y: number;
     z: number;
@@ -164,26 +205,18 @@ export interface V3 extends Vector<V3Impl> {
     cp(dist: V3|number[]): V3;
 }
 
-class V3Impl implements V3 {
-    _v: number[];
-
+class V3Impl extends VectorBase<V3Impl> implements V3 {
     constructor(
         x: number,
         y: number,
         z: number,
     ) {
-        this._v = [x, y, z];
+        super([x, y, z], V3Impl.fm_array);
     }
 
     static fm_array(v: number[]): V3Impl {
         return new V3Impl(v[0], v[1], v[2]);
     }
-
-    // 単項演算
-
-    length2 = (): number => this.ip(this);
-    length = (): number => Math.sqrt(this.length2());
-    unit = (): V3Impl => this.scalar(1 / this.length());
 
     // 取得
     get x(): number { return this._v[0]; }
@@ -193,42 +226,27 @@ class V3Impl implements V3 {
     set y(n: number) { this._v[1] = n; }
     set z(n: number) { this._v[2] = n; }
 
-    array = (): number[] => this._v.slice(0);
-    clone = (): V3Impl => new V3Impl(this.x, this.y, this.z);
-
-    // 二項演算
-
-    add = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(add(this._v, to_array_if(dist)));
-    sub = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(sub(this._v, to_array_if(dist)));
-    el_mul = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(el_mul(this._v, to_array_if(dist)));
-    el_div = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(el_div(this._v, to_array_if(dist)));
-    scalar = (n: number): V3Impl => V3Impl.fm_array(scalar(this._v, n));
-    ip = (dist: V3Impl|number[]): number => ip(this.array(), to_array_if(dist));
-    cp = (dist: V3Impl|number[]): V3Impl => V3Impl.fm_array(cp3(this._v, to_array_if(dist)));
-    angle = (dist: V3Impl|number[]): number => angle(this._v, to_array_if(dist));
-
-    toString = (): string => `[${this._v.join(', ')}]`;
-    toString03f = (): string => `[${this._v.map(n => Math.round(n*1000)/1000).join(', ')}]`;
+    cp(dist: V3Impl|number[]): V3Impl {
+        return V3Impl.fm_array(v_cp3(this._v, to_array_if(dist)));
+    }
 }
 
 /** 4D Vector - 4次元ベクトル */
-export interface V4 extends Vector<V4Impl> {
+export interface V4 extends Vector<V4> {
     x: number;
     y: number;
     z: number;
     w: number;
 }
 
-class V4Impl implements V4 {
-    _v: number[];
-
+class V4Impl extends VectorBase<V4Impl> implements V4 {
     constructor(
         x: number,
         y: number,
         z: number,
         w: number,
     ) {
-        this._v = [x, y, z, w];
+        super([x, y, z, w], V4Impl.fm_array);
     }
 
     static fm_array(v: number[]): V4Impl {
@@ -244,28 +262,6 @@ class V4Impl implements V4 {
     set y(n: number) { this._v[1] = n; }
     set z(n: number) { this._v[2] = n; }
     set w(n: number) { this._v[3] = n; }
-
-    array = (): number[] => this._v.slice(0);
-    clone = (): V4Impl => new V4Impl(this.x, this.y, this.z, this.w);
-
-    // 単項演算
-
-    unit = (): V4Impl => this.scalar(1 / this.length());
-    length2 = (): number => this.ip(this);
-    length = (): number => Math.sqrt(this.length2());
-
-    // 二項演算
-
-    add = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(add(this._v, to_array_if(dist)));
-    sub = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(sub(this._v, to_array_if(dist)));
-    el_mul = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(el_mul(this._v, to_array_if(dist)));
-    el_div = (dist: V4Impl|number[]): V4Impl => V4Impl.fm_array(el_div(this._v, to_array_if(dist)));
-    scalar = (n: number): V4Impl => V4Impl.fm_array(scalar(this._v, n));
-    ip = (dist: V4Impl|number[]): number => ip(this.array(), to_array_if(dist));
-    angle = (dist: V4Impl|number[]): number => angle(this._v, to_array_if(dist));
-
-    toString = (): string => `[${this._v.join(', ')}]`;
-    toString03f = (): string => `[${this._v.map(n => Math.round(n*1000)/1000).join(', ')}]`;
 }
 
 
@@ -311,6 +307,13 @@ export function polar_to_v2(r: number, rad: number): V2 {
     return new V2Impl(x, y);
 }
 
+/** v2 -> [radius, radian] */
+export function v2_to_polar(v: V2): [number, number] {
+    const r = v.length();
+    const rad = Math.atan2(v.y, v.x);
+    return [r, rad];
+}
+
 /**
  * 円柱座標系から直交座標系の3次元ベクトルを生成する
  * @param r     極形式のxy成分の長さ
@@ -326,6 +329,21 @@ export function polar_to_v3(r: number, rad: number, z: number): V3 {
     const x = r * Math.cos(rad);
     const y = r * Math.sin(rad);
     return new V3Impl(x, y, z);
+}
+
+/** v3 -> [radius, radian, z] */
+export function v3_to_polar(v: V3): [number, number, number] {
+    const r = v3_to_v2(v).length();
+    const rad = Math.atan2(v.y, v.x);
+    return [r, rad, v.z];
+}
+/** v3 -> [radius, radian_horizontal, radian_vertical] */
+export function v3_to_sphere(v: V3): [number, number, number] {
+    const r = v.length();
+    const r_h = v3_to_v2(v).length();
+    const rad_h = Math.atan2(v.y, v.x);
+    const rad_v = Math.atan2(v.z, r_h);
+    return [r, rad_h, rad_v];
 }
 
 /**
