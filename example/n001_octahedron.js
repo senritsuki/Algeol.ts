@@ -26,7 +26,7 @@ seq.range_step(-radius, radius, 1).forEach(function (x) {
     });
 });
 var duplicater = al.compose_v4map(sq, [
-    function (v) { return mx.affine3_trans(v); },
+    function (v) { return mx.affine3_translate(v); },
 ]);
 var octahedrons = al.duplicate_v3(octahedron.verts, 1, duplicater)
     .map(function (v) { return new al.Surfaces(v, octahedron.faces); });

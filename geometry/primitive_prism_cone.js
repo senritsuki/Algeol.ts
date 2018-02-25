@@ -7,16 +7,16 @@ var prism_z_min = 0;
 var prism_z_max = 1;
 /** 任意の平面形状の角柱 */
 function Prism(p2) {
-    return new prim.BasePrimitive(function (v) {
+    return prim.primitive3(function (v) {
         if (v.z < prism_z_min || v.z > prism_z_max)
             return false;
-        return p2.b2(vc.v3_to_v2(v));
-    }, function () { return sfl.extrude2(p2.sf, prism_z_max); });
+        return p2.bool(vc.v3_to_v2(v));
+    }, function () { return sfl.extrude2(p2.verts, prism_z_max); });
 }
 exports.Prism = Prism;
 /** 任意の平面形状の角錐 */
 function Cone(p2) {
-    return new prim.BasePrimitive(function (v) {
+    return prim.primitive3(function (v) {
         if (v.z < prism_z_min || v.z > prism_z_max)
             return false;
         if (v.z == prism_z_max) {
@@ -25,8 +25,8 @@ function Cone(p2) {
         else {
             v = v.scalar(1 / (prism_z_max - v.z));
         }
-        return p2.b2(vc.v3_to_v2(v));
-    }, function () { return sfl.extrude2_cone(p2.sf, prism_z_max); });
+        return p2.bool(vc.v3_to_v2(v));
+    }, function () { return sfl.extrude2_cone(p2.verts, prism_z_max); });
 }
 exports.Cone = Cone;
 /** 半径1の円に外接する正方形 */

@@ -25,7 +25,7 @@ seq.range_step(-radius, radius, 1).forEach(x => {
 });
 
 const duplicater = al.compose_v4map(sq, [
-    v => mx.affine3_trans(v),
+    v => mx.affine3_translate(v),
 ]);
 
 const octahedrons = al.duplicate_v3(octahedron.verts, 1, duplicater)

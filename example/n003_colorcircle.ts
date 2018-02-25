@@ -13,8 +13,8 @@ const geo = prim.prism(12, 0.5, 1.0);
 const sq = seq.arith(num);
 
 const duplicater = al.compose_v4map(sq, [
-    _ => mx.affine3_trans([0, 5, 0]),
-    n => mx.affine3_rot_z(ut.deg_to_rad(-n * step)),
+    _ => mx.affine3_translate([0, 5, 0]),
+    n => mx.affine3_rotate_z(ut.deg_to_rad(-n * step)),
 ]);
 
 const geos = al.duplicate_f(geo, duplicater);

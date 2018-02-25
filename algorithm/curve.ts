@@ -52,7 +52,7 @@ export function ray3_to_ray2(ray3: Ray3): Ray2 {
 }
 
 export function rot_ray3d_z(ray3: Ray3, rad: number): Ray3 {
-    const d = mx.m3_rot_z(rad).map(ray3.d);
+    const d = mx.m3_rotate_z(rad).map(ray3.d);
     return ray(ray3.c, d);
 }
 
@@ -212,13 +212,12 @@ class NURBS<T extends vc.Vector<T>> extends CurveBase<T, NURBS<T>> {
         const degree = this.degree;
         const knots = this.knots;
         const weights = this.weights;
-        const index = seq.arith(controls.length);
-        const n1 = index
-            .map(i => weights[i] * ut.b_spline_basis(knots, i, degree, t))
+        const b_w = seq.arith(controls.length)
+            .map(i => weights[i] * ut.b_spline_basis(knots, i, degree, t));
+        const n1 = b_w
             .map((n, i) => controls[i].scalar(n))
             .reduce((a, b) => a.add(b));
-        const n2 = index
-            .map(i => weights[i] * ut.b_spline_basis(knots, i, degree, t))
+        const n2 = b_w
             .reduce((a, b) => a + b);
         return n1.scalar(1 / n2);
     }
@@ -438,8 +437,8 @@ export function bezier3_interpolate_arc(p0: V3, p1: V3, o: V3): Curve3 {
     d1._v[2] = 0;
     const rad = d0.angle(d1);
     const n = bezier_arc_p(rad) * d0.length();
-    const e0 = mx.m3_rot_z(ut.deg90).map(d0).unit().scalar(n);
-    const e1 = mx.m3_rot_z(-ut.deg90).map(d1).unit().scalar(n);
+    const e0 = mx.m3_rotate_z(ut.deg90).map(d0).unit().scalar(n);
+    const e1 = mx.m3_rotate_z(-ut.deg90).map(d1).unit().scalar(n);
     const c0 = p0.add(e0);
     const c1 = p1.add(e1);
     const controls = [p0, c0, c1, p1];

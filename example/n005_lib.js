@@ -119,8 +119,8 @@ exports.to_xy_hexagon_basis_deg30 = to_xy_hexagon_basis_deg30;
 function xygeo_scale_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
     var maps = al.compose_v4map(z_rates, [
-        function (v) { return mx.scale_m4([v.x, v.y, 1]); },
-        function (v) { return mx.affine3_trans([0, 0, v.z]); },
+        function (v) { return mx.affine3_scale([v.x, v.y, 1]); },
+        function (v) { return mx.affine3_translate([0, 0, v.z]); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -129,9 +129,9 @@ exports.xygeo_scale_trans = xygeo_scale_trans;
 function xygeo_scale_rot_trans(xy_verts, z_num, z) {
     var z_rates = seq.range(0, 1, z_num).map(function (t) { return z(t); });
     var maps = al.compose_v4map(z_rates, [
-        function (v) { return mx.scale_m4([v.x, v.x, 1]); },
-        function (v) { return mx.affine3_rot_z(v.y); },
-        function (v) { return mx.affine3_trans([0, 0, v.z]); },
+        function (v) { return mx.affine3_scale([v.x, v.x, 1]); },
+        function (v) { return mx.affine3_rotate_z(v.y); },
+        function (v) { return mx.affine3_translate([0, 0, v.z]); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -139,9 +139,9 @@ function xygeo_scale_rot_trans(xy_verts, z_num, z) {
 exports.xygeo_scale_rot_trans = xygeo_scale_rot_trans;
 function xygeo_z_scale_rot(xy_verts, zsr_list) {
     var maps = al.compose_v4map(zsr_list, [
-        function (zsr) { return mx.affine3_trans([0, 0, zsr.x]); },
-        function (zsr) { return mx.scale_m4([zsr.y, zsr.y, 1]); },
-        function (zsr) { return mx.affine3_rot_z(zsr.z); },
+        function (zsr) { return mx.affine3_translate([0, 0, zsr.x]); },
+        function (zsr) { return mx.affine3_scale([zsr.y, zsr.y, 1]); },
+        function (zsr) { return mx.affine3_rotate_z(zsr.z); },
     ]);
     var polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -149,7 +149,7 @@ function xygeo_z_scale_rot(xy_verts, zsr_list) {
 exports.xygeo_z_scale_rot = xygeo_z_scale_rot;
 function duplicate_rot_z(xy_verts, count, deg) {
     var maps = al.compose_v4map(seq.arith(count), [
-        function (i) { return mx.affine3_rot_z(ut.deg_to_rad(i * deg)); },
+        function (i) { return mx.affine3_rotate_z(ut.deg_to_rad(i * deg)); },
     ]);
     var new_verts = al.duplicate_v3(xy_verts, 1, maps);
     return prima.flatten(new_verts);
@@ -164,7 +164,7 @@ function duplicate_rot_z_120_3(xy_verts) {
 }
 exports.duplicate_rot_z_120_3 = duplicate_rot_z_120_3;
 function v3_rot_z(v, deg) {
-    return mx.m3_rot_z(ut.deg_to_rad(deg)).map(v);
+    return mx.m3_rotate_z(ut.deg_to_rad(deg)).map(v);
 }
 exports.v3_rot_z = v3_rot_z;
 function ray3_rot_z_scale(cd, deg, len) {
@@ -230,10 +230,10 @@ exports.FloorBase = FloorBase;
 var RegularFloor = /** @class */ (function (_super) {
     __extends(RegularFloor, _super);
     function RegularFloor(o, connectors, 
-        /** 頂点数 */
-        n, 
-        /** 内接円半径, 頂点の開始角度（0ならx軸正, 90ならy軸正） */
-        base) {
+    /** 頂点数 */
+    n, 
+    /** 内接円半径, 頂点の開始角度（0ならx軸正, 90ならy軸正） */
+    base) {
         if (base === void 0) { base = vc.v3_unit_x; }
         var _this = _super.call(this, o, connectors) || this;
         _this.n = n;
@@ -263,14 +263,14 @@ var RegularFloor = /** @class */ (function (_super) {
 }(FloorBase));
 exports.RegularFloor = RegularFloor;
 function floor_regular(o, 
-    /** 頂点数 */
-    n, 
-    /** 内接円半径 */
-    ir, 
-    /** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
-    width_rate, 
-    /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
-    deg_offset) {
+/** 頂点数 */
+n, 
+/** 内接円半径 */
+ir, 
+/** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
+width_rate, 
+/** 頂点の開始角度（0ならx軸正, 90ならy軸正） */
+deg_offset) {
     /** コネクタの幅（辺の幅と同じなら1.0, 半分なら0.5） */
     if (width_rate === void 0) { width_rate = 1.0; }
     /** 頂点の開始角度（0ならx軸正, 90ならy軸正） */

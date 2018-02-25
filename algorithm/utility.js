@@ -156,3 +156,7 @@ function isin(min, max, n) {
     return min <= n && n <= max;
 }
 exports.isin = isin;
+function xor(b1, b2) {
+    return b1 && b2 ? false : !(b1 || b2) ? false : true;
+}
+exports.xor = xor;

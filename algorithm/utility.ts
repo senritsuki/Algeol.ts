@@ -155,3 +155,7 @@ export const tan_deg = compose_2f(deg_to_rad, Math.tan);
 export function isin(min: number, max: number, n: number): boolean {
     return min <= n && n <= max;
 }
+
+export function xor(b1: boolean, b2: boolean): boolean {
+    return b1 && b2 ? false : !(b1 || b2) ? false : true;
+}

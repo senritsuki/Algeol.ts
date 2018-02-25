@@ -4,7 +4,7 @@ import * as vc from "../algorithm/vector";
 import * as mx from "../algorithm/matrix";
 
 import * as al from '../geometry/surface_core';
-import * as prim2 from '../geometry/primitive2';
+import * as prim2 from '../geometry/primitive';
 import * as lib from './n005_lib';
 
 import * as wf from '../decoder/wavefront';
@@ -13,7 +13,7 @@ import * as saver from './n003_save';
 const v3 = vc.v3;
 
 
-export function save(objs: al.SurfaceGroups[]) {
+export function save(objs: al.SurfaceModel[]) {
     saver.save_objmtl(wf.objs_to_strings('./_obj/n006', objs));
 }
 
@@ -21,8 +21,8 @@ export function main() {
     const square = lib.floor_square(v3(0, 0, 3), 1);
 
     const duplicate_square = al.compose_v4map(seq.arith(4), [
-        _ => mx.affine3_trans(v3(5, 0, 0)),
-        i => mx.affine3_rot_z(ut.deg90 * i),
+        _ => mx.affine3_translate(v3(5, 0, 0)),
+        i => mx.affine3_rotate_z(ut.deg90 * i),
     ])
     const squares = al.duplicate_f(square, duplicate_square);
     const geos_square = squares.map(rf => lib.geo_rfloor_simple(rf));
@@ -34,7 +34,8 @@ export function main() {
 
     const geos_route = routes.map(route => lib.geo_route_planes(route, 24));
 
-    const geo_plane = prim2.plane(prim2.circle_i(24, 10), prim2.to_v3_xy(0));
+    //const geo_plane = prim2.plane(prim2.circle_i(24, 10), prim2.to_v3_xy(0));
+    const geo_plane = prim2.bind(prim2.circle(24), [prim2.af2.scale([10, 10])]).to_surfaces();
     
     save([
         al.merge_surfaces(geos_square, lib.lch(18, 0, 0)),
@@ -73,8 +74,8 @@ export function test_build_curve3() {
     console.log(square.connectors[0].toString());
     console.log(square.connectors[3].toString());
     const duplicate_square = al.compose_v4map(seq.arith(2), [
-        _ => mx.affine3_trans(v3(5, 0, 0)),
-        i => mx.affine3_rot_z(ut.deg90 * i),
+        _ => mx.affine3_translate(v3(5, 0, 0)),
+        i => mx.affine3_rotate_z(ut.deg90 * i),
     ]);
     const squares = al.duplicate_f(square, duplicate_square);
     

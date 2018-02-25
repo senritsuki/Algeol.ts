@@ -53,7 +53,7 @@ export function geos_to_strings(name: string, geos: al.Surfaces[]): ObjString {
     return {objstrs, objfile};
 }
 
-export function objs_to_strings(name: string, objs: al.SurfaceGroups[]): ObjMtlString {
+export function objs_to_strings(name: string, objs: al.SurfaceModel[]): ObjMtlString {
     const objfile = name + '.obj';
     const mtlfile = name + '.mtl';
 

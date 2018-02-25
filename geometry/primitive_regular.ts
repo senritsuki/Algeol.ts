@@ -6,8 +6,8 @@ import * as sfl from './surface_lib';
 import * as prim from './primitive_core';
 
 /** 半径1の球 */
-export function Sphere(div_horizontal: number, div_vertical: number): prim.Primitive {
-    return new prim.BasePrimitive(b3_sphere, build_sf_sphere(div_horizontal, div_vertical));
+export function Sphere(div_horizontal: number, div_vertical: number): prim.Primitive3s {
+    return prim.primitive3(b3_sphere, build_sf_sphere(div_horizontal, div_vertical));
 }
 
 /** 半径1の球 */
@@ -47,12 +47,12 @@ export function sf_octahedron(): sf.Surfaces {
 }
 
 /** 半径1の球に外接する立方体 */
-export function Cube(): prim.Primitive {
-    return new prim.BasePrimitive(b3_cube, sf_cube);
+export function Cube(): prim.Primitive3s {
+    return prim.primitive3(b3_cube, sf_cube);
 }
 /** 半径1の球に内接する正八面体 */
-export function Octahedron(): prim.Primitive {
-    return new prim.BasePrimitive(b3_octahedron, sf_octahedron);
+export function Octahedron(): prim.Primitive3s {
+    return prim.primitive3(b3_octahedron, sf_octahedron);
 }
 
 /** 半径1の球の一部 */

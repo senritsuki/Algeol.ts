@@ -5,7 +5,7 @@ var ut = require("../algorithm/utility");
 var sq = require("../algorithm/sequence");
 var vc = require("../algorithm/vector");
 var al = require("./surface_core");
-var prim2 = require("./primitive2");
+var prim2 = require("./primitive_plane");
 var geometry = function (verts, faces) { return new al.Surfaces(verts, faces); };
 /** プリミティブオブジェクト生成用関数群 */
 var fn;
@@ -234,14 +234,14 @@ var fn;
         function verts_i(n_gonal, r, t, z) {
             if (t === void 0) { t = 0; }
             if (z === void 0) { z = 0; }
-            return prim2.circle_i(n_gonal, r, t).map(function (v) { return vc.v2_to_v3(v, z); });
+            return prim2.circle_verts(n_gonal, r, t).map(function (v) { return vc.v2_to_v3(v, z); });
         }
         circle.verts_i = verts_i;
         /** 円に外接するn角形 */
         function verts_c(n_gonal, r, t, z) {
             if (t === void 0) { t = 0; }
             if (z === void 0) { z = 0; }
-            return prim2.circle_c(n_gonal, r, t).map(function (v) { return vc.v2_to_v3(v, z); });
+            return prim2.circle_verts_c(n_gonal, r, t).map(function (v) { return vc.v2_to_v3(v, z); });
         }
         circle.verts_c = verts_c;
     })(circle = fn.circle || (fn.circle = {}));

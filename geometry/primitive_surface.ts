@@ -4,7 +4,7 @@ import * as ut from "../algorithm/utility";
 import * as sq from "../algorithm/sequence";
 import * as vc from "../algorithm/vector";
 import * as al from "./surface_core";
-import * as prim2 from "./primitive2";
+import * as prim2 from "./primitive_plane";
 
 type V3 = vc.V3;
 const geometry = (verts: V3[], faces: number[][]) => new al.Surfaces(verts, faces);
@@ -216,11 +216,11 @@ export namespace fn {
     export namespace circle {
         /** 円に内接するn角形 */
         export function verts_i(n_gonal: number, r: number, t: number = 0, z: number = 0): V3[] {
-            return prim2.circle_i(n_gonal, r, t).map(v => vc.v2_to_v3(v, z));
+            return prim2.circle_verts(n_gonal, r, t).map(v => vc.v2_to_v3(v, z));
         }
         /** 円に外接するn角形 */
         export function verts_c(n_gonal: number, r: number, t: number = 0, z: number = 0): V3[] {
-            return prim2.circle_c(n_gonal, r, t).map(v => vc.v2_to_v3(v, z));
+            return prim2.circle_verts_c(n_gonal, r, t).map(v => vc.v2_to_v3(v, z));
         }
     }
     /** Prism - 角柱 */

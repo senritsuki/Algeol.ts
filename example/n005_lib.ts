@@ -110,8 +110,8 @@ export function to_xy_hexagon_basis_deg30(d_inner: number): V3[] {
 export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Surfaces {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
     const maps = al.compose_v4map(z_rates, [
-        v => mx.scale_m4([v.x, v.y, 1]),
-        v => mx.affine3_trans([0, 0, v.z]),
+        v => mx.affine3_scale([v.x, v.y, 1]),
+        v => mx.affine3_translate([0, 0, v.z]),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -120,9 +120,9 @@ export function xygeo_scale_trans(xy_verts: V3[], z_num: number, z: (t: number) 
 export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: number) => V3): al.Surfaces {
     const z_rates = seq.range(0, 1, z_num).map(t => z(t));
     const maps = al.compose_v4map(z_rates, [
-        v => mx.scale_m4([v.x, v.x, 1]),
-        v => mx.affine3_rot_z(v.y),
-        v => mx.affine3_trans([0, 0, v.z]),
+        v => mx.affine3_scale([v.x, v.x, 1]),
+        v => mx.affine3_rotate_z(v.y),
+        v => mx.affine3_translate([0, 0, v.z]),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -130,9 +130,9 @@ export function xygeo_scale_rot_trans(xy_verts: V3[], z_num: number, z: (t: numb
 
 export function xygeo_z_scale_rot(xy_verts: V3[], zsr_list: V3[]): al.Surfaces {
     const maps = al.compose_v4map(zsr_list, [
-        zsr => mx.affine3_trans([0, 0, zsr.x]),
-        zsr => mx.scale_m4([zsr.y, zsr.y, 1]),
-        zsr => mx.affine3_rot_z(zsr.z),
+        zsr => mx.affine3_translate([0, 0, zsr.x]),
+        zsr => mx.affine3_scale([zsr.y, zsr.y, 1]),
+        zsr => mx.affine3_rotate_z(zsr.z),
     ]);
     const polygons = al.duplicate_v3(xy_verts, 1, maps);
     return prima.prismArray(polygons);
@@ -141,7 +141,7 @@ export function xygeo_z_scale_rot(xy_verts: V3[], zsr_list: V3[]): al.Surfaces {
 
 export function duplicate_rot_z(xy_verts: V3[], count: number, deg: number): V3[] {
     const maps = al.compose_v4map(seq.arith(count), [
-        i => mx.affine3_rot_z(ut.deg_to_rad(i * deg)),
+        i => mx.affine3_rotate_z(ut.deg_to_rad(i * deg)),
     ]);
     const new_verts = al.duplicate_v3(xy_verts, 1, maps);
     return prima.flatten(new_verts); 
@@ -156,7 +156,7 @@ export function duplicate_rot_z_120_3(xy_verts: V3[]): V3[] {
 
 
 export function v3_rot_z(v: V3, deg: number): V3 {
-    return mx.m3_rot_z(ut.deg_to_rad(deg)).map(v);
+    return mx.m3_rotate_z(ut.deg_to_rad(deg)).map(v);
 }
 export function ray3_rot_z_scale(cd: cv.Ray3, deg: number, len: number): cv.Ray3 {
     const d = v3_rot_z(cd.d, deg).scalar(len);

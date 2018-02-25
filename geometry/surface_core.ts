@@ -19,19 +19,19 @@ export function apply<T extends IMap<T>>(sf: T, m: mx.M4): T {
     return sf.map(v => m.map(v));
 }
 export function translate<T extends IMap<T>>(sf: T, v_add: number[]|vc.V3): T {
-    return apply(sf, mx.affine3_trans(v_add));
+    return apply(sf, mx.affine3_translate(v_add));
 }
 export function rotate_x<T extends IMap<T>>(sf: T, rad: number): T {
-    return apply(sf, mx.affine3_rot_x(rad));
+    return apply(sf, mx.affine3_rotate_x(rad));
 }
 export function rotate_y<T extends IMap<T>>(sf: T, rad: number): T {
-    return apply(sf, mx.affine3_rot_y(rad));
+    return apply(sf, mx.affine3_rotate_y(rad));
 }
 export function rotate_z<T extends IMap<T>>(sf: T, rad: number): T {
-    return apply(sf, mx.affine3_rot_z(rad));
+    return apply(sf, mx.affine3_rotate_z(rad));
 }
 export function scale<T extends IMap<T>>(sf: T, v: number[]|vc.V3): T {
-    return apply(sf, mx.scale_m4(v));
+    return apply(sf, mx.affine3_scale(v));
 }
 
 
@@ -55,6 +55,32 @@ export abstract class MapBase<T extends MapBase<T>> implements IMap<MapBase<T>> 
     }
 }
 
+/** マテリアル。名前と拡散光 */
+export class Material {
+    constructor(
+        /** マテリアル名 */
+        public name: string,
+        /** 拡散光色 */
+        public diffuse: RGB01|null = null,
+    ){}
+}
+/** 1つ以上の面、名前、マテリアル */
+export class SurfacesMaterial {
+    constructor(
+        /** 面リスト */
+        public faces: IndexList[],
+        /** 面リストの名前 */
+        public name: string|null,
+        /** 面リストに対応するマテリアル */
+        public material: Material|null = null,
+    ){}
+
+    clone_offset(index_offset: number): SurfacesMaterial {
+        const new_faces = this.faces.map(f => shift_offset(f, index_offset));
+        return new SurfacesMaterial(new_faces, this.name, this.material);
+    }
+}
+/** 頂点リスト、1つ以上の面 */
 export class Surfaces extends MapBase<Surfaces> {
     constructor(
         verts: vc.V3[],
@@ -66,63 +92,53 @@ export class Surfaces extends MapBase<Surfaces> {
         return new Surfaces(this.verts, this.faces);
     }
 }
-export class Material {
-    constructor(
-        public name: string,
-        public diffuse: RGB01|null = null,
-    ){}
-}
-export class SurfaceGroup {
-    constructor(
-        public name: string|null,
-        public faces: IndexList[],
-        public material: Material|null = null,
-    ){}
-
-    clone_offset(index_offset: number): SurfaceGroup {
-        const new_faces = this.faces.map(f => shift_offset(f, index_offset));
-        return new SurfaceGroup(this.name, new_faces, this.material);
-    }
-}
-export class SurfaceGroups extends MapBase<SurfaceGroups> {
+/**
+ * モデル名、頂点リスト、面情報リスト
+ * SurfaceModel 1--1 name
+ *              1--* verts
+ *              1--* faces 1--1 name
+ *                         1--1 material
+ *                         1--* faces
+ */
+export class SurfaceModel extends MapBase<SurfaceModel> {
     constructor(
         public name: string|null,
         verts: vc.V3[],
-        public faces: SurfaceGroup[],
+        public faces: SurfacesMaterial[],
     ){
         super(verts);
     }
-    clone(): SurfaceGroups {
-        return new SurfaceGroups(this.name, this.verts, this.faces);
+    clone(): SurfaceModel {
+        return new SurfaceModel(this.name, this.verts, this.faces);
     }
 }
 
-export function merge_surfaces(sf: Surfaces|Surfaces[], material: Material|null, name: string|null=null): SurfaceGroups {
+export function merge_surfaces(sf: Surfaces|Surfaces[], material: Material|null, name: string|null=null): SurfaceModel {
     if (sf instanceof Array) {
         return _geos_to_obj(sf, name, _ => material);
     } else {
-        return new SurfaceGroups(name, sf.verts, [new SurfaceGroup(name, sf.faces, material)]);
+        return new SurfaceModel(name, sf.verts, [new SurfacesMaterial(sf.faces, name, material)]);
     }
 }
 
-export function merge_surfaces_materials(sf: Surfaces[], materials: Material[], name: string|null=null): SurfaceGroups {
+export function merge_surfaces_materials(sf: Surfaces[], materials: Material[], name: string|null=null): SurfaceModel {
     return _geos_to_obj(sf, name, i => materials[i]);
 }
 
-function _geos_to_obj(geos: Surfaces[], name: string|null, f_material: (i: number) => Material|null): SurfaceGroups {
+function _geos_to_obj(geos: Surfaces[], name: string|null, f_material: (i: number) => Material|null): SurfaceModel {
     let verts: vc.V3[] = [];
-    let faces: SurfaceGroup[] = [];
+    let faces: SurfacesMaterial[] = [];
     let index = 0;
     geos.forEach((geo, i) => {
         verts = verts.concat(geo.verts);
         const f = geo.faces.map(f => shift_offset(f, index));
         const m = f_material(i);
         const m_name = m != null ? m.name : null;
-        const fg = new SurfaceGroup(m_name, f, m);
+        const fg = new SurfacesMaterial(f, m_name, m);
         faces.push(fg);
         index += geo.verts.length;
     });
-    return new SurfaceGroups(name, verts, faces);
+    return new SurfaceModel(name, verts, faces);
 }
 
 export function concat_surfaces(sf: Surfaces[]): Surfaces {
@@ -136,16 +152,16 @@ export function concat_surfaces(sf: Surfaces[]): Surfaces {
     });
     return new Surfaces(verts, faces);
 }
-export function concat_surface_groups(objs: SurfaceGroups[], name: string|null=null): SurfaceGroups {
+export function concat_surface_models(objs: SurfaceModel[], name: string|null=null): SurfaceModel {
     let verts: vc.V3[] = [];
-    let faces: SurfaceGroup[] = [];
+    let faces: SurfacesMaterial[] = [];
     let index = 0;
     objs.forEach(obj => {
         verts = verts.concat(obj.verts);
         faces = faces.concat(obj.faces.map(f => f.clone_offset(index)));
         index += obj.verts.length;
     });
-    return new SurfaceGroups(name, verts, faces);
+    return new SurfaceModel(name, verts, faces);
 }
 
 

@@ -116,6 +116,7 @@ class M2Impl extends MatrixBase<M2Impl, vc.V2> implements M2 {
 
 /** Square Matrix of order 3 - 3次元正方行列 */
 export interface M3 extends Matrix<M3, vc.V3> {
+    map_v2(v: vc.V2, w: number): vc.V2;
 }
 
 class M3Impl extends MatrixBase<M3Impl, vc.V3> implements M3 {
@@ -133,6 +134,9 @@ class M3Impl extends MatrixBase<M3Impl, vc.V3> implements M3 {
 
     dim(): number {
         return M3Impl.Dim;
+    }
+    map_v2(v: vc.V2, w: number): vc.V2 {
+        return vc.array_to_v2(m_map(this._m, v._v.concat(w)));
     }
 }
 
@@ -233,7 +237,7 @@ export function map_m4_v3(vl: vc.V3[], m4: M4, w: number = 1): vc.V3[] {
 }
 
 /** 平行移動写像 */
-export function affine2_trans(v: number[]|vc.V2): M3 {
+export function affine2_translate(v: number[]|vc.V2): M3 {
     v = v instanceof Array ? v : v._v;
     return M3Impl.FromRows([
         [1, 0, v[0]],
@@ -242,7 +246,7 @@ export function affine2_trans(v: number[]|vc.V2): M3 {
     ]);
 }
 /** 平行移動写像 */
-export function affine3_trans(v: number[]|vc.V3): M4 {
+export function affine3_translate(v: number[]|vc.V3): M4 {
     v = v instanceof Array ? v : v._v;
     return M4Impl.FromRows([
         [1, 0, 0, v[0]],
@@ -261,7 +265,7 @@ export function m2_scale(v: number[]|vc.V2): M2 {
     ]);
 }
 /** 拡大縮小写像 */
-export function scale_m3(v: number[]|vc.V3): M3 {
+export function m3_scale(v: number[]|vc.V3): M3 {
     v = v instanceof Array ? v : v._v;
     return M3Impl.FromRows([
         [v[0], 0, 0],
@@ -270,15 +274,11 @@ export function scale_m3(v: number[]|vc.V3): M3 {
     ]);
 }
 /** 拡大縮小写像 */
-export function scale_m4(v: number[]|vc.V3): M4 {
-    return m3_to_m4(scale_m3(v));
-}
-/** 拡大縮小写像 */
 export const affine2_scale = ut.compose_2f(m2_scale, m2_to_m3);
 /** 拡大縮小写像 */
-export const affine3_scale = ut.compose_2f(scale_m3, m3_to_m4);
+export const affine3_scale = ut.compose_2f(m3_scale, m3_to_m4);
 
-export function m2_rot(rad: number): M2 {
+export function m2_rotate(rad: number): M2 {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
     return M2Impl.FromRows([
@@ -287,7 +287,7 @@ export function m2_rot(rad: number): M2 {
     ]);
 }
 /** x軸回転写像 */
-export function m3_rot_x(rad: number): M3 {
+export function m3_rotate_x(rad: number): M3 {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -297,7 +297,7 @@ export function m3_rot_x(rad: number): M3 {
     ]);
 }
 /** y軸回転写像 */
-export function m3_rot_y(rad: number): M3 {
+export function m3_rotate_y(rad: number): M3 {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -307,7 +307,7 @@ export function m3_rot_y(rad: number): M3 {
     ]);
 }
 /** z軸回転写像 */
-export function m3_rot_z(rad: number): M3 {
+export function m3_rotate_z(rad: number): M3 {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
     return M3Impl.FromRows([
@@ -317,13 +317,13 @@ export function m3_rot_z(rad: number): M3 {
     ]);
 }
 
-export const affine2_rot = ut.compose_2f(m2_rot, m2_to_m3);
+export const affine2_rotate = ut.compose_2f(m2_rotate, m2_to_m3);
 /** x軸回転写像 */
-export const affine3_rot_x = ut.compose_2f(m3_rot_x, m3_to_m4);
+export const affine3_rotate_x = ut.compose_2f(m3_rotate_x, m3_to_m4);
 /** y軸回転写像 */
-export const affine3_rot_y = ut.compose_2f(m3_rot_y, m3_to_m4);
+export const affine3_rotate_y = ut.compose_2f(m3_rotate_y, m3_to_m4);
 /** z軸回転写像 */
-export const affine3_rot_z = ut.compose_2f(m3_rot_z, m3_to_m4);
+export const affine3_rotate_z = ut.compose_2f(m3_rotate_z, m3_to_m4);
 
 
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
@@ -333,8 +333,8 @@ export function rot_yz_x_m3(v3: vc.V3): M3 {
     const z = v3.z;
     const radY = -Math.atan2(z, Math.sqrt(x * x + y * y));
     const radZ = Math.atan2(y, x);
-    const mxRotY = m3_rot_y(radY);
-    const mxRotZ = m3_rot_z(radZ);
+    const mxRotY = m3_rotate_y(radY);
+    const mxRotZ = m3_rotate_z(radZ);
     return mxRotZ.mul(mxRotY);
 }
 /** x軸ベクトルをv3ベクトルと平行にする回転写像 */
@@ -347,8 +347,8 @@ export function rot_yz_z_m3(v3: vc.V3): M3 {
     const z = v3.z;
     const radY = ut.deg90 - Math.atan2(z, Math.sqrt(x * x + y * y));
     const radZ = Math.atan2(y, x);
-    const mxRotY = m3_rot_y(radY);
-    const mxRotZ = m3_rot_z(radZ);
+    const mxRotY = m3_rotate_y(radY);
+    const mxRotZ = m3_rotate_z(radZ);
     return mxRotZ.mul(mxRotY);
 }
 /** z軸ベクトルをv3ベクトルと平行にする回転写像 */
@@ -357,18 +357,18 @@ export const rot_yz_z_m4 = ut.compose_2f(rot_yz_z_m3, m3_to_m4);
 
 /** オイラー角XYZの回転写像 */
 export function rot_xyz_m3(rad_xyz: [number, number, number]): M3 {
-    return m3_rot_x(rad_xyz[0])
-        .mul(m3_rot_y(rad_xyz[1]))
-        .mul(m3_rot_z(rad_xyz[2]));
+    return m3_rotate_x(rad_xyz[0])
+        .mul(m3_rotate_y(rad_xyz[1]))
+        .mul(m3_rotate_z(rad_xyz[2]));
 }
 /** オイラー角XYZの回転写像 */
 export const rot_xyz_m4 = ut.compose_2f(rot_xyz_m3, m3_to_m4);
 
 /** オイラー角XYZの逆回転写像 */
 export function rot_inv_xyz_m3(rad_xyz: [number, number, number]): M3 {
-    return m3_rot_z(-rad_xyz[2])
-        .mul(m3_rot_y(-rad_xyz[1]))
-        .mul(m3_rot_x(-rad_xyz[0]));
+    return m3_rotate_z(-rad_xyz[2])
+        .mul(m3_rotate_y(-rad_xyz[1]))
+        .mul(m3_rotate_x(-rad_xyz[0]));
 }
 /** オイラー角XYZの回転写像 */
 export const rot_inv_xyz_m4 = ut.compose_2f(rot_inv_xyz_m3, m3_to_m4);

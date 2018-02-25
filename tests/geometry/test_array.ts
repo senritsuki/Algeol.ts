@@ -22,12 +22,12 @@ function save(name: string, geo: al.Surfaces): void {
 export function test_al() {
     al.duplicate_v3(
         [vc.v3(0, 0, 0), vc.v3(1, 0, 0)], 1,
-        al.m4s_to_v4maps([mx.affine3_trans([1, 0, 0]), mx.affine3_trans([2, 0, 0])])
+        al.m4s_to_v4maps([mx.affine3_translate([1, 0, 0]), mx.affine3_translate([2, 0, 0])])
     ).forEach(vv => vv.forEach(v => console.log(v)));
     al.compose_m4<number>([0, 1], [
-        d => mx.affine3_trans([d + 1, 0, 0]),
-        _d => mx.scale_m4([2, 2, 2]),
-        d => mx.affine3_trans([0, d + 1, 0]),
+        d => mx.affine3_translate([d + 1, 0, 0]),
+        _d => mx.affine3_scale([2, 2, 2]),
+        d => mx.affine3_translate([0, d + 1, 0]),
     ]).forEach(m => console.log(m));
 }
 
@@ -76,18 +76,18 @@ function test() {
         multi.prismRing(al.duplicate_v3(
             prim.fn.circle.verts_i(4, 1), 1,
             al.compose_v4map<number>(seq.arith(4), [
-                _d => mx.affine3_rot_x(ut.deg90),
-                _d => mx.affine3_trans([3, 0, 0]),
-                d => mx.affine3_rot_z(ut.deg90 * d),
+                _d => mx.affine3_rotate_x(ut.deg90),
+                _d => mx.affine3_translate([3, 0, 0]),
+                d => mx.affine3_rotate_z(ut.deg90 * d),
             ]))));
     save('antiprismRing',
         multi.antiprismRing(al.duplicate_v3(
             prim.fn.circle.verts_i(4, 1), 1,
             al.compose_v4map<number>(seq.arith(8), [
-                d => mx.affine3_rot_z(ut.deg45 * d),
-                _d => mx.affine3_rot_x(ut.deg90),
-                _d => mx.affine3_trans([3, 0, 0]),
-                d => mx.affine3_rot_z(ut.deg45 * d),
+                d => mx.affine3_rotate_z(ut.deg45 * d),
+                _d => mx.affine3_rotate_x(ut.deg90),
+                _d => mx.affine3_translate([3, 0, 0]),
+                d => mx.affine3_rotate_z(ut.deg45 * d),
             ]))));
 }
 test();

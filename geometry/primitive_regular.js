@@ -7,7 +7,7 @@ var sfl = require("./surface_lib");
 var prim = require("./primitive_core");
 /** 半径1の球 */
 function Sphere(div_horizontal, div_vertical) {
-    return new prim.BasePrimitive(b3_sphere, build_sf_sphere(div_horizontal, div_vertical));
+    return prim.primitive3(b3_sphere, build_sf_sphere(div_horizontal, div_vertical));
 }
 exports.Sphere = Sphere;
 /** 半径1の球 */
@@ -47,12 +47,12 @@ function sf_octahedron() {
 exports.sf_octahedron = sf_octahedron;
 /** 半径1の球に外接する立方体 */
 function Cube() {
-    return new prim.BasePrimitive(b3_cube, sf_cube);
+    return prim.primitive3(b3_cube, sf_cube);
 }
 exports.Cube = Cube;
 /** 半径1の球に内接する正八面体 */
 function Octahedron() {
-    return new prim.BasePrimitive(b3_octahedron, sf_octahedron);
+    return prim.primitive3(b3_octahedron, sf_octahedron);
 }
 exports.Octahedron = Octahedron;
 /** 半径1の球の一部 */

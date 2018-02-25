@@ -34,8 +34,8 @@ exports.route_arc_o = route_arc_o;
 function dupl_circle(n, r, fz, con1, con2) {
     return function (floor) {
         var floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            function (i) { return mx.affine3_trans(v3(0, r, fz(i))); },
-            function (i) { return mx.affine3_rot_z(ut.deg360 / n * -i); },
+            function (i) { return mx.affine3_translate(v3(0, r, fz(i))); },
+            function (i) { return mx.affine3_rotate_z(ut.deg360 / n * -i); },
         ]));
         var routes = floors.map(function (_, i) { return lib.route_arc(at(floors, i + 1).con(con2), at(floors, i).con(con1)); });
         return [floors, routes];
@@ -49,8 +49,8 @@ function dupl_arc(n, r, deg1, deg2, fz, con1, con2) {
     var rad_d = ut.deg_to_rad((deg2 - deg1) / (n - 1));
     return function (floor) {
         var floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            function (i) { return mx.affine3_trans(v3(0, r, fz(i))); },
-            function (i) { return mx.affine3_rot_z(rad_1 + rad_d * i); },
+            function (i) { return mx.affine3_translate(v3(0, r, fz(i))); },
+            function (i) { return mx.affine3_rotate_z(rad_1 + rad_d * i); },
         ]));
         var routes = floors.map(function (_, i) { return lib.route_arc(at(floors, i).con(con1), at(floors, i + 1).con(con2)); });
         return [floors, routes];
@@ -62,9 +62,9 @@ exports.dupl_arc_hexa = function (n, r, deg1, deg2, fz) { return dupl_arc(n, r, 
 function dupl_lines(n, r, fz, con1, con2) {
     return function (floor) {
         var floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            function (_) { return mx.affine3_rot_z(ut.deg180 / floor.n); },
-            function (i) { return mx.affine3_trans(v3(0, r, fz(i))); },
-            function (i) { return mx.affine3_rot_z(ut.deg360 / n * -i); },
+            function (_) { return mx.affine3_rotate_z(ut.deg180 / floor.n); },
+            function (i) { return mx.affine3_translate(v3(0, r, fz(i))); },
+            function (i) { return mx.affine3_rotate_z(ut.deg360 / n * -i); },
         ]));
         var routes = floors.map(function (_, i) { return lib.route_curve(at(floors, i + 1).con(con2), at(floors, i).con(con1), null); });
         return [floors, routes];

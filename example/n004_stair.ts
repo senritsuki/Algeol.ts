@@ -24,7 +24,7 @@ const geo_floor = prim.cuboid_vv([-1/2, -1/2, -1/8], [1/2, 1/2, 0]);
 const geo_stairstep = prim.cuboid_vv([-3/8, -1/16, -1/8], [3/8, 1/16, 0]);
 
 const floor_duplicater = al.compose_v4map([start, goal], [
-    d => mx.affine3_trans(d),
+    d => mx.affine3_translate(d),
 ]);
 
 const stair_start = start.add([0, 1/2, 0]);
@@ -40,7 +40,7 @@ const stair_step_num = Math.round(Math.abs(stair_goal.y - stair_start.y) * 8);
 const stair_coords = seq.arith(stair_step_num + 1).map(i => stair_curve.coord(i / stair_step_num));
 
 const stairstep_duplicater = al.compose_v4map(stair_coords, [
-    d => mx.affine3_trans(d),
+    d => mx.affine3_translate(d),
 ]);
 
 const obj_floors = al.merge_surfaces(al.duplicate_f(geo_floor, floor_duplicater), lch5(19, 0, 0));

@@ -19,10 +19,10 @@ exports.E = 0.001;
 /** 位置ベクトルと方向ベクトルのペア */
 var Ray = /** @class */ (function () {
     function Ray(
-        /** 位置ベクトル */
-        c, 
-        /** 方向ベクトル */
-        d) {
+    /** 位置ベクトル */
+    c, 
+    /** 方向ベクトル */
+    d) {
         this.c = c;
         this.d = d;
     }
@@ -53,7 +53,7 @@ function ray3_to_ray2(ray3) {
 }
 exports.ray3_to_ray2 = ray3_to_ray2;
 function rot_ray3d_z(ray3, rad) {
-    var d = mx.m3_rot_z(rad).map(ray3.d);
+    var d = mx.m3_rotate_z(rad).map(ray3.d);
     return ray(ray3.c, d);
 }
 exports.rot_ray3d_z = rot_ray3d_z;
@@ -180,13 +180,12 @@ var NURBS = /** @class */ (function (_super) {
         var degree = this.degree;
         var knots = this.knots;
         var weights = this.weights;
-        var index = seq.arith(controls.length);
-        var n1 = index
-            .map(function (i) { return weights[i] * ut.b_spline_basis(knots, i, degree, t); })
+        var b_w = seq.arith(controls.length)
+            .map(function (i) { return weights[i] * ut.b_spline_basis(knots, i, degree, t); });
+        var n1 = b_w
             .map(function (n, i) { return controls[i].scalar(n); })
             .reduce(function (a, b) { return a.add(b); });
-        var n2 = index
-            .map(function (i) { return weights[i] * ut.b_spline_basis(knots, i, degree, t); })
+        var n2 = b_w
             .reduce(function (a, b) { return a + b; });
         return n1.scalar(1 / n2);
     };
@@ -405,8 +404,8 @@ function bezier3_interpolate_arc(p0, p1, o) {
     d1._v[2] = 0;
     var rad = d0.angle(d1);
     var n = exports.bezier_arc_p(rad) * d0.length();
-    var e0 = mx.m3_rot_z(ut.deg90).map(d0).unit().scalar(n);
-    var e1 = mx.m3_rot_z(-ut.deg90).map(d1).unit().scalar(n);
+    var e0 = mx.m3_rotate_z(ut.deg90).map(d0).unit().scalar(n);
+    var e1 = mx.m3_rotate_z(-ut.deg90).map(d1).unit().scalar(n);
     var c0 = p0.add(e0);
     var c1 = p1.add(e1);
     var controls = [p0, c0, c1, p1];

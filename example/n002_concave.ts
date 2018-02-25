@@ -11,8 +11,8 @@ const sq = seq.arith(21, -10, 1).map(x => seq.arith(21, -10, 1).map(y => vc.v2(x
     .reduce((a, b) => a.concat(b));
 
 const duplicater = al.compose_v4map(sq, [
-    v => mx.affine3_trans([v.x, v.y, 0.5]),
-    v => mx.scale_m4([1, 1, 1 + Math.min(12, v.length())]),
+    v => mx.affine3_translate([v.x, v.y, 0.5]),
+    v => mx.affine3_scale([1, 1, 1 + Math.min(12, v.length())]),
 ]);
 
 const cubes = al.duplicate_v3(cube.verts, 1, duplicater)

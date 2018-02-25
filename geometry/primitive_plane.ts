@@ -9,14 +9,25 @@ import * as prim from './primitive_core';
 const geometry = (verts: vc.V3[], faces: number[][]) => new al.Surfaces(verts, faces);
 
 /**
+ * 楕円に内接するn角形
+ * @param   n_gonal     多角形の頂点数
+ * @param   r           多角形の外接円の半径
+ * @param   rad         多角形の1つ目の頂点の偏角
+ */
+export function ellipse_verts(n_gonal: number, r: vc.V2, rad: number): vc.V2[] {
+    return sq.arith(n_gonal, rad, ut.deg360 / n_gonal)
+        .map(rad => vc.polar_to_v2(1, rad))
+        .map(v => v.el_mul(r));
+}
+
+/*
  * 円に内接するn角形
  * @param   n_gonal     多角形の頂点数
  * @param   r           多角形の外接円の半径
  * @param   rad         多角形の1つ目の頂点の偏角
  */
-export function circle_verts_i(n_gonal: number, r: number, rad: number = 0): vc.V2[] {
-    return sq.arith(n_gonal, rad, ut.deg360 / n_gonal)
-        .map(rad => vc.polar_to_v2(r, rad));
+export function circle_verts(n_gonal: number, r: number, rad: number): vc.V2[] {
+    return ellipse_verts(n_gonal, vc.v2(r, r), rad);
 }
 /**
  * 円に外接するn角形
@@ -24,18 +35,22 @@ export function circle_verts_i(n_gonal: number, r: number, rad: number = 0): vc.
  * @param   r           多角形の内接円の半径
  * @param   rad         多角形の1つ目の頂点の偏角
  */
-export function circle_verts_c(n_gonal: number, r: number, rad: number = 0): vc.V2[] {
+export function circle_verts_c(n_gonal: number, r: number, rad: number): vc.V2[] {
     const theta = ut.deg360 / (n_gonal * 2);
     const r2 = r / Math.cos(theta);
     const p2 = rad + theta;
-    return circle_verts_i(n_gonal, r2, p2);
+    return circle_verts(n_gonal, r2, p2);
 }
 
-export function circle_b2(): (v: vc.V2) => boolean {
+export function ellipse_b2(r: vc.V2): (v: vc.V2) => boolean {
     return v => {
+        v = v.el_div(r);
         v = v.el_mul(v);
         return v.x + v.y <= 1;
     };
+}
+export function circle_b2(r: number): (v: vc.V2) => boolean {
+    return ellipse_b2(vc.v2(r, r));
 }
 
 /**
@@ -44,11 +59,55 @@ export function circle_b2(): (v: vc.V2) => boolean {
  * @param rad       円を近似する多角形の最初の頂点の角度（default: 0）
  * @param use_c     多角形を円に外接させるか否か（false: 内接, true: 外接, default: false）
  */
-export function Circle(n_gonal: number, rad: number = 0, use_c: boolean = false): prim.Plane {
-    const f = use_c == false ? circle_verts_i : circle_verts_c;
-    return new prim.Plane(
-        circle_b2(),
-        f(n_gonal, 1, rad),
+export function circle(n_gonal: number, r: number = 1, rad: number = 0, use_c: boolean = false): prim.Primitive2 {
+    const f = use_c == false ? circle_verts : circle_verts_c;
+    return prim.primitive2(
+        circle_b2(r),
+        f(n_gonal, r, rad),
+    );
+}
+export function ellipse(n_gonal: number, r: vc.V2|number[], rad: number = 0): prim.Primitive2 {
+    r = vc.to_v2_if(r);
+    return prim.primitive2(
+        ellipse_b2(r),
+        ellipse_verts(n_gonal, r, rad),
+    );
+}
+
+export function round4_1(x: number, y: number): vc.V2[] {
+    return [
+        vc.v2(x, 0),
+        vc.v2(0, y),
+        vc.v2(-x, 0),
+        vc.v2(0, -y),
+    ];
+}
+export function round4_2(x: number, y: number): vc.V2[] {
+    return [
+        vc.v2(x, y),
+        vc.v2(-x, y),
+        vc.v2(-x, -y),
+        vc.v2(x, -y),
+    ];
+}
+
+/** ひし形 */
+export function rhombus_verts(r: vc.V2): vc.V2[] {
+    return round4_1(r.x, r.y);
+}
+/** ひし形 */
+export function rhombus_b2(r: vc.V2): (v: vc.V2) => boolean {
+    return v => {
+        v = v.el_div(r);
+        return Math.abs(v.x) + Math.abs(v.y) <= 1;
+    };
+}
+/** ひし形 */
+export function rhombus(r: vc.V2|number[]): prim.Primitive2 {
+    r = vc.to_v2_if(r);
+    return prim.primitive2(
+        rhombus_b2(r),
+        rhombus_verts(r),
     );
 }
 
@@ -60,8 +119,18 @@ export function Circle(n_gonal: number, rad: number = 0, use_c: boolean = false)
  * @param rad2          円弧の終了角度
  */
 export function arc_verts(n: number, r: number, rad1: number, rad2: number): vc.V2[] {
+    return ellipse_arc_verts(n, vc.v2(r, r), rad1, rad2);
+}
+/**
+ * 楕円弧
+ * @param n             円弧を近似する辺の数
+ * @param r             円の半径
+ * @param rad1          円弧の開始角度
+ * @param rad2          円弧の終了角度
+ */
+export function ellipse_arc_verts(n: number, r: vc.V2, rad1: number, rad2: number): vc.V2[] {
     const step = n >= 2 ? (rad2 - rad1) / (n - 1) : 0;
-    return sq.arith(n + 1, rad1, step).map(t => vc.polar_to_v2(r, t));
+    return sq.arith(n + 1, rad1, step).map(t => vc.polar_to_v2(1, t).el_mul(r));
 }
 
 /**
@@ -72,11 +141,18 @@ export function arc_verts(n: number, r: number, rad1: number, rad2: number): vc.
  * @param rad2          円弧の終了角度
  */
 export function pie_verts(n: number, r: number, rad1: number, rad2: number): vc.V2[] {
-    return [vc.v2_zero].concat(arc_verts(n, r, rad1, rad2));
+    return ellipse_arc_verts(n, vc.v2(r, r), rad1, rad2);
+}
+export function ellipse_pie_verts(n: number, r: vc.V2, rad1: number, rad2: number): vc.V2[] {
+    return [vc.v2_zero].concat(ellipse_arc_verts(n, r, rad1, rad2));
 }
 /** 半径1のパイ */
-export function pie_b2(rad1: number, rad2: number): (v: vc.V2) => boolean {
+export function pie_b2(r: number, rad1: number, rad2: number): (v: vc.V2) => boolean {
+    return ellipse_pie_b2(vc.v2(r, r), rad1, rad2);
+}
+export function ellipse_pie_b2(r: vc.V2, rad1: number, rad2: number): (v: vc.V2) => boolean {
     return v => {
+        v = v.el_div(r);
         const r_r = vc.v2_to_polar(v);
         if (r_r[0] > 1) return false;
         const rad = ut.normalize_rad(r_r[1]);
@@ -86,25 +162,82 @@ export function pie_b2(rad1: number, rad2: number): (v: vc.V2) => boolean {
     }
 }
 
-export function Pie(n_gonal: number, rad1: number, rad2: number): prim.Plane {
-    return new prim.Plane(
-        pie_b2(rad1, rad2),
-        pie_verts(n_gonal, 1, rad1, rad2),
+export function pie(n_gonal: number, r: number, rad1: number, rad2: number): prim.Primitive2 {
+    return prim.primitive2(
+        pie_b2(r, rad1, rad2),
+        pie_verts(n_gonal, r, rad1, rad2),
+    );
+}
+export function ellipse_pie(n_gonal: number, r: vc.V2|number[], rad1: number, rad2: number): prim.Primitive2 {
+    r = vc.to_v2_if(r);
+    return prim.primitive2(
+        ellipse_pie_b2(r, rad1, rad2),
+        ellipse_pie_verts(n_gonal, r, rad1, rad2),
     );
 }
 
 
+/** 90度のパイやドーナツの角柱化は容易だが、リングの角柱化は意外と難しい。ドーナツを一周させるか */
+
+export function ellipse_doughnut_verts(n: number, r1: vc.V2, r2: vc.V2): Array<[vc.V2, vc.V2]> {
+    const v1 = ellipse_verts(n, r1, 0);
+    const v2 = ellipse_verts(n, r2, 0);
+    const f = (i: number): [vc.V2, vc.V2] => [v1[i], v2[i]];
+    return sq.arith(n).map(i => f(i));
+}
+export function doughnut_verts(n: number, r1: number, r2: number): Array<[vc.V2, vc.V2]> {
+    return ellipse_doughnut_verts(n, vc.v2(r1, r1), vc.v2(r2, r2));
+}
+
+export function ellipse_doughnut_b2(r1: vc.V2, r2: vc.V2): (v: vc.V2) => boolean {
+    const b1 = ellipse_b2(r1);
+    const b2 = ellipse_b2(r2);
+    return v => {
+        return ut.xor(b1(v), b2(v));
+    }
+}
+export function doughnut_b2(r1: number, r2: number): (v: vc.V2) => boolean {
+    return ellipse_doughnut_b2(vc.v2(r1, r1), vc.v2(r2, r2));
+}
+
+
+
 /**
- * ドーナツ
+ * 穴あきパイ
  * @param n             円弧を近似する辺の数
- * @param r             円の半径
+ * @param r1            内側の円の半径
+ * @param r2            外側の円の半径
  * @param rad1          円弧の開始角度
  * @param rad2          円弧の終了角度
  */
-export function doughnut_verts(n: number, r1: number, r2: number, t1: number, t2: number): vc.V2[] {
-    const arc1 = arc_verts(n, r1, t1, t2);
-    const arc2 = arc_verts(n, r2, t2, t1);
+export function doughnut_pie_verts(n: number, r1: number, r2: number, rad1: number, rad2: number): vc.V2[] {
+    return ellipse_doughnut_pie_verts(n, vc.v2(r1, r1), vc.v2(r2, r2), rad1, rad2);
+}
+/**
+ * 楕円穴あきパイ（円ドーナツの楕円化における厚みの歪み対策）
+ * @param n             円弧を近似する辺の数
+ * @param rx1           内側の円のx半径
+ * @param ry1           内側の円のy半径
+ * @param rx2           外側の円のx半径
+ * @param ry2           外側の円のy半径
+ * @param rad1          円弧の開始角度
+ * @param rad2          円弧の終了角度
+ */
+export function ellipse_doughnut_pie_verts(n: number, r1: vc.V2, r2: vc.V2, rad1: number, rad2: number): vc.V2[] {
+    const arc1 = ellipse_arc_verts(n, r1, rad1, rad2);
+    const arc2 = ellipse_arc_verts(n, r2, rad2, rad1);
     return arc1.concat(arc2);
+}
+/** 半分のひし形ドーナツ */
+export function rhombus_doughnut_half_verts(rx1: number, ry1: number, rx2: number, ry2: number): vc.V2[] {
+    return [
+        vc.v2(rx1, 0),
+        vc.v2(0, ry1),
+        vc.v2(-rx1, 0),
+        vc.v2(-rx2, 0),
+        vc.v2(0, ry2),
+        vc.v2(rx2, 0),
+    ];
 }
 
 

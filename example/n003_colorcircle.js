@@ -13,8 +13,8 @@ var step = 360 / num;
 var geo = prim.prism(12, 0.5, 1.0);
 var sq = seq.arith(num);
 var duplicater = al.compose_v4map(sq, [
-    function (_) { return mx.affine3_trans([0, 5, 0]); },
-    function (n) { return mx.affine3_rot_z(ut.deg_to_rad(-n * step)); },
+    function (_) { return mx.affine3_translate([0, 5, 0]); },
+    function (n) { return mx.affine3_rotate_z(ut.deg_to_rad(-n * step)); },
 ]);
 var geos = al.duplicate_f(geo, duplicater);
 var lch = ut.compose_2f(cc.lch_to_rgb01, function (nn) { return cc.clamp01(nn); });

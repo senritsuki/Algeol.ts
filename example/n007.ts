@@ -14,7 +14,7 @@ const v3 = vc.v3;
 
 lib.config_bottom_z(-500);
 
-export function save(objs: al.SurfaceGroups[]) {
+export function save(objs: al.SurfaceModel[]) {
     saver.save_objmtl(wf.objs_to_strings('./_obj/n007', objs));
 }
 
@@ -39,8 +39,8 @@ type FloorRouteDuplicator = (floor: lib.RegularFloor) => [lib.RegularFloor[], li
 export function dupl_circle(n: number, r: number, fz: (i: number) => number, con1: number, con2: number): FloorRouteDuplicator {
     return floor => {
         const floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            i => mx.affine3_trans(v3(0, r, fz(i))),
-            i => mx.affine3_rot_z(ut.deg360 / n * -i),
+            i => mx.affine3_translate(v3(0, r, fz(i))),
+            i => mx.affine3_rotate_z(ut.deg360 / n * -i),
         ]));
         const routes = floors.map((_, i) => lib.route_arc(
             at(floors, i+1).con(con2),
@@ -57,8 +57,8 @@ export function dupl_arc(n: number, r: number, deg1: number, deg2: number, fz: (
     const rad_d = ut.deg_to_rad((deg2 - deg1) / (n - 1));
     return floor => {
         const floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            i => mx.affine3_trans(v3(0, r, fz(i))),
-            i => mx.affine3_rot_z(rad_1 + rad_d * i),
+            i => mx.affine3_translate(v3(0, r, fz(i))),
+            i => mx.affine3_rotate_z(rad_1 + rad_d * i),
         ]));
         const routes = floors.map((_, i) => lib.route_arc(
             at(floors, i).con(con1),
@@ -73,9 +73,9 @@ export const dupl_arc_hexa = (n: number, r: number, deg1: number, deg2: number, 
 export function dupl_lines(n: number, r: number, fz: (i: number) => number, con1: number, con2: number): FloorRouteDuplicator {
     return floor => {
         const floors = al.duplicate_f(floor, al.compose_v4map(seq.arith(n), [
-            _ => mx.affine3_rot_z(ut.deg180 / floor.n),
-            i => mx.affine3_trans(v3(0, r, fz(i))),
-            i => mx.affine3_rot_z(ut.deg360 / n * -i),
+            _ => mx.affine3_rotate_z(ut.deg180 / floor.n),
+            i => mx.affine3_translate(v3(0, r, fz(i))),
+            i => mx.affine3_rotate_z(ut.deg360 / n * -i),
         ]));
         const routes = floors.map((_, i) => lib.route_curve(
             at(floors, i+1).con(con2),

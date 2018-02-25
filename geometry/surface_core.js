@@ -21,23 +21,23 @@ function apply(sf, m) {
 }
 exports.apply = apply;
 function translate(sf, v_add) {
-    return apply(sf, mx.affine3_trans(v_add));
+    return apply(sf, mx.affine3_translate(v_add));
 }
 exports.translate = translate;
 function rotate_x(sf, rad) {
-    return apply(sf, mx.affine3_rot_x(rad));
+    return apply(sf, mx.affine3_rotate_x(rad));
 }
 exports.rotate_x = rotate_x;
 function rotate_y(sf, rad) {
-    return apply(sf, mx.affine3_rot_y(rad));
+    return apply(sf, mx.affine3_rotate_y(rad));
 }
 exports.rotate_y = rotate_y;
 function rotate_z(sf, rad) {
-    return apply(sf, mx.affine3_rot_z(rad));
+    return apply(sf, mx.affine3_rotate_z(rad));
 }
 exports.rotate_z = rotate_z;
 function scale(sf, v) {
-    return apply(sf, mx.scale_m4(v));
+    return apply(sf, mx.affine3_scale(v));
 }
 exports.scale = scale;
 var MapBase = /** @class */ (function () {
@@ -58,6 +58,42 @@ var MapBase = /** @class */ (function () {
     return MapBase;
 }());
 exports.MapBase = MapBase;
+/** マテリアル。名前と拡散光 */
+var Material = /** @class */ (function () {
+    function Material(
+    /** マテリアル名 */
+    name, 
+    /** 拡散光色 */
+    diffuse) {
+        if (diffuse === void 0) { diffuse = null; }
+        this.name = name;
+        this.diffuse = diffuse;
+    }
+    return Material;
+}());
+exports.Material = Material;
+/** 1つ以上の面、名前、マテリアル */
+var SurfacesMaterial = /** @class */ (function () {
+    function SurfacesMaterial(
+    /** 面リスト */
+    faces, 
+    /** 面リストの名前 */
+    name, 
+    /** 面リストに対応するマテリアル */
+    material) {
+        if (material === void 0) { material = null; }
+        this.faces = faces;
+        this.name = name;
+        this.material = material;
+    }
+    SurfacesMaterial.prototype.clone_offset = function (index_offset) {
+        var new_faces = this.faces.map(function (f) { return shift_offset(f, index_offset); });
+        return new SurfacesMaterial(new_faces, this.name, this.material);
+    };
+    return SurfacesMaterial;
+}());
+exports.SurfacesMaterial = SurfacesMaterial;
+/** 頂点リスト、1つ以上の面 */
 var Surfaces = /** @class */ (function (_super) {
     __extends(Surfaces, _super);
     function Surfaces(verts, faces) {
@@ -71,50 +107,35 @@ var Surfaces = /** @class */ (function (_super) {
     return Surfaces;
 }(MapBase));
 exports.Surfaces = Surfaces;
-var Material = /** @class */ (function () {
-    function Material(name, diffuse) {
-        if (diffuse === void 0) { diffuse = null; }
-        this.name = name;
-        this.diffuse = diffuse;
-    }
-    return Material;
-}());
-exports.Material = Material;
-var SurfaceGroup = /** @class */ (function () {
-    function SurfaceGroup(name, faces, material) {
-        if (material === void 0) { material = null; }
-        this.name = name;
-        this.faces = faces;
-        this.material = material;
-    }
-    SurfaceGroup.prototype.clone_offset = function (index_offset) {
-        var new_faces = this.faces.map(function (f) { return shift_offset(f, index_offset); });
-        return new SurfaceGroup(this.name, new_faces, this.material);
-    };
-    return SurfaceGroup;
-}());
-exports.SurfaceGroup = SurfaceGroup;
-var SurfaceGroups = /** @class */ (function (_super) {
-    __extends(SurfaceGroups, _super);
-    function SurfaceGroups(name, verts, faces) {
+/**
+ * モデル名、頂点リスト、面情報リスト
+ * SurfaceModel 1--1 name
+ *              1--* verts
+ *              1--* faces 1--1 name
+ *                         1--1 material
+ *                         1--* faces
+ */
+var SurfaceModel = /** @class */ (function (_super) {
+    __extends(SurfaceModel, _super);
+    function SurfaceModel(name, verts, faces) {
         var _this = _super.call(this, verts) || this;
         _this.name = name;
         _this.faces = faces;
         return _this;
     }
-    SurfaceGroups.prototype.clone = function () {
-        return new SurfaceGroups(this.name, this.verts, this.faces);
+    SurfaceModel.prototype.clone = function () {
+        return new SurfaceModel(this.name, this.verts, this.faces);
     };
-    return SurfaceGroups;
+    return SurfaceModel;
 }(MapBase));
-exports.SurfaceGroups = SurfaceGroups;
+exports.SurfaceModel = SurfaceModel;
 function merge_surfaces(sf, material, name) {
     if (name === void 0) { name = null; }
     if (sf instanceof Array) {
         return _geos_to_obj(sf, name, function (_) { return material; });
     }
     else {
-        return new SurfaceGroups(name, sf.verts, [new SurfaceGroup(name, sf.faces, material)]);
+        return new SurfaceModel(name, sf.verts, [new SurfacesMaterial(sf.faces, name, material)]);
     }
 }
 exports.merge_surfaces = merge_surfaces;
@@ -132,11 +153,11 @@ function _geos_to_obj(geos, name, f_material) {
         var f = geo.faces.map(function (f) { return shift_offset(f, index); });
         var m = f_material(i);
         var m_name = m != null ? m.name : null;
-        var fg = new SurfaceGroup(m_name, f, m);
+        var fg = new SurfacesMaterial(f, m_name, m);
         faces.push(fg);
         index += geo.verts.length;
     });
-    return new SurfaceGroups(name, verts, faces);
+    return new SurfaceModel(name, verts, faces);
 }
 function concat_surfaces(sf) {
     var verts = [];
@@ -150,7 +171,7 @@ function concat_surfaces(sf) {
     return new Surfaces(verts, faces);
 }
 exports.concat_surfaces = concat_surfaces;
-function concat_surface_groups(objs, name) {
+function concat_surface_models(objs, name) {
     if (name === void 0) { name = null; }
     var verts = [];
     var faces = [];
@@ -160,9 +181,9 @@ function concat_surface_groups(objs, name) {
         faces = faces.concat(obj.faces.map(function (f) { return f.clone_offset(index); }));
         index += obj.verts.length;
     });
-    return new SurfaceGroups(name, verts, faces);
+    return new SurfaceModel(name, verts, faces);
 }
-exports.concat_surface_groups = concat_surface_groups;
+exports.concat_surface_models = concat_surface_models;
 /** 4次元行列リストを写像配列に変換 */
 function m4s_to_v3maps(mm) {
     return mm.map(function (m) { return function (v) { return m.map_v3(v, 1); }; });

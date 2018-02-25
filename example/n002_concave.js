@@ -10,8 +10,8 @@ var cube = prim.cube(0.5);
 var sq = seq.arith(21, -10, 1).map(function (x) { return seq.arith(21, -10, 1).map(function (y) { return vc.v2(x, y); }); })
     .reduce(function (a, b) { return a.concat(b); });
 var duplicater = al.compose_v4map(sq, [
-    function (v) { return mx.affine3_trans([v.x, v.y, 0.5]); },
-    function (v) { return mx.scale_m4([1, 1, 1 + Math.min(12, v.length())]); },
+    function (v) { return mx.affine3_translate([v.x, v.y, 0.5]); },
+    function (v) { return mx.affine3_scale([1, 1, 1 + Math.min(12, v.length())]); },
 ]);
 var cubes = al.duplicate_v3(cube.verts, 1, duplicater)
     .map(function (v) { return new al.Surfaces(v, cube.faces); });
