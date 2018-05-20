@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1526722248645" clover="3.2.0">
+  <project timestamp="1526722248645" name="All files">
+    <metrics statements="120" coveredstatements="65" conditionals="40" coveredconditionals="32" methods="46" coveredmethods="24" elements="206" coveredelements="121" complexity="0" loc="120" ncloc="120" packages="1" files="3" classes="3">
+      <file name="sequence.ts" path="D:\program\Algeol.ts\ts\algorithm\sequence.ts">
+        <metrics statements="59" coveredstatements="10" conditionals="8" coveredconditionals="8" methods="20" coveredmethods="2"/>
+        <line num="12" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="15" count="16" type="stmt"/>
+        <line num="17" count="4" type="stmt"/>
+        <line num="26" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="29" count="15" type="stmt"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="153" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="155" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="163" count="0" type="stmt"/>
+      </file>
+      <file name="utility.ts" path="D:\program\Algeol.ts\ts\algorithm\utility.ts">
+        <metrics statements="46" coveredstatements="40" conditionals="32" coveredconditionals="24" methods="26" coveredmethods="22"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="35" count="7" type="stmt"/>
+        <line num="44" count="4" type="stmt"/>
+        <line num="55" count="12" type="stmt"/>
+        <line num="66" count="6" type="stmt"/>
+        <line num="67" count="6" type="stmt"/>
+        <line num="76" count="2" type="stmt"/>
+        <line num="77" count="2" type="stmt"/>
+        <line num="78" count="2" type="stmt"/>
+        <line num="79" count="2" type="stmt"/>
+        <line num="80" count="4" type="stmt"/>
+        <line num="81" count="4" type="stmt"/>
+        <line num="82" count="10" type="stmt"/>
+        <line num="85" count="2" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="109" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="110" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="119" count="6" type="stmt"/>
+        <line num="121" count="2" type="stmt"/>
+        <line num="128" count="4" type="stmt"/>
+        <line num="134" count="3" type="stmt"/>
+        <line num="138" count="4" type="stmt"/>
+        <line num="146" count="9" type="cond" truecount="4" falsecount="0"/>
+        <line num="150" count="7" type="stmt"/>
+        <line num="151" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="152" count="7" type="stmt"/>
+        <line num="156" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="157" count="33" type="stmt"/>
+        <line num="159" count="30" type="cond" truecount="3" falsecount="1"/>
+        <line num="160" count="18" type="stmt"/>
+        <line num="161" count="18" type="stmt"/>
+        <line num="162" count="33" type="stmt"/>
+        <line num="164" count="18" type="stmt"/>
+        <line num="171" count="2" type="stmt"/>
+        <line num="175" count="2" type="stmt"/>
+        <line num="179" count="2" type="stmt"/>
+        <line num="189" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="199" count="4" type="cond" truecount="8" falsecount="0"/>
+      </file>
+      <file name="utility_const.ts" path="D:\program\Algeol.ts\ts\algorithm\utility_const.ts">
+        <metrics statements="15" coveredstatements="15" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+      </file>
+    </metrics>
+  </project>
+</coverage>

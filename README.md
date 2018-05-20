@@ -1,27 +1,47 @@
 # Algeol.ts
-- Algeol: Algorithmic Geometry Generator for TypeScript 2.x.
-- アルゴリズムによる3Dジオメトリ生成を支援するライブラリ。TypeScript言語向け。
-- ブラウザ環境、node.js環境、どちらでも動きます。
 
-## 背景
-- 私が運営している創作同人サークル「虚空旋律記」では空想的な3D風景を収めた画集を発行しているのですが、そこでは3Dモデルをプログラムで生成しており、そのノウハウが蓄積されてきたため、ライブラリとして公開してみることにしました。
+Algeol.ts is a TypeScript library that contains various algorithms for three-dimensional geometry generation.
+
+Algeol.tsは、3次元ジオメトリ生成のための様々なアルゴリズムを含むTypeScriptライブラリです。
+
+## 概要
+
+Algeol.tsには、3Dモデリングソフト無しで3Dモデルを生成するために役立つオブジェクトや関数が実装されています。
+例えば、ベクトルや行列、クォータニオンやパラメトリック曲線、3Dジオメトリを再帰的に格納し制御できるオブジェクトと,
+そのオブジェクトをWavefront.obj形式に出力できる関数、などです。
+
+3Dモデルはポリゴンの集合体であり、ポリゴンは3つ以上の頂点となる三次元ベクトルが集まったものです。
+多くの3Dモデリングソフトは三次元ベクトルを意識せずに3Dモデルを編集できる機能を備えていますが、
+Algeol.tsは、全ての三次元ベクトルおよびそれを含むポリゴンや3Dモデルをプログラムで直接制御することに特化しています。
 
 ## 注意
-- 仕事ではなく趣味のため、バグの放置や開発中断が起こり得ます。
-- 勉強のために、あえて車輪の細発明を行っています。そのため性能や品質が犠牲になっています。
+
+- 未完成です。
+- 実行速度を速くすることは目標としていません。
+- decoder/savefile.ts はファイル出力を行うため Node.js が前提ですが、それ以外は Node.js / ブラウザ環境 どちらでも動くはずです。
 
 ## 使い方
-- 準備中……
+
+使いたいモジュールをimportして使います。
+
+|例|ファイル|
+|---|---|
+|ベーシックな三角形の出力|[Algeol.ts/examples/1-primitives/triangle.ts](Algeol.ts/examples/1-primitives/triangle.ts)|
+|プラトンの立体（正多角形）の出力|[Algeol.ts/examples/1-primitives/platonic_solid.ts](Algeol.ts/examples/1-primitives/platonic_solid.ts)|
+|三色（赤緑青）の立方体の出力|[Algeol.ts/examples/2-colors/rgb_cubes.ts](Algeol.ts/examples/2-colors/rgb_cubes.ts)|
+|L\*C\*h色空間のカラーホイールの出力|[Algeol.ts/examples/2-colors/lch_color_wheel.ts](Algeol.ts/examples/2-colors/lch_color_wheel.ts)|
+|L\*C\*h色空間の色立体の出力|[Algeol.ts/examples/2-colors/lch_3d.ts](Algeol.ts/examples/2-colors/lch_3d.ts)|
+
 
 ## ディレクトリ構成
-|ディレクトリ名|概要|依存先|
+|ディレクトリ名|概要|依存先ディレクトリ|
 |---|---|---|
-|algeol/|メイン。ジオメトリの生成や複製など。|algeol/math|
-|algeol/math/|数学・アルゴリズム関連の様々なオブジェクトや関数。|なし|
-|algeol/presets/|特定のジオメトリの生成や、特定のフォーマットへの変換など。|algeol, algeol/math|
-|algeol_tests/|テストコード。|algeol, algeol/math, algeol/presets|
+|Algeol.ts/algorithm/|数列、ベクトル、行列、曲線など。|なし|
+|Algeol.ts/geometry/|ジオメトリのプリセット定義、生成、複製など。|algorithm|
+|Algeol.ts/decoder/|Wavefront.objフォーマットへの変換、ファイル出力。|algorithm, geometry|
+|Algeo.ts/tests/|テストコード。Jest向け。|algorithm, geometry, decoder|
+|Algeo.ts/examples/|サンプル。|algorithm, geometry, decoder|
 
-- 循環依存はありません。
 
 ## ファイル・モジュール構成
 |モジュール名|ファイルパス|概要|依存モジュール|
@@ -42,7 +62,11 @@
 |geo_multi|algeol\presets\geo_multi.ts|複合オブジェクト定義|algeol, utility, vector|
 |geo_primitive|algeol\presets\geo_primitive.ts|プリミティブオブジェクト定義|algeol, utility, vector|
 
-- 循環依存はありません。
+## 背景・作った理由
+
+私は以前から「虚空旋律記」という同人サークル活動をしており、
+プログラムで生成した空想的な3D風景を収めた画集を発行したりしていました。
+Algeol.tsは、その活動の副産物です。
 
 ## 参考文献
 - Eric Lengyel, 狩野智英訳, 『ゲームプログラミングのための3Dグラフィックス数学』, ボーンデジタル, 2002年.

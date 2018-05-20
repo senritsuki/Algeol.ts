@@ -1,0 +1,44 @@
+{
+  "name": "algeol.ts",
+  "version": "1.0.0",
+  "description": "Algeol.ts is a TypeScript library that contains various algorithms for three-dimensional geometry generation.",
+  "main": "index.js",
+  "directories": {
+    "example": "example",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/senritsuki/Algeol.ts.git"
+  },
+  "author": "senritsuki",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/senritsuki/Algeol.ts/issues"
+  },
+  "homepage": "https://github.com/senritsuki/Algeol.ts#readme",
+  "devDependencies": {
+    "@types/jest": "^22.2.3",
+    "@types/node": "^10.0.0",
+    "jest": "^22.4.3",
+    "ts-jest": "^22.4.6",
+    "typescript": "^2.8.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
