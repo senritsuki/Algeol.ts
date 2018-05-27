@@ -1,4 +1,8 @@
-﻿/** Complex Number - 複素数・二元数 */
+﻿/** 
+ * Complex number - 複素数（二元数）の生成と演算
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 import * as vc from "./vector";
 

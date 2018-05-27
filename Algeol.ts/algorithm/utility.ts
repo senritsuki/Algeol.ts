@@ -1,4 +1,8 @@
-﻿/** Utility - 便利な定数・関数 */
+﻿/** 
+ * Utility constants and functions - 汎用的な定数と関数
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 export * from './utility_const';
 

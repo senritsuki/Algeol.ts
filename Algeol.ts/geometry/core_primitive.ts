@@ -1,3 +1,9 @@
+/**
+ * プリミティブオブジェクトの生成
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
+
 import * as seq from "../algorithm/sequence";
 import * as vc from "../algorithm/vector";
 import * as geo from "./core";

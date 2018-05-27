@@ -1,4 +1,8 @@
-﻿/** Matrix - 行列 */
+﻿/** 
+ * Matrix - 行列の生成と行列演算
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 import * as ut from "./utility";
 import * as vc from "./vector";

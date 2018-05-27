@@ -1,4 +1,8 @@
-﻿/** L-system (Lindenmayer system) */
+﻿/** 
+ * L-system
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 import * as vc from './vector';
 import * as cv from './curve';

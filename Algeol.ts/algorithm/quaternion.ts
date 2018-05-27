@@ -1,4 +1,8 @@
-﻿/** Quaternion - クォータニオン・四元数 */
+﻿/**
+ * Quaternion - クォータニオン（四元数）の生成と演算
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 import * as vc from "./vector";
 import * as mx from "./matrix";

@@ -1,4 +1,8 @@
-﻿/** Turtle graphics - タートルグラフィックス */
+﻿/**
+ * Turtle graphics - タートルグラフィックス
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 import * as ut from './utility';
 import * as vc from './vector';

@@ -1,4 +1,8 @@
-﻿/** Projection - 投影 */
+﻿/**
+ * Projection - 射影演算
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 import * as vc from "./vector";
 import * as mx from "./matrix";

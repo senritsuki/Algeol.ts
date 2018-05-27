@@ -1,3 +1,9 @@
+/**
+ * オブジェクトとマテリアルのファイル出力
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
+
 import * as fs from "fs"
 import * as geo from "../geometry/core";
 import * as wf from "./wavefront";

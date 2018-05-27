@@ -1,4 +1,8 @@
-﻿/** Scalable Vector Graphics .svg */
+﻿/**
+ * Scalable Vector Graphics (.svg) format - SVGフォーマットへの変換
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 //import * as al from "../algeo";
 import * as seq from "../algorithm/sequence";

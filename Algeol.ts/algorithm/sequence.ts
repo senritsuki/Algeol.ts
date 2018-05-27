@@ -1,4 +1,6 @@
-/** Sequence - 数列 */
+/**
+ * Sequence - 数列の生成
+ */
 
 import * as ut from "./utility";
 

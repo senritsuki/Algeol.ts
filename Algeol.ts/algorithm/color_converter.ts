@@ -1,4 +1,8 @@
-/** Color Converter - 色変換 */
+/** 
+ * Color space conversion (RGB, HSL, XYZ, L*a*b*, L*C*h) - 色空間の変換
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 export namespace etc {
     /** 3次元ベクトルの線形変換 */

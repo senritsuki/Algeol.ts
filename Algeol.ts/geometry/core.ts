@@ -1,3 +1,9 @@
+/**
+ * オブジェクトとマテリアルの生成とグループ化、オブジェクトの変形と複製
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
+
 import * as vc from '../algorithm/vector';
 import * as mx from '../algorithm/matrix';
 

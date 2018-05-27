@@ -1,4 +1,8 @@
-/** Wavefront .obj, .mtl */
+/**
+ * Wavefront (.obj, .mtl) format - Wavefrontフォーマットへの変換
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 import * as vc from "../algorithm/vector";
 import * as al from "../geometry/core";
@@ -33,7 +37,12 @@ export function setFloatFixed(digit: number|null): void {
     float_fix = digit != null ? n => n.toFixed(digit) : n => n.toString();
 }
 
-
+/**
+ * Wavefront .obj フォーマットに変換して1行ずつコールバック
+ * @param obj       変換するオブジェクト
+ * @param mtlfile   参照するマテリアルファイル名
+ * @param callback  変換結果を1行ずつ受け取るコールバック関数
+ */
 export function dump_obj(obj: al.Object, mtlfile: string|null, callback: (line: string) => void): void {
     callback(mtlfile != null ? `mtllib ${mtlfile}` : '#mtllib');
     callback('');
@@ -52,6 +61,11 @@ export function dump_obj(obj: al.Object, mtlfile: string|null, callback: (line: 
     });
 }
 
+/**
+ * Wavefront .obj フォーマットに変換して1行ずつコールバック
+ * @param mtls      変換するマテリアル配列
+ * @param callback  変換結果を1行ずつ受け取るコールバック関数
+ */
 export function dump_mtl(mtls: al.Material[], callback: (line: string) => void): void {
     mtls.forEach(m => {
         callback(`newmtl ${m.material_name}`);

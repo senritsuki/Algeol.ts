@@ -1,4 +1,8 @@
-﻿/** Curve, Parametric Equation - パラメトリック方程式による曲線 */
+﻿/** 
+ * Parametric curves - パラメトリック曲線の生成
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 import * as ut from "./utility";
 import * as seq from "./sequence";

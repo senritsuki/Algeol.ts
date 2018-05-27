@@ -1,4 +1,8 @@
-
+/** 
+ * よく使う定数の定義
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
 /** Square Root of 2 - 2の平方根 (≒ 1.414) */
 export const r2 = Math.sqrt(2);
