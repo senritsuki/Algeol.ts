@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from "./vector";
-import * as mx from "./matrix";
+import * as vc from './vector';
+import * as mx from './matrix';
 
 
 /** Quaternion - クォータニオン・四元数 */
@@ -83,10 +83,10 @@ class QuaternionImpl implements Quaternion {
     // 単項演算
 
     conjugate(): Quaternion {
-        return new QuaternionImpl(this.r(), vc.v_scalar(this.i(), -1));
+        return new QuaternionImpl(this.r(), vc.scalar_array(this.i(), -1));
     }
     abs2(): number {
-        return vc.v_ip(this._v, this._v);
+        return vc.ip_array(this._v, this._v);
     }
     abs(): number {
         return Math.sqrt(this.abs2());
@@ -131,12 +131,12 @@ class QuaternionImpl implements Quaternion {
 
     add(dist: Quaternion): Quaternion {
         const r = this.r() + dist.r();
-        const i = vc.v_add(this.i(), dist.i());
+        const i = vc.add_array(this.i(), dist.i());
         return new QuaternionImpl(r, i);
     }
     sub(dist: Quaternion): Quaternion {
         const r = this.r() + dist.r();
-        const i = vc.v_sub(this.i(), dist.i());
+        const i = vc.sub_array(this.i(), dist.i());
         return new QuaternionImpl(r, i);
     }
     mul(dist: Quaternion): Quaternion {
@@ -144,16 +144,16 @@ class QuaternionImpl implements Quaternion {
         const r2 = dist.r();
         const i1 = this.i();
         const i2 = dist.i();
-        const r = r1 * r2 - vc.v_ip(i1, i2);
-        const i_1 = vc.v_scalar(i2, r1);
-        const i_2 = vc.v_scalar(i1, r2);
-        const i_3 = vc.v_cp3(i1, i2);
-        const i = vc.v_add(vc.v_add(i_1, i_2), i_3);
+        const r = r1 * r2 - vc.ip_array(i1, i2);
+        const i_1 = vc.scalar_array(i2, r1);
+        const i_2 = vc.scalar_array(i1, r2);
+        const i_3 = vc.cp3_array(i1, i2);
+        const i = vc.add_array(vc.add_array(i_1, i_2), i_3);
         return new QuaternionImpl(r, i);
     }
     scalar(n: number): Quaternion {
         const r = this.r() * n;
-        const i = vc.v_scalar(this.i(), n);
+        const i = vc.scalar_array(this.i(), n);
         return new QuaternionImpl(r, i);
     }
 

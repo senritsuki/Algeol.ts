@@ -2,7 +2,7 @@
  * Sequence - 数列の生成
  */
 
-import * as ut from "./utility";
+import * as ut from './utility';
 
 /** 
  * Arithmetic Sequence - 等差数列
@@ -36,24 +36,14 @@ export function geometric(count: number, start: number = 1, ratio: number = 2): 
 /** 
  * @code (4, 10, 3) -> [4, 7, 10]
  * @code (0, 12, 4) -> [0, 4, 8, 12]
+ * @code (4, 10, 3, false) -> [4, 6, 8]
+ * @code (0, 12, 4, false) -> [0, 3, 6, 9]
  */
-export function range(first: number, last: number, count: number): number[] {
-    const seq: number[] = new Array(count);
-    for (let i = 0; i < count; i++) {
+export function range(first: number, last: number, count: number, skip_last: boolean = false): number[] {
+    const i_max = skip_last ? count - 1 : count;
+    const seq: number[] = new Array(i_max);
+    for (let i = 0; i < i_max; i++) {
         const r = i / (count - 1);  // 0.0 ... 1.0
-        const n = (1 - r) * first + r * last;
-        seq[i] = n;
-    }
-    return seq;
-}
-/** 
- * @code (4, 10, 3) -> [4, 6, 8]
- * @code (0, 12, 4) -> [0, 3, 6, 9]
- */
-export function range_wo_last(first: number, last: number, count: number): number[] {
-    const seq: number[] = new Array(count);
-    for (let i = 0; i < count; i++) {
-        const r = i / count;    // 0.0 ... (count-1) / count
         const n = (1 - r) * first + r * last;
         seq[i] = n;
     }

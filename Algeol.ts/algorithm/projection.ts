@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from "./vector";
-import * as mx from "./matrix";
+import * as vc from './vector';
+import * as mx from './matrix';
 
 
 export interface Projection {

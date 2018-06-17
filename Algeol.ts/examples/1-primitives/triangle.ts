@@ -1,8 +1,8 @@
 // Triangle - 三角形
 
-import * as vc from "../../algorithm/vector";
-import * as geo from "../../geometry/core";
-import * as sf from "../../decoder/savefile";
+import * as vc from '../../algorithm/vector';
+import * as geo from '../../object/object';
+import * as sf from '../../decoder/savefile';
 
 const obj = geo.obj_single(
     // vertices

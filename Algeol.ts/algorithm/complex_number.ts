@@ -4,7 +4,7 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from "./vector";
+import * as vc from './vector';
 
 
 /** Complex Number - 複素数・二元数 */
@@ -88,7 +88,7 @@ class ComplexNumberImpl implements ComplexNumber {
         return new ComplexNumberImpl(this.r(), -this.i());
     }
     abs2(): number {
-        return vc.v_ip(this._v, this._v);
+        return vc.ip_array(this._v, this._v);
     }
     abs(): number {
         return Math.sqrt(this.abs2());
@@ -115,11 +115,11 @@ class ComplexNumberImpl implements ComplexNumber {
     // 二項演算
 
     add(dist: ComplexNumber): ComplexNumber {
-        const v = vc.v_add(this._v, dist._v);
+        const v = vc.add_array(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     }
     sub(dist: ComplexNumber): ComplexNumber {
-        const v = vc.v_sub(this._v, dist._v);
+        const v = vc.sub_array(this._v, dist._v);
         return new ComplexNumberImpl(v[0], v[1]);
     }
     mul(dist: ComplexNumber): ComplexNumber {
@@ -128,7 +128,7 @@ class ComplexNumberImpl implements ComplexNumber {
         return new ComplexNumberImpl(r, i);
     }
     scalar(n: number): ComplexNumber {
-        const v = vc.v_scalar(this._v, n);
+        const v = vc.scalar_array(this._v, n);
         return new ComplexNumberImpl(v[0], v[1]);
     }
 

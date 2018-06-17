@@ -1,13 +1,17 @@
-/** Sequence - 数列 */
+/**
+ * Vector sequence - ベクトル数列の生成
+ * 
+ * Copyright (c) 2016 senritsuki
+ */
 
-import * as sq from "./sequence";
-import * as vc from "./vector";
-
+import * as sq from './sequence';
+import * as vc from './vector';
+//import * as cv from './curve';
 
 /** 
  * Arithmetic Sequence - 等差数列
  */
-export function v_arith<T extends vc.Vector<T>>(start: T, diff: T, count: number): T[] {
+export function arithmetic<T extends vc.Vector<T>>(count: number, start: T, diff: T): T[] {
     const seq: T[] = new Array(count);
     for (let i = 0; i < count; i++) {
         seq[i] = start.add(diff.scalar(i));
@@ -18,7 +22,7 @@ export function v_arith<T extends vc.Vector<T>>(start: T, diff: T, count: number
 /**
  * Geometric Sequence - 等比数列
  */
-export function v_geo<T extends vc.Vector<T>>(count: number, start: T, ratio: T): T[] {
+export function geometric<T extends vc.Vector<T>>(count: number, start: T, ratio: T): T[] {
     const seq: T[] = new Array(count);
     for (let i = 0, n = start; i < count; i++, n = n.el_mul(ratio)) {
         seq[i] = n;
@@ -26,7 +30,7 @@ export function v_geo<T extends vc.Vector<T>>(count: number, start: T, ratio: T)
     return seq;
 }
 
-export function v_arith2<T extends vc.Vector<T>>(o: T, d1: T, count1: number, d2: T, count2: number): T[] {
+export function arithmetic2<T extends vc.Vector<T>>(o: T, d1: T, count1: number, d2: T, count2: number): T[] {
     const seq: T[] = new Array(count1 * count2);
     sq.arithmetic(count1).forEach(i => {
         const i2 = i * count2;
@@ -37,7 +41,7 @@ export function v_arith2<T extends vc.Vector<T>>(o: T, d1: T, count1: number, d2
     });
     return seq;
 }
-export function v_arith3<T extends vc.Vector<T>>(o: T, d1: T, count1: number, d2: T, count2: number, d3: T, count3: number): T[] {
+export function arithmetic3<T extends vc.Vector<T>>(o: T, d1: T, count1: number, d2: T, count2: number, d3: T, count3: number): T[] {
     const seq: T[] = new Array(count1 * count2);
     sq.arithmetic(count1).forEach(i => {
         const i2 = i * count2 * count3;
@@ -61,6 +65,17 @@ export function accelerate<T extends vc.Vector<T>>(o: T, velocity: T, accelerati
         c = c.add(v);
         v = v.add(acceleration);
     });
+    return seq;
+}
+
+export function range<V extends vc.Vector<V>>(first: V, last: V, count: number, skip_last: boolean = false): V[] {
+    const i_max = skip_last ? count - 1 : count;
+    const seq: V[] = new Array(i_max);
+    for (let i = 0; i < i_max; i++) {
+        const r = i / (count - 1);  // 0.0 ... 1.0
+        const n = vc.add(first.scalar(1 - r), last.scalar(r));
+        seq[i] = n;
+    }
     return seq;
 }
 

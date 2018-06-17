@@ -20,8 +20,8 @@ test('range', () => {
 });
 
 test('range_wo_last', () => {
-    expect(seq.range_wo_last(0, 12, 4)).toEqual([0, 3, 6, 9]);
-    expect(seq.range_wo_last(4, 10, 3)).toEqual([4, 6, 8]);
+    expect(seq.range(0, 12, 5, true)).toEqual([0, 3, 6, 9]);
+    expect(seq.range(4, 10, 4, true)).toEqual([4, 6, 8]);
 });
 
 test('range_step', () => {

@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from "../algorithm/vector";
-import * as al from "../geometry/core";
+import * as vc from '../algorithm/vector';
+import * as al from '../object/object';
 
 
 export let vert_to_array = (v: vc.V3): number[] => [v.x, v.y, v.z];
@@ -47,18 +47,18 @@ export function dump_obj(obj: al.Object, mtlfile: string|null, callback: (line: 
     callback(mtlfile != null ? `mtllib ${mtlfile}` : '#mtllib');
     callback('');
     callback(obj.object_name != null ? `#o ${obj.object_name}` : '#o');
-    obj.verts(null, v => callback(vert_to_str(v)));
+    obj.verts(v => callback(vert_to_str(v)), null);
     callback('');
-    obj.face_groups(1, (fg, offset) => {
+    obj.face_groups((fg, offset) => {
         if (fg.info != null) {
             callback(fg.info.group_name != null ? `g ${fg.info.group_name}` : '#g');
             if (fg.info.material_name != null) callback(`usemtl ${fg.info.material_name}`);
         } else {
             callback('#g');
         }
-        fg.faces(offset, f => callback(face_to_str(f)));
+        fg.faces(f => callback(face_to_str(f)), offset);
         callback('');
-    });
+    }, 1);
 }
 
 /**

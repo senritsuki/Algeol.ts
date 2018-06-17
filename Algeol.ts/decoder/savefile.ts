@@ -4,9 +4,9 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as fs from "fs"
-import * as geo from "../geometry/core";
-import * as wf from "./wavefront";
+import * as fs from 'fs'
+import * as geo from '../object/object';
+import * as wf from './wavefront';
 
 export function save(file: string, callback: (wst: fs.WriteStream) => void): void {
     const wst = fs.createWriteStream(file);

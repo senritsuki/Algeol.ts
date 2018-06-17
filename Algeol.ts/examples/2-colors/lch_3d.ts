@@ -1,12 +1,12 @@
-import * as ut from "../../algorithm/utility";
-import * as seq from "../../algorithm/sequence";
-import * as mx from "../../algorithm/matrix";
-import * as cc from "../../algorithm/color_converter";
+import * as ut from '../../algorithm/utility';
+import * as seq from '../../algorithm/sequence';
+import * as mx from '../../algorithm/matrix';
+import * as cc from '../../algorithm/color_converter';
 
-import * as geo from "../../geometry/core";
-import * as prim from "../../geometry/core_primitive"
-import * as wf from "../../decoder/wavefront";
-import * as sf from "../../decoder/savefile";
+import * as geo from '../../object/object';
+import * as prim from '../../object/primitive'
+import * as wf from '../../decoder/wavefront';
+import * as sf from '../../decoder/savefile';
 
 const faceinfo = (name: string) => geo.faceinfo(name, name);
 const colorkey = (lch: [number, number, number]) => `lch_${lch[0]}_${lch[1]}_${lch[2]}`;

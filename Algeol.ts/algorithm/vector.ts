@@ -23,35 +23,35 @@ export function v_op2(a: number[], b: number[], dim: number, fn: (n1: number, n2
 }
 
 /** Addition 加算 */
-export function v_add(a: number[], b: number[]): number[] {
+export function add_array(a: number[], b: number[]): number[] {
     return v_op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 + n2);
 }
 /** Subtraction 減算 */
-export function v_sub(a: number[], b: number[]): number[] {
+export function sub_array(a: number[], b: number[]): number[] {
     return v_op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 - n2);
 }
 /** スカラー倍 */
-export function v_scalar(a: number[], n: number): number[] {
+export function scalar_array(a: number[], n: number): number[] {
     return v_op1(a, a.length, (n1) => n1 * n);
 }
 /** 要素ごとの乗算 */
-export function v_el_mul(a: number[], b: number[]): number[] {
+export function el_mul_array(a: number[], b: number[]): number[] {
     return v_op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 * n2);
 }
 /** 要素ごとの除算 */
-export function v_el_div(a: number[], b: number[]): number[] {
+export function el_div_array(a: number[], b: number[]): number[] {
     return v_op2(a, b, Math.min(a.length, b.length), (n1, n2) => n1 / n2);
 }
 /** Inner Product, Dot Product 内積 */
-export function v_ip(a: number[], b: number[]): number {
-    return v_el_mul(a, b).reduce((a, b) => a + b);
+export function ip_array(a: number[], b: number[]): number {
+    return el_mul_array(a, b).reduce((a, b) => a + b);
 }
 /** Cross Product 2-D 外積（二次元） */
-export function v_cp2(a: number[], b: number[]): number {
+export function cp2_array(a: number[], b: number[]): number {
     return a[0] * b[1] - a[1] * b[0];
 }
 /** Cross Product 3-D 外積（三次元） */
-export function v_cp3(a: number[], b: number[]): number[] {
+export function cp3_array(a: number[], b: number[]): number[] {
     return [
         a[1] * b[2] - a[2] * b[1],
         a[2] * b[0] - a[0] * b[2],
@@ -59,14 +59,25 @@ export function v_cp3(a: number[], b: number[]): number[] {
     ];
 }
 /** 二つの方向ベクトルのなす角 radian */
-export function v_angle(a: number[], b: number[]): number {
+export function angle_array(a: number[], b: number[]): number {
     // 余弦定理 abs(a)*abs(b)*cos(rad) = ip(a,b) を用いればよい
-    const al = Math.sqrt(v_ip(a, a));
-    const bl = Math.sqrt(v_ip(b, b));
-    const i = v_ip(a, b);
+    const al = Math.sqrt(ip_array(a, a));
+    const bl = Math.sqrt(ip_array(b, b));
+    const i = ip_array(a, b);
     const rad = Math.acos(i / (al * bl));
     return rad;
 }
+
+/** Addition 加算 */
+export function add<V extends Vector<V>>(a: V, b: V): V {
+    return a.add(b);
+}
+/** Subtraction 減算 */
+export function sub<V extends Vector<V>>(a: V, b: V): V {
+    return a.sub(b);
+}
+
+
 
 /** ベクトルの次元によらない共通インターフェース */
 export interface VectorCommon {
@@ -131,7 +142,7 @@ class VectorBase<T extends Vector<T>> implements Vector<T> {
         return `[${this._v.map(n => Math.round(n*1000)/1000).join(', ')}]`;
     }
     length2(): number {
-        return v_ip(this._v, this._v);
+        return ip_array(this._v, this._v);
     }
     length(): number {
         return Math.sqrt(this.length2());
@@ -141,29 +152,29 @@ class VectorBase<T extends Vector<T>> implements Vector<T> {
         return this._f(this._v);
     }
     unit(): T {
-        return this._f(v_scalar(this._v, 1 / this.length()));
+        return this._f(scalar_array(this._v, 1 / this.length()));
     }
 
     add(dist: T|number[]): T {
-        return this._f(v_add(this._v, to_array_if(dist)));
+        return this._f(add_array(this._v, to_array_if(dist)));
     }
     sub(dist: T|number[]): T {
-        return this._f(v_sub(this._v, to_array_if(dist)));
+        return this._f(sub_array(this._v, to_array_if(dist)));
     }
     el_mul(dist: T|number[]): T {
-        return this._f(v_el_mul(this._v, to_array_if(dist)));
+        return this._f(el_mul_array(this._v, to_array_if(dist)));
     }
     el_div(dist: T|number[]): T {
-        return this._f(v_el_div(this._v, to_array_if(dist)));
+        return this._f(el_div_array(this._v, to_array_if(dist)));
     }
     scalar(n: number): T {
-        return this._f(v_scalar(this._v, n));
+        return this._f(scalar_array(this._v, n));
     }
     ip(dist: T|number[]): number {
-        return v_ip(this.array(), to_array_if(dist));
+        return ip_array(this.array(), to_array_if(dist));
     }
     angle(dist: T|number[]): number {
-        return v_angle(this._v, to_array_if(dist));
+        return angle_array(this._v, to_array_if(dist));
     }
 }
 
@@ -216,7 +227,7 @@ class V2Impl extends VectorBase<V2Impl> implements V2 {
     set y(n: number) { this._v[1] = n; }
 
     cp(dist: V2Impl|number[]): number {
-        return v_cp2(this._v, to_array_if(dist));
+        return cp2_array(this._v, to_array_if(dist));
     }
 }
 
@@ -252,7 +263,7 @@ class V3Impl extends VectorBase<V3Impl> implements V3 {
     set z(n: number) { this._v[2] = n; }
 
     cp(dist: V3Impl|number[]): V3Impl {
-        return V3Impl.fm_array(v_cp3(this._v, to_array_if(dist)));
+        return V3Impl.fm_array(cp3_array(this._v, to_array_if(dist)));
     }
 }
 

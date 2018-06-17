@@ -4,10 +4,10 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from "./utility";
-import * as seq from "./sequence";
-import * as vc from "./vector";
-import * as mx from "./matrix";
+import * as ut from './utility';
+import * as seq from './sequence';
+import * as vc from './vector';
+import * as mx from './matrix';
 
 export let E = 0.001;
 

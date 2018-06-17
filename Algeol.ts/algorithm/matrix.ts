@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from "./utility";
-import * as vc from "./vector";
+import * as ut from './utility';
+import * as vc from './vector';
 
 /**
  * Clone - 複製
@@ -38,7 +38,7 @@ export function m_mul(m1: number[][], m2: number[][]): number[][] {
     for (let r = 0; r < orderR; r++) {
         m[r] = new Array(orderC);
         for (let c = 0; c < orderC; c++) {
-            m[r][c] = vc.v_ip(m1[r], m2t[c]);
+            m[r][c] = vc.ip_array(m1[r], m2t[c]);
         }
     }
     return m;
@@ -49,7 +49,7 @@ export function m_map(m1: number[][], v1: number[]): number[] {
     const orderR = m1.length;
     const v: number[] = new Array(orderR);
     for (let i = 0; i < orderR; i++) {
-        v[i] = vc.v_ip(m1[i], v1);
+        v[i] = vc.ip_array(m1[i], v1);
     }
     return v;
 }

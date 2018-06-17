@@ -1,5 +1,6 @@
 /** Algorithm Library */
 
+
 /** Color Converter - 色変換 */
 export * from './color_converter';
 /** Complex Number - 複素数・二元数 */
@@ -23,5 +24,5 @@ export * from './utility';
 /** Vector - ベクトル */
 export * from './vector';
 /** Vector sequence - ベクトル列 */
-export * from './vector_sequence';
+//export * from './vector_sequence';
 

@@ -1,7 +1,7 @@
-import * as mx from "../../algorithm/matrix";
-import * as geo from "../../geometry/core";
-import * as prim from "../../geometry/core_primitive"
-import * as sf from "../../decoder/savefile";
+import * as mx from '../../algorithm/matrix';
+import * as geo from '../../object/object';
+import * as prim from '../../object/primitive'
+import * as sf from '../../decoder/savefile';
 
 const cube = prim.cube();
 const rgb_cubes = geo.obj_group([
