@@ -364,33 +364,49 @@ export const affine3_rotate_y = ut.compose_2f(m3_rotate_y, m3_to_m4);
 export const affine3_rotate_z = ut.compose_2f(m3_rotate_z, m3_to_m4);
 
 
-/** x軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rot_yz_x_m3(v3: vc.V3): M3 {
-    const x = v3.x;
-    const y = v3.y;
-    const z = v3.z;
+/** (1, 0) を (v.x, v.y) と平行にする回転写像 */
+export function rotate_z_10_to_xy(v: vc.V2|number[]): M2 {
+    v = vc.to_v2_if(v);
+    const x = v.x;
+    const y = v.y;
+    const radZ = Math.atan2(y, x);
+    const mxRotZ = m2_rotate(radZ);
+    return mxRotZ;
+}
+/** (1, 0) を (v.x, v.y) と平行にする回転写像 */
+export const affine2_rotate_z_10_to_xy = ut.compose_2f(rotate_z_10_to_xy, m2_to_m3);
+/** (1, 0) を (v.x, v.y) と平行にする回転写像 */
+export const affine3_rotate_z_10_to_xy = ut.compose_2f(affine2_rotate_z_10_to_xy, m3_to_m4);
+
+/** (1, 0, 0) を (v.x, v.y, v.z) と平行にする回転写像 */
+export function rotate_yz_100_to_xyz(v: vc.V3|number[]): M3 {
+    v = vc.to_v3_if(v);
+    const x = v.x;
+    const y = v.y;
+    const z = v.z;
     const radY = -Math.atan2(z, Math.sqrt(x * x + y * y));
     const radZ = Math.atan2(y, x);
     const mxRotY = m3_rotate_y(radY);
     const mxRotZ = m3_rotate_z(radZ);
     return mxRotZ.mul(mxRotY);
 }
-/** x軸ベクトルをv3ベクトルと平行にする回転写像 */
-export const rot_yz_x_m4 = ut.compose_2f(rot_yz_x_m3, m3_to_m4);
+/** (1, 0) を (v.x, v.y) と平行にする回転写像 */
+export const affine3_rotate_yz_100_to_xyz = ut.compose_2f(rotate_yz_100_to_xyz, m3_to_m4);
 
-/** z軸ベクトルをv3ベクトルと平行にする回転写像 */
-export function rot_yz_z_m3(v3: vc.V3): M3 {
-    const x = v3.x;
-    const y = v3.y;
-    const z = v3.z;
+/** (0, 1) を (v.x, v.y) と平行にする回転写像 */
+export function rotate_yz_010_to_xyz(v: vc.V3|number[]): M3 {
+    v = vc.to_v3_if(v);
+    const x = v.x;
+    const y = v.y;
+    const z = v.z;
     const radY = ut.deg90 - Math.atan2(z, Math.sqrt(x * x + y * y));
     const radZ = Math.atan2(y, x);
     const mxRotY = m3_rotate_y(radY);
     const mxRotZ = m3_rotate_z(radZ);
     return mxRotZ.mul(mxRotY);
 }
-/** z軸ベクトルをv3ベクトルと平行にする回転写像 */
-export const rot_yz_z_m4 = ut.compose_2f(rot_yz_z_m3, m3_to_m4);
+/** (0, 1) を (v.x, v.y) と平行にする回転写像 */
+export const affine3_rotate_yz_010_to_xyz = ut.compose_2f(rotate_yz_010_to_xyz, m3_to_m4);
 
 
 /** オイラー角XYZの回転写像 */

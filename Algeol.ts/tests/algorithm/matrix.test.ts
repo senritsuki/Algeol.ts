@@ -78,15 +78,15 @@ test('rotate-3d-y', () => {
 
 test('rot_yz_x_m3', () => {
     let v = vc.v3(1, 1, 1);
-    expect_toBeClosedToZero(mx.rot_yz_x_m3(v).map([1, 0, 0]).sub(v.unit()));
+    expect_toBeClosedToZero(mx.rotate_yz_100_to_xyz(v).map([1, 0, 0]).sub(v.unit()));
     v = vc.v3(1, 2, 3);
-    expect_toBeClosedToZero(mx.rot_yz_x_m3(v).map([1, 0, 0]).sub(v.unit()));
+    expect_toBeClosedToZero(mx.rotate_yz_100_to_xyz(v).map([1, 0, 0]).sub(v.unit()));
 });
 test('rot_yz_z_m3', () => {
     let v = vc.v3(1, 1, 1);
-    expect_toBeClosedToZero(mx.rot_yz_z_m3(v).map([0, 0, 1]).sub(v.unit()));
+    expect_toBeClosedToZero(mx.rotate_yz_010_to_xyz(v).map([0, 0, 1]).sub(v.unit()));
     v = vc.v3(1, 2, 3);
-    expect_toBeClosedToZero(mx.rot_yz_z_m3(v).map([0, 0, 1]).sub(v.unit()));
+    expect_toBeClosedToZero(mx.rotate_yz_010_to_xyz(v).map([0, 0, 1]).sub(v.unit()));
 });
 
 
