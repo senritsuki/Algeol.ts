@@ -7,6 +7,7 @@
 import * as vc from '../algorithm/vector';
 import * as mx from '../algorithm/matrix';
 
+
 /** オブジェクト */
 export interface Object {
     /** オブジェクト名 */
@@ -25,6 +26,11 @@ export interface Object {
      * @param offset コールバック時に適用するサーフェイスインデックスのオフセット
      */
     face_groups(callback: (face_group: FaceGroup, offset: number) => void, offset: number): void;
+}
+
+export interface VF {
+    verts: vc.V3[];
+    faces: number[][];
 }
 
 /** サーフェイスグループの名前とマテリアル */

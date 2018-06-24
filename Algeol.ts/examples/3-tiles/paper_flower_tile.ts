@@ -15,7 +15,7 @@ import * as sf from '../../decoder/savefile';
 
 
 function build_paper_flower(num: number, width: number): geo.Object {
-    const paper_flower = prim.circle(4);
+    const paper_flower = prim.regular_polygon(4);
     const tr_base = mx.compose([
         mx.affine3_scale([0.5, 0.5 * width, 1]),
         mx.affine3_translate([0.5, 0, 0]),

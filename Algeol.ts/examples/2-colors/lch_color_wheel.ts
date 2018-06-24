@@ -14,7 +14,7 @@ function build_obj(count: number): geo.Object {
     const rad = ut.deg180 / count;
     const r = 1 / Math.cos(rad);
     const t = r * Math.sin(rad);
-    const base = prim.bipyramid(4);
+    const base = prim.regular_bipyramid(4);
     const tr_base = mx.compose([
         mx.affine3_scale([t, t, t]),
         mx.affine3_translate([0, 1, 0]),

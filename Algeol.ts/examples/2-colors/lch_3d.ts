@@ -17,7 +17,7 @@ const seq_chroma = seq.arithmetic(11, 1, 10);
 const seq_hue = seq.arithmetic(hue_num, 0, 360 / hue_num);
 
 function build_chroma0(): geo.Object {
-    const prism = prim.prism(12);
+    const prism = prim.regular_prism(12);
     const tr_base = mx.compose([
         mx.affine3_scale([0.125, 0.125, 0.875]),
     ]);
@@ -34,7 +34,7 @@ function build_chroma0(): geo.Object {
 }
 
 function build_hue(hue: number): geo.Object {
-    const square = prim.circle_c(4);
+    const square = prim.regular_polygon_c(4);
     const tr_base = mx.compose([
         mx.affine3_translate([-1, 2, 0]),
         mx.affine3_rotate_y(ut.deg90),

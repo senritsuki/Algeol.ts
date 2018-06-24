@@ -8,7 +8,7 @@ import * as ut from '../../algorithm/utility';
 import * as vc from '../../algorithm/vector';
 import * as ellipse from './ellipse';
 
-/*
+/**
  * 円に内接するn角形
  * @param   n_gonal     多角形の頂点数
  * @param   r           多角形の外接円の半径

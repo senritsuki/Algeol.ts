@@ -367,16 +367,24 @@ export const affine3_rotate_z = ut.compose_2f(m3_rotate_z, m3_to_m4);
 /** (1, 0) を (v.x, v.y) と平行にする回転写像 */
 export function rotate_z_10_to_xy(v: vc.V2|number[]): M2 {
     v = vc.to_v2_if(v);
-    const x = v.x;
-    const y = v.y;
-    const radZ = Math.atan2(y, x);
-    const mxRotZ = m2_rotate(radZ);
-    return mxRotZ;
+    const radZ = Math.atan2(v.y, v.x);
+    return m2_rotate(radZ);
 }
 /** (1, 0) を (v.x, v.y) と平行にする回転写像 */
 export const affine2_rotate_z_10_to_xy = ut.compose_2f(rotate_z_10_to_xy, m2_to_m3);
 /** (1, 0) を (v.x, v.y) と平行にする回転写像 */
 export const affine3_rotate_z_10_to_xy = ut.compose_2f(affine2_rotate_z_10_to_xy, m3_to_m4);
+
+/** (v.x, v.y) を (1, 0) と平行にする回転写像 */
+export function rotate_z_xy_to_10(v: vc.V2|number[]): M2 {
+    v = vc.to_v2_if(v);
+    const radZ = Math.atan2(v.y, v.x);
+    return m2_rotate(-radZ);
+}
+/** (v.x, v.y) を (1, 0) と平行にする回転写像 */
+export const affine2_rotate_z_xy_to_10 = ut.compose_2f(rotate_z_xy_to_10, m2_to_m3);
+/** (v.x, v.y) を (1, 0) と平行にする回転写像 */
+export const affine3_rotate_z_xy_to_10 = ut.compose_2f(affine2_rotate_z_xy_to_10, m3_to_m4);
 
 /** (1, 0, 0) を (v.x, v.y, v.z) と平行にする回転写像 */
 export function rotate_yz_100_to_xyz(v: vc.V3|number[]): M3 {
@@ -428,11 +436,11 @@ export function rot_inv_xyz_m3(rad_xyz: [number, number, number]): M3 {
 export const rot_inv_xyz_m4 = ut.compose_2f(rot_inv_xyz_m3, m3_to_m4);
 
 
-/** 行列を合成する */
+/** 行列合成 reduce((a, b) => mul(b, a)) */
 export function compose<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
     return mm.reduce((a, b) => b.mul(a));
 }
-/** 行列を逆順に合成する */
+/** 行列合成 reduce((a, b) => mul(a, b)) */
 export function compose_rev<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
     return mm.reduce((a, b) => a.mul(b));
 }

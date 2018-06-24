@@ -43,10 +43,8 @@ export function doughnut_pie_verts(n: number, r1: number, r2: number, rad1: numb
 /**
  * 楕円穴あきパイ（円ドーナツの楕円化における厚みの歪み対策）
  * @param n             円弧を近似する辺の数
- * @param rx1           内側の円のx半径
- * @param ry1           内側の円のy半径
- * @param rx2           外側の円のx半径
- * @param ry2           外側の円のy半径
+ * @param r1            内側の円のx, y半径
+ * @param r2            外側の円のx, y半径
  * @param rad1          円弧の開始角度
  * @param rad2          円弧の終了角度
  */

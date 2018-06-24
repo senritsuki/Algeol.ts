@@ -121,6 +121,9 @@ export interface Vector<T extends Vector<T>> extends VectorCommon {
     ip(dist: T|number[]): number;
     /** 二項演算: 二つの方向ベクトルのなす角 */
     angle(dist: T|number[]): number;
+
+    length_add(n: number): T;
+    length_sub(n: number): T;
 }
 
 class VectorBase<T extends Vector<T>> implements Vector<T> {
@@ -175,6 +178,15 @@ class VectorBase<T extends Vector<T>> implements Vector<T> {
     }
     angle(dist: T|number[]): number {
         return angle_array(this._v, to_array_if(dist));
+    }
+
+    length_add(n: number): T {
+        const cur_len = this.length();
+        const new_len = cur_len + n;
+        return this.scalar(new_len / cur_len);
+    }
+    length_sub(n: number): T {
+        return this.length_add(-n);
     }
 }
 

@@ -79,3 +79,24 @@ export function range<V extends vc.Vector<V>>(first: V, last: V, count: number, 
     return seq;
 }
 
+export function arc_range<V extends vc.Vector<V>>(o: V, dx: V, dy: V, rad1: number, rad2: number, count: number, skip_last: boolean = false): V[] {
+    const fx = Math.cos;
+    const fy = Math.sin;
+    return arc_range_custom(o, dx, dy, fx, fy, rad1, rad2, count, skip_last);
+}
+
+export function arc_range_custom<V extends vc.Vector<V>>(
+    o: V, 
+    dx: V, 
+    dy: V, 
+    fx: (rad: number) => number,
+    fy: (rad: number) => number, 
+    rad1: number,
+    rad2: number,
+    count: number,
+    skip_last: boolean = false,
+): V[] {
+    return sq.range(rad1, rad2, count, skip_last)
+        .map(rad => o.add(dx.scalar(fx(rad)).add(dy.scalar(fy(rad)))))
+}
+
