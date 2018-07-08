@@ -2,7 +2,7 @@ import * as vc from "../../algorithm/vector";
 import * as cv from "../../algorithm/curve";
 
 function expect_toBeClosedToZero<T extends vc.Vector<T>>(v: vc.Vector<T>) {
-    vc.to_array_if(v).forEach(n => expect(n).toBeCloseTo(0));
+    vc.to_array_if_not(v).forEach(n => expect(n).toBeCloseTo(0));
 }
 
 test('Ray2', () => {

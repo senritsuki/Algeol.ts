@@ -28,6 +28,7 @@ export interface Object {
     face_groups(callback: (face_group: FaceGroup, offset: number) => void, offset: number): void;
 }
 
+/** 頂点とポリゴンインデックス */
 export interface VF {
     verts: vc.V3[];
     faces: number[][];
@@ -173,6 +174,17 @@ export function obj_single(verts: vc.V3[], face_groups: FaceGroup[], transform: 
 }
 
 /**
+ * 単一のオブジェクトを生成する
+ * @param vf 頂点とポリゴンインデックス
+ * @param facegroup_name ポリゴングループの名前
+ * @param transform 適用するアフィン変換（任意）
+ * @param object_name オブジェクト名（任意）
+ */
+export function obj_single_vf(vf: VF, facegroup_name: string|null, transform: mx.M4|null, object_name?: string|null): Object {
+    return new SingleObject(vf.verts, [facegroup(vf.faces, facegroup_name, facegroup_name)], transform, object_name||null);
+}
+
+/**
  * 複数のオブジェクトをグループ化したオブジェクトを生成する
  * @param children グループ化するオブジェクト
  * @param transform 適用するアフィン変換（任意）
@@ -199,7 +211,7 @@ export function obj_duplicate(src: Object, duplicate: mx.M4[], object_name?: str
  * @param group_name サーフェイスグループの名前（任意）
  * @param material_name サーフェイスグループに適用するマテリアル名（任意）
  */
-export function face(faces: number[][], group_name: string|null, material_name: string|null): FaceGroup {
+export function facegroup(faces: number[][], group_name: string|null, material_name: string|null): FaceGroup {
     return new SimpleFaceGroup(faces, faceinfo(group_name, material_name));
 }
 
@@ -218,7 +230,7 @@ export function faceinfo(group_name: string|null, material_name: string|null): F
  * @param rgb アンビエントカラーとディフューズカラー。0以上1以下ののRGB配列
  */
 export function material(material_name: string, rgb: vc.V3|number[]): Material {
-    const c = vc.to_array_if(rgb);
+    const c = vc.to_array_if_not(rgb);
     return {
         material_name: material_name,
         ambient: c,

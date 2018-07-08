@@ -3,7 +3,7 @@ import * as geo from '../../object/object';
 import * as prim from '../../object/primitive'
 import * as sf from '../../decoder/savefile';
 
-const cube = prim.regular_hexahedron();
+const cube = geo.obj_single_vf(prim.regular_hexahedron(), null, null);
 const rgb_cubes = geo.obj_group([
     geo.obj_group([cube], mx.affine3_translate([-3, 0, 0]), geo.faceinfo('red', 'red'),  null),
     geo.obj_group([cube], mx.affine3_translate([0, 0, 0]), geo.faceinfo('green', 'green'),  null),

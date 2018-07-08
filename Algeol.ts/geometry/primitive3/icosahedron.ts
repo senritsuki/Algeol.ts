@@ -7,16 +7,21 @@
 import * as ut from '../../algorithm/utility';
 import * as sq from '../../algorithm/sequence';
 import * as vc from '../../algorithm/vector';
+import * as mx from '../../algorithm/matrix';
 import * as trirect from './trirect';
 
 /**
  * 原点中心の半径rの球に内接する正20面体の頂点12個
  * 球に内接する長方形3枚の頂点を流用する
  */
-export function verts(r: number): vc.V3[] {
+export function verts(r: number, do_rot: boolean = false): vc.V3[] {
     const short = r / Math.sqrt(2 + ut.phi); // 0^2 + 1^2 + ut.phi^2
     const long = short * ut.phi;
-    return trirect.verts(long, short);
+    let verts = trirect.verts(long, short);
+    if (do_rot) {
+        verts = verts.map(v => mx.m3_rotate_y(rad_rot_y_to_z).map(v));
+    }
+    return verts;
 }
 /**
  * 正20面体の面20個

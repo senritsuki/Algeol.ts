@@ -29,7 +29,17 @@ function apply_thickness(v: vc.V3, thickness: number, type: ThickType): [vc.V3, 
 }
 
 export function arc180_verts(o: vc.V3, dx: vc.V3, dy: vc.V3, division: number): vc.V3[] {
-    return vsq.arc_range(o, dx, dy, 0, ut.deg180, division);
+    return vsq.arc_range(o, dx, dy, 0, ut.deg180, division+1);
+}
+
+export function arc60x2_verts(o: vc.V3, dx: vc.V3, dy: vc.V3, division: number): vc.V3[] {
+    const sq1 = vsq.arc_range(o.sub(dx), dx.scalar(2), dy.scalar(ut.r3 / 2), 0, ut.deg60, division / 2 + 1, true);
+    const sq2 = vsq.arc_range(o.add(dx), dx.scalar(-2), dy.scalar(ut.r3 / 2), ut.deg60, 0, division / 2 + 1);
+    return sq1.concat(sq2);
+}
+
+export function arc90_verts(o: vc.V3, dx: vc.V3, dy: vc.V3, division: number): vc.V3[] {
+    return vsq.arc_range(o, dx, dy, 0, ut.deg90, division+1);
 }
 
 export function base_arc_faces(length: number): number[][] {
@@ -57,7 +67,7 @@ export function base_arc180(
     const sq_base1 = height ? [sq_outer[sq_outer.length-1], sq_inner[0]] : [];
     const sq_base2 = height ? [sq_inner[sq_inner.length-1], sq_outer[0]] : [];
     const verts = sq_base1.concat(sq_inner).concat(sq_base2).concat(sq_outer);
-    const faces = base_arc_faces(verts.length);
+    const faces = [sq.arithmetic(verts.length)];
     return {verts, faces};
 }
 
@@ -77,7 +87,7 @@ export function base_wall180(
     const dh = vc.v3(0, 0, height);
     const sq_outer = [outer2, outer2.add(dh), outer1.add(dh), outer1];
     const verts = sq_inner.concat(sq_outer);
-    const faces = [verts.map((_, i) => i)];
+    const faces = [sq.arithmetic(verts.length)];
     return {verts, faces};
 }
 

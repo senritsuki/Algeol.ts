@@ -13,10 +13,12 @@ export function connect(
     obj: geo.Object, 
     src1: vc.V3, 
     src2: vc.V3, 
-    src_width: number,
     dst1: vc.V3, 
     dst2: vc.V3, 
-    dst_width: number,
+    /** div(dst_width, src_width) */
+    scale_width: number = 1,
+    /** div(dst_height, src_height) */
+    scale_height: number = 1,
 ): geo.Object {
     const src_d = src2.sub(src1);
     const src_c = src1.add(src2).scalar(0.5);
@@ -27,7 +29,7 @@ export function connect(
     const transform = mx.compose([
         mx.affine3_translate(src_c.scalar(-1)),
         mx.affine3_rotate_z_xy_to_10(vc.v2(src_d.x, src_d.y)),
-        mx.affine3_scale([dst_len / src_len, dst_width / src_width, 1]),
+        mx.affine3_scale([dst_len / src_len, scale_width, scale_height]),
         mx.affine3_rotate_z_10_to_xy(vc.v2(dst_d.x, dst_d.y)),
         mx.affine3_translate(dst_c),
     ]);

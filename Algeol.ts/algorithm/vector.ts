@@ -159,25 +159,25 @@ class VectorBase<T extends Vector<T>> implements Vector<T> {
     }
 
     add(dist: T|number[]): T {
-        return this._f(add_array(this._v, to_array_if(dist)));
+        return this._f(add_array(this._v, to_array_if_not(dist)));
     }
     sub(dist: T|number[]): T {
-        return this._f(sub_array(this._v, to_array_if(dist)));
+        return this._f(sub_array(this._v, to_array_if_not(dist)));
     }
     el_mul(dist: T|number[]): T {
-        return this._f(el_mul_array(this._v, to_array_if(dist)));
+        return this._f(el_mul_array(this._v, to_array_if_not(dist)));
     }
     el_div(dist: T|number[]): T {
-        return this._f(el_div_array(this._v, to_array_if(dist)));
+        return this._f(el_div_array(this._v, to_array_if_not(dist)));
     }
     scalar(n: number): T {
         return this._f(scalar_array(this._v, n));
     }
     ip(dist: T|number[]): number {
-        return ip_array(this.array(), to_array_if(dist));
+        return ip_array(this.array(), to_array_if_not(dist));
     }
     angle(dist: T|number[]): number {
-        return angle_array(this._v, to_array_if(dist));
+        return angle_array(this._v, to_array_if_not(dist));
     }
 
     length_add(n: number): T {
@@ -239,7 +239,7 @@ class V2Impl extends VectorBase<V2Impl> implements V2 {
     set y(n: number) { this._v[1] = n; }
 
     cp(dist: V2Impl|number[]): number {
-        return cp2_array(this._v, to_array_if(dist));
+        return cp2_array(this._v, to_array_if_not(dist));
     }
 }
 
@@ -275,7 +275,7 @@ class V3Impl extends VectorBase<V3Impl> implements V3 {
     set z(n: number) { this._v[2] = n; }
 
     cp(dist: V3Impl|number[]): V3Impl {
-        return V3Impl.fm_array(cp3_array(this._v, to_array_if(dist)));
+        return V3Impl.fm_array(cp3_array(this._v, to_array_if_not(dist)));
     }
 }
 
@@ -313,10 +313,10 @@ class V4Impl extends VectorBase<V4Impl> implements V4 {
 }
 
 
-export const to_array_if = <T extends Vector<T>>(n: T|number[]): number[] => n instanceof Array ? n : n._v;
-export const to_v2_if = (v: V2|number[]): V2 => v instanceof Array ? array_to_v2(v) : v;
-export const to_v3_if = (v: V3|number[]): V3 => v instanceof Array ? array_to_v3(v) : v;
-export const to_v4_if = (v: V4|number[]): V4 => v instanceof Array ? array_to_v4(v) : v;
+export const to_array_if_not = <T extends Vector<T>>(n: T|number[]): number[] => n instanceof Array ? n : n._v;
+export const to_v2_if_not = (v: V2|number[]): V2 => v instanceof Array ? array_to_v2(v) : v;
+export const to_v3_if_not = (v: V3|number[]): V3 => v instanceof Array ? array_to_v3(v) : v;
+export const to_v4_if_not = (v: V4|number[]): V4 => v instanceof Array ? array_to_v4(v) : v;
 
 
 // --------------------------------------------------------

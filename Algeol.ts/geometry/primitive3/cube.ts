@@ -14,6 +14,8 @@ export function verts(r: number): vc.V3[] {
 }
 /** 立方体の面6つ
     面は全て合同の正方形である */
-export function faces(): number[][] {
-    return cuboid.faces();
-}
+export const faces = cuboid.faces;
+
+export const faces_top = cuboid.faces_top;
+export const faces_bottom = cuboid.faces_bottom;
+export const faces_side = cuboid.faces_side;

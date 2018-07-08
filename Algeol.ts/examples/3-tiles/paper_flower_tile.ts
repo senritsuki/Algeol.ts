@@ -15,7 +15,7 @@ import * as sf from '../../decoder/savefile';
 
 
 function build_paper_flower(num: number, width: number): geo.Object {
-    const paper_flower = prim.regular_polygon(4);
+    const paper_flower = geo.obj_single_vf(prim.regular_polygon(4), null, null);
     const tr_base = mx.compose([
         mx.affine3_scale([0.5, 0.5 * width, 1]),
         mx.affine3_translate([0.5, 0, 0]),
@@ -64,7 +64,7 @@ function build_flower_tile(): geo.Object {
     const dx = vc.v3(1, 0, 0);
     const dy = vc.v3(0.5, 0.5 * ut.r3, 0);
     const o = dx.add(dy).scalar(size * -0.5);
-    const verts = mesh_rect.verts(o, dx, dy, size, size);
+    const verts = mesh_rect.verts(o, dx, dy, size, size, null);
     const edges = mesh_rect.edges_triangle(size, size);
     const lines = mesh_util.edges_to_lines(verts, edges);
     

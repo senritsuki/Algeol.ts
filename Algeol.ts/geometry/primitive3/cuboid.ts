@@ -31,3 +31,24 @@ export function faces(): number[][] {
         [7, 4, 0, 3], // 右
     ];
 }
+/** 直方体の上面 */
+export function faces_top(): number[][] {
+    return [
+        [0, 1, 2, 3], // 上
+    ];
+}
+/** 直方体の下面 */
+export function faces_bottom(): number[][] {
+    return [
+        [7, 6, 5, 4], // 下
+    ];
+}
+/** 直方体の側面 */
+export function faces_side(): number[][] {
+    return [
+        [4, 5, 1, 0], // 奥
+        [5, 6, 2, 1], // 左
+        [6, 7, 3, 2], // 前
+        [7, 4, 0, 3], // 右
+    ];
+}

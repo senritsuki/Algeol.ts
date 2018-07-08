@@ -202,3 +202,7 @@ export function isin(min: number, max: number, n: number): boolean {
 export function xor(b1: boolean, b2: boolean): boolean {
     return b1 && b2 ? false : !(b1 || b2) ? false : true;
 }
+
+export function zip<A, B>(a: A[], b: B[]): [A, B][] {
+    return priv.sequence(Math.max(a.length, b.length)).map(i => <[A, B]>[a[i], b[i]]);
+}

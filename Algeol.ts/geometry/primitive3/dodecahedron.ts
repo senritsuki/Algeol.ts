@@ -7,6 +7,7 @@
 import * as ut from '../../algorithm/utility';
 import * as sq from '../../algorithm/sequence';
 import * as vc from '../../algorithm/vector';
+import * as mx from '../../algorithm/matrix';
 import * as trirect from './trirect';
 import * as cube from './cube';
 
@@ -14,12 +15,17 @@ import * as cube from './cube';
  * 原点中心の半径rの球に内接する正12面体の頂点20個
  * 球に内接する長方形3枚と立方体の頂点を流用する
  */
-export function verts(r: number): vc.V3[] {
+export function verts(r: number, do_rot: boolean = false): vc.V3[] {
     const c = r / ut.r3;
     const short = c / ut.phi;
     const long = c * ut.phi;
-    return trirect.verts(long, short).concat(cube.verts(c));
+    let verts = trirect.verts(long, short).concat(cube.verts(c));
+    if (do_rot) {
+        verts = verts.map(v => mx.m3_rotate_y(rad_rot_y_to_z).map(v));
+    }
+    return verts;
 }
+
 /**
  * 正12面体の面12個
  * 面は全て合同の正五角形である

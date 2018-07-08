@@ -14,7 +14,7 @@ const obj = geo.obj_single(
     // face groups
     [
         // face group
-        geo.face(
+        geo.facegroup(
             // faces
             [
                 [0, 1, 2],

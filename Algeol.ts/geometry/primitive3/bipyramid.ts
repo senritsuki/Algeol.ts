@@ -17,11 +17,11 @@ export function verts_i(n_gonal: number, r: number, h1: number, h2: number): vc.
     return verts;
 }
 /** (底面の頂点数, 底面の内接円の半径, 高さ, 深さ) -> 双角錐の頂点の配列 */
-export function verts_c(n_gonal: number, r: number, h1: number, h2: number): vc.V3[] {
+export function verts_c(n_gonal: number, r: number, z1: number, z2: number): vc.V3[] {
     const verts: vc.V3[] = [];
     circle.verts_c(n_gonal, r, 0, 0).forEach(v => verts.push(v)); // 底面
-    verts.push(vc.v3(0, 0, h1)); // 頭頂点
-    verts.push(vc.v3(0, 0, h2)); // 頭頂点の逆
+    verts.push(vc.v3(0, 0, z1)); // 頭頂点
+    verts.push(vc.v3(0, 0, z2)); // 頭頂点の逆
     return verts;
 }
 
