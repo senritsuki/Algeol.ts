@@ -44,3 +44,17 @@ export function faces(): number[][] {
         [3, 2, 1], // 下
     ];
 }
+
+/**
+ * 正4面体の辺6つ
+ */
+export function edges(): [number, number][] {
+    return [
+        [0, 1],
+        [0, 2],
+        [0, 3],
+        [3, 2],
+        [2, 1],
+        [1, 3],
+    ];
+}

@@ -20,11 +20,11 @@ function build_chroma0(): geo.Object {
     const prism_vf = prim.regular_prism(12);
     const prism = geo.obj_single_vf(prism_vf, null, null);
     const tr_base = mx.compose([
-        mx.affine3_scale([0.125, 0.125, 0.875]),
+        mx.m4_scale3([0.125, 0.125, 0.875]),
     ]);
     const tr = (lightness: number) => mx.compose([
         tr_base,
-        mx.affine3_translate([0, 0, lightness / 10]),
+        mx.m4_translate3([0, 0, lightness / 10]),
     ]);
     const obj = geo.obj_group(
         seq_lightness
@@ -38,14 +38,14 @@ function build_hue(hue: number): geo.Object {
     const square_vf = prim.regular_polygon_c(4);
     const square = geo.obj_single_vf(square_vf, null, null);
     const tr_base = mx.compose([
-        mx.affine3_translate([-1, 2, 0]),
-        mx.affine3_rotate_y(ut.deg90),
-        mx.affine3_scale([1, 0.4375, 0.4375]),
+        mx.m4_translate3([-1, 2, 0]),
+        mx.m4_rotate3_y(ut.deg90),
+        mx.m4_scale3([1, 0.4375, 0.4375]),
     ]);
     const tr = (lch: [number, number, number]) => mx.compose([
         tr_base,
-        mx.affine3_translate([0, lch[1] / 10, lch[0] / 10]),
-        mx.affine3_rotate_z(ut.deg_to_rad(-lch[2])),
+        mx.m4_translate3([0, lch[1] / 10, lch[0] / 10]),
+        mx.m4_rotate3_z(ut.deg_to_rad(-lch[2])),
     ]);
     const obj = geo.obj_group(
         seq.to_3d(seq_lightness, seq_chroma, [hue])

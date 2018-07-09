@@ -27,11 +27,11 @@ export function connect(
     const src_len = src_d.length();
     const dst_len = dst_d.length();
     const transform = mx.compose([
-        mx.affine3_translate(src_c.scalar(-1)),
-        mx.affine3_rotate_z_xy_to_10(vc.v2(src_d.x, src_d.y)),
-        mx.affine3_scale([dst_len / src_len, scale_width, scale_height]),
-        mx.affine3_rotate_z_10_to_xy(vc.v2(dst_d.x, dst_d.y)),
-        mx.affine3_translate(dst_c),
+        mx.m4_translate3(src_c.scalar(-1)),
+        mx.m4_rotate_from_v_to_10(vc.v2(src_d.x, src_d.y)),
+        mx.m4_scale3([dst_len / src_len, scale_width, scale_height]),
+        mx.m4_rotate_from_10_to_v(vc.v2(dst_d.x, dst_d.y)),
+        mx.m4_translate3(dst_c),
     ]);
     return geo.obj_group([obj], transform, null, null);
 }

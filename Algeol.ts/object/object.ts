@@ -195,6 +195,11 @@ export function obj_group(children: Object[], transform: mx.M4|null, group_info:
     return new GroupObject(children, transform, group_info, object_name||null);
 }
 
+export function obj_group_vf(children: VF[], transform: mx.M4|null, group_info: FaceInfo|null, object_name?: string|null): Object {
+    const objs = children.map(vf => obj_single_vf(vf, null, null));
+    return new GroupObject(objs, transform, group_info, object_name||null);
+}
+
 /**
  * あるオブジェクトを複製しグループ化したオブジェクトを生成する
  * @param src 複製元オブジェクト

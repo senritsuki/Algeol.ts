@@ -17,12 +17,12 @@ import * as sf from '../../decoder/savefile';
 function build_paper_flower(num: number, width: number): geo.Object {
     const paper_flower = geo.obj_single_vf(prim.regular_polygon(4), null, null);
     const tr_base = mx.compose([
-        mx.affine3_scale([0.5, 0.5 * width, 1]),
-        mx.affine3_translate([0.5, 0, 0]),
+        mx.m4_scale3([0.5, 0.5 * width, 1]),
+        mx.m4_translate3([0.5, 0, 0]),
     ]);
     const tr = (i: number) => mx.compose([
         tr_base,
-        mx.affine3_rotate_z(ut.deg360 * i / num),
+        mx.m4_rotate3_z(ut.deg360 * i / num),
     ]);
     return geo.obj_duplicate(
         paper_flower,
@@ -33,11 +33,11 @@ function build_paper_flower(num: number, width: number): geo.Object {
 
 function build_small_flowers(lines: cv.Curve3[]): geo.Object {
     const paper_flower = build_paper_flower(4, 0.5);
-    const scaling = mx.affine3_scale([1/16, 1/16, 1]);
+    const scaling = mx.m4_scale3([1/16, 1/16, 1]);
     const tr = (ray: cv.Ray3) => mx.compose([
         scaling,
-        mx.affine3_rotate_z_10_to_xy([ray.d.x, ray.d.y]),
-        mx.affine3_translate(ray.c),
+        mx.m4_rotate_from_10_to_v([ray.d.x, ray.d.y]),
+        mx.m4_translate3(ray.c),
     ]);
     const ts = [0.25, 0.50, 0.75];
     return geo.obj_duplicate(
@@ -48,10 +48,10 @@ function build_small_flowers(lines: cv.Curve3[]): geo.Object {
 }
 function build_large_flowers(verts: vc.V3[]): geo.Object {
     const paper_flower = build_paper_flower(6, 0.5 / ut.r3);
-    const scaling = mx.affine3_scale([1/8, 1/8, 1]);
+    const scaling = mx.m4_scale3([1/8, 1/8, 1]);
     const tr = (v: vc.V3) => mx.compose([
         scaling,
-        mx.affine3_translate(v),
+        mx.m4_translate3(v),
     ]);
     return geo.obj_duplicate(
         paper_flower,

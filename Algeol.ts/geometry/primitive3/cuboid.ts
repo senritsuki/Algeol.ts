@@ -6,8 +6,10 @@
 
 import * as vc from '../../algorithm/vector';
 
-/** 直方体の頂点8つ
-    頂点の順序は立方体と同じであり、同じface配列を流用可能 */
+/**
+ * 直方体の頂点8つ
+ * 頂点の順序は立方体と同じであり、同じface配列を流用する
+ */
 export function verts(x: number, y: number, z: number): vc.V3[] {
     return [
         vc.v3(x, y, z),    // 上 右奥
@@ -20,6 +22,7 @@ export function verts(x: number, y: number, z: number): vc.V3[] {
         vc.v3(x, -y, -z),  // 下 右前
     ];
 }
+
 /** 直方体の面6つ */
 export function faces(): number[][] {
     return [
@@ -50,5 +53,25 @@ export function faces_side(): number[][] {
         [5, 6, 2, 1], // 左
         [6, 7, 3, 2], // 前
         [7, 4, 0, 3], // 右
+    ];
+}
+
+/**
+ * 直方体の辺12個
+ */
+export function edges(): [number, number][] {
+    return [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 0],
+        [4, 5],
+        [5, 6],
+        [6, 7],
+        [7, 4],
+        [0, 4],
+        [1, 5],
+        [2, 6],
+        [3, 7],
     ];
 }

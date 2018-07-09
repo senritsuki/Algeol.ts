@@ -2,13 +2,13 @@ import * as sq from '../algorithm/sequence';
 import * as vc from '../algorithm/vector'
 import * as cv from '../algorithm/curve'
 
-export interface VFs<V extends vc.Vector<V>> {
+export interface VF<V extends vc.Vector<V>> {
     verts: V[];
     faces: number[][];
 }
 
-export function scaling<V extends vc.Vector<V>>(verts: V[], faces: number[][], scale: number): VFs<V> {
-    const vf: VFs<V> = {verts: [], faces: []};
+export function scale_face<V extends vc.Vector<V>>(verts: V[], faces: number[][], scale: number): VF<V> {
+    const vf: VF<V> = {verts: [], faces: []};
     faces.forEach(face => {
         const verts1 = face.map(i => verts[i]);
         const center = verts1.reduce((a, b) => a.add(b)).scalar(1 / verts1.length);
@@ -19,6 +19,25 @@ export function scaling<V extends vc.Vector<V>>(verts: V[], faces: number[][], s
         vf.faces.push(face2);
     });
     return vf;
+}
+
+export function get_edges(faces: number[][]): [number, number][] {
+    const set = new Set<string>();
+    const swap = (n: [number, number]): [number, number] => n[0] > n[1] ? [n[1], n[0]] : n;
+    const edges: [number, number][] = [];
+    faces.forEach(face => {
+        const loop = sq.arithmetic(face.length).map(i => [i, (i+1) % face.length]);
+        loop.forEach(ii => {
+            const edge = swap([face[ii[0]], face[ii[1]]]);
+            const key = edge.join('-');
+            if (set.has(key)) {
+                return;
+            }
+            set.add(key);
+            edges.push(edge);
+        });
+    });
+    return edges;
 }
 
 export function edges_to_lines<V extends vc.Vector<V>>(verts: V[], edges: number[][]): cv.Curve<V>[] {

@@ -6,8 +6,10 @@
 
 import * as vc from '../../algorithm/vector';
 
-/** 原点中心の半径rの球に内接する正8面体の頂点6つ
-    x軸上、y軸上、z軸上それぞれに2点ずつとる */
+/**
+ * 原点中心の半径rの球に内接する正8面体の頂点6つ
+ * x軸上、y軸上、z軸上それぞれに2点ずつとる
+ */
 export function verts(r: number): vc.V3[] {
     return [
         vc.v3(0, 0, r),  // 上
@@ -18,8 +20,11 @@ export function verts(r: number): vc.V3[] {
         vc.v3(0, 0, -r), // 下
     ];
 }
-/** 正8面体の三角形の面8つ
-    面は全て合同の正三角形である */
+
+/**
+ * 正8面体の三角形の面8つ
+ * 面は全て合同の正三角形である
+ */
 export function faces(): number[][] {
     return [
         [1, 2, 0], // 上 右奥
@@ -30,5 +35,25 @@ export function faces(): number[][] {
         [4, 3, 5], // 下 左前
         [3, 2, 5], // 下 左奥
         [2, 1, 5], // 下 右奥
+    ];
+}
+
+/**
+ * 正8面体の辺12個
+ */
+export function edges(): [number, number][] {
+    return [
+        [0, 1],
+        [0, 2],
+        [0, 3],
+        [0, 4],
+        [5, 1],
+        [5, 2],
+        [5, 3],
+        [5, 4],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+        [4, 1],
     ];
 }

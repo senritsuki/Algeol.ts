@@ -316,7 +316,7 @@ export function apply_affine3(m: M4, vl: vc.V3[], w: number = 1): vc.V3[] {
 }
 
 /** 平行移動写像 */
-export function affine2_translate(v: number[]|vc.V2): M3 {
+export function m3_translate2(v: number[]|vc.V2): M3 {
     v = v instanceof Array ? v : v._v;
     return M3Impl.FromRows([
         [1, 0, v[0]],
@@ -325,7 +325,7 @@ export function affine2_translate(v: number[]|vc.V2): M3 {
     ]);
 }
 /** 平行移動写像 */
-export function affine3_translate(v: number[]|vc.V3): M4 {
+export function m4_translate3(v: number[]|vc.V3): M4 {
     v = v instanceof Array ? v : v._v;
     return M4Impl.FromRows([
         [1, 0, 0, v[0]],
@@ -353,9 +353,9 @@ export function m3_scale(v: number[]|vc.V3): M3 {
     ]);
 }
 /** 拡大縮小写像 */
-export const affine2_scale = ut.compose_2f(m2_scale, m2_to_m3);
+export const m3_scale2 = ut.compose_2f(m2_scale, m2_to_m3);
 /** 拡大縮小写像 */
-export const affine3_scale = ut.compose_2f(m3_scale, m3_to_m4);
+export const m4_scale3 = ut.compose_2f(m3_scale, m3_to_m4);
 
 export function m2_rotate(rad: number): M2 {
     const c = Math.cos(rad);
@@ -396,39 +396,39 @@ export function m3_rotate_z(rad: number): M3 {
     ]);
 }
 
-export const affine2_rotate = ut.compose_2f(m2_rotate, m2_to_m3);
+export const m3_rotate2 = ut.compose_2f(m2_rotate, m2_to_m3);
 /** x軸回転写像 */
-export const affine3_rotate_x = ut.compose_2f(m3_rotate_x, m3_to_m4);
+export const m4_rotate3_x = ut.compose_2f(m3_rotate_x, m3_to_m4);
 /** y軸回転写像 */
-export const affine3_rotate_y = ut.compose_2f(m3_rotate_y, m3_to_m4);
+export const m4_rotate3_y = ut.compose_2f(m3_rotate_y, m3_to_m4);
 /** z軸回転写像 */
-export const affine3_rotate_z = ut.compose_2f(m3_rotate_z, m3_to_m4);
+export const m4_rotate3_z = ut.compose_2f(m3_rotate_z, m3_to_m4);
 
 
-/** (1, 0) を (v.x, v.y) と平行にする回転写像 */
-export function rotate_z_10_to_xy(v: vc.V2|number[]): M2 {
+/** (1, 0) から 引数v への回転写像 */
+export function m2_rotate_from_10_to_v(v: vc.V2|number[]): M2 {
     v = vc.to_v2_if_not(v);
     const radZ = Math.atan2(v.y, v.x);
     return m2_rotate(radZ);
 }
-/** (1, 0) を (v.x, v.y) と平行にする回転写像 */
-export const affine2_rotate_z_10_to_xy = ut.compose_2f(rotate_z_10_to_xy, m2_to_m3);
-/** (1, 0) を (v.x, v.y) と平行にする回転写像 */
-export const affine3_rotate_z_10_to_xy = ut.compose_2f(affine2_rotate_z_10_to_xy, m3_to_m4);
+/** (1, 0) から 引数v への回転写像 */
+export const m3_rotate_from_10_to_v = ut.compose_2f(m2_rotate_from_10_to_v, m2_to_m3);
+/** (1, 0) から 引数v への回転写像 */
+export const m4_rotate_from_10_to_v = ut.compose_2f(m3_rotate_from_10_to_v, m3_to_m4);
 
-/** (v.x, v.y) を (1, 0) と平行にする回転写像 */
-export function rotate_z_xy_to_10(v: vc.V2|number[]): M2 {
+/** 引数v から (1, 0) への回転写像 */
+export function m2_rotate_from_v_to_10(v: vc.V2|number[]): M2 {
     v = vc.to_v2_if_not(v);
     const radZ = Math.atan2(v.y, v.x);
     return m2_rotate(-radZ);
 }
-/** (v.x, v.y) を (1, 0) と平行にする回転写像 */
-export const affine2_rotate_z_xy_to_10 = ut.compose_2f(rotate_z_xy_to_10, m2_to_m3);
-/** (v.x, v.y) を (1, 0) と平行にする回転写像 */
-export const affine3_rotate_z_xy_to_10 = ut.compose_2f(affine2_rotate_z_xy_to_10, m3_to_m4);
+/** 引数v から (1, 0) への回転写像 */
+export const m3_rotate_from_v_to_10 = ut.compose_2f(m2_rotate_from_v_to_10, m2_to_m3);
+/** 引数v から (1, 0) への回転写像 */
+export const m4_rotate_from_v_to_10 = ut.compose_2f(m3_rotate_from_v_to_10, m3_to_m4);
 
-/** (1, 0, 0) を (v.x, v.y, v.z) と平行にする回転写像 */
-export function rotate_yz_100_to_xyz(v: vc.V3|number[]): M3 {
+/** (1, 0, 0) から 引数v への回転写像 */
+export function m3_rotate_from_100_to_v(v: vc.V3|number[]): M3 {
     v = vc.to_v3_if_not(v);
     const x = v.x;
     const y = v.y;
@@ -439,11 +439,11 @@ export function rotate_yz_100_to_xyz(v: vc.V3|number[]): M3 {
     const mxRotZ = m3_rotate_z(radZ);
     return mxRotZ.mul(mxRotY);
 }
-/** (1, 0) を (v.x, v.y) と平行にする回転写像 */
-export const affine3_rotate_yz_100_to_xyz = ut.compose_2f(rotate_yz_100_to_xyz, m3_to_m4);
+/** (1, 0, 0) から 引数v への回転写像 */
+export const m4_rotate_from_100_to_v = ut.compose_2f(m3_rotate_from_100_to_v, m3_to_m4);
 
-/** (0, 1) を (v.x, v.y) と平行にする回転写像 */
-export function rotate_yz_010_to_xyz(v: vc.V3|number[]): M3 {
+/** (0, 0, 1) から 引数v への回転写像 */
+export function m3_rotate_from_001_to_v(v: vc.V3|number[]): M3 {
     v = vc.to_v3_if_not(v);
     const x = v.x;
     const y = v.y;
@@ -454,27 +454,27 @@ export function rotate_yz_010_to_xyz(v: vc.V3|number[]): M3 {
     const mxRotZ = m3_rotate_z(radZ);
     return mxRotZ.mul(mxRotY);
 }
-/** (0, 1) を (v.x, v.y) と平行にする回転写像 */
-export const affine3_rotate_yz_010_to_xyz = ut.compose_2f(rotate_yz_010_to_xyz, m3_to_m4);
+/** (0, 0, 1) から 引数v への回転写像 */
+export const m4_rotate_from_001_to_v = ut.compose_2f(m3_rotate_from_001_to_v, m3_to_m4);
 
 
 /** オイラー角XYZの回転写像 */
-export function rot_xyz_m3(rad_xyz: [number, number, number]): M3 {
+export function m3_rot_xyz(rad_xyz: [number, number, number]): M3 {
     return m3_rotate_x(rad_xyz[0])
         .mul(m3_rotate_y(rad_xyz[1]))
         .mul(m3_rotate_z(rad_xyz[2]));
 }
 /** オイラー角XYZの回転写像 */
-export const rot_xyz_m4 = ut.compose_2f(rot_xyz_m3, m3_to_m4);
+export const m4_rot3_xyz = ut.compose_2f(m3_rot_xyz, m3_to_m4);
 
 /** オイラー角XYZの逆回転写像 */
-export function rot_inv_xyz_m3(rad_xyz: [number, number, number]): M3 {
+export function m3_rot_inv_xyz(rad_xyz: [number, number, number]): M3 {
     return m3_rotate_z(-rad_xyz[2])
         .mul(m3_rotate_y(-rad_xyz[1]))
         .mul(m3_rotate_x(-rad_xyz[0]));
 }
 /** オイラー角XYZの回転写像 */
-export const rot_inv_xyz_m4 = ut.compose_2f(rot_inv_xyz_m3, m3_to_m4);
+export const m4_rot3_inv_xyz = ut.compose_2f(m3_rot_inv_xyz, m3_to_m4);
 
 
 /** 行列合成 reduce((a, b) => mul(b, a)) */
@@ -510,7 +510,7 @@ export function rodrigues_K(axis: vc.V3): M3 {
  * Rodrigues' rotation formula
  * https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
  */
-export function rodrigues_m3(axis: vc.V3, rad: number): M3 {
+export function m3_rodrigues(axis: vc.V3, rad: number): M3 {
     const k = rodrigues_K(axis);
     const k2 = k.mul(k);
     const cos = Math.cos(rad);
@@ -518,6 +518,6 @@ export function rodrigues_m3(axis: vc.V3, rad: number): M3 {
     return unit_m3.add(k.scalar(sin)).add(k2.scalar(1 - cos));
 }
 
-export function rodrigues_m4(axis: vc.V3, rad: number): M4 {
-    return m3_to_m4(rodrigues_m3(axis, rad));
+export function m4_rodrigues3(axis: vc.V3, rad: number): M4 {
+    return m3_to_m4(m3_rodrigues(axis, rad));
 }

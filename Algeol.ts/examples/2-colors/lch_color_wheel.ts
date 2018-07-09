@@ -16,12 +16,12 @@ function build_obj(count: number): geo.Object {
     const t = r * Math.sin(rad);
     const base = geo.obj_single_vf(prim.regular_bipyramid(4, 1, 1), null, null);
     const tr_base = mx.compose([
-        mx.affine3_scale([t, t, t]),
-        mx.affine3_translate([0, 1, 0]),
+        mx.m4_scale3([t, t, t]),
+        mx.m4_translate3([0, 1, 0]),
     ]);
     const tr = (hue: number) => mx.compose([
         tr_base,
-        mx.affine3_rotate_z(ut.deg_to_rad(hue)),
+        mx.m4_rotate3_z(ut.deg_to_rad(hue)),
     ]);
     const obj = geo.obj_group(
         seq.arithmetic(count, 0, 360 / count)

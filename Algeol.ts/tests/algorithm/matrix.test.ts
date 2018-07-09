@@ -32,61 +32,61 @@ test('m4', () => {
 });
 
 test('translate', () => {
-    expect(mx.affine2_translate([1, 2]).map_v2([0, 0], 1).array()).toEqual([1, 2]);
-    expect(mx.affine2_translate([1, 2]).map_v2([2, 3], 1).array()).toEqual([3, 5]);
-    expect(mx.affine3_translate([1, 2, 3]).map_v3([0, 0, 0], 1).array()).toEqual([1, 2, 3]);
-    expect(mx.affine3_translate([1, 2, 3]).map_v3([2, 3, 4], 1).array()).toEqual([3, 5, 7]);
+    expect(mx.m3_translate2([1, 2]).map_v2([0, 0], 1).array()).toEqual([1, 2]);
+    expect(mx.m3_translate2([1, 2]).map_v2([2, 3], 1).array()).toEqual([3, 5]);
+    expect(mx.m4_translate3([1, 2, 3]).map_v3([0, 0, 0], 1).array()).toEqual([1, 2, 3]);
+    expect(mx.m4_translate3([1, 2, 3]).map_v3([2, 3, 4], 1).array()).toEqual([3, 5, 7]);
 });
 
 test('scale', () => {
-    expect(mx.affine2_scale([1, 2]).map_v2([0, 0], 1).array()).toEqual([0, 0]);
-    expect(mx.affine2_scale([1, 2]).map_v2([2, 3], 1).array()).toEqual([2, 6]);
-    expect(mx.affine3_scale([1, 2, 3]).map_v3([0, 0, 0], 1).array()).toEqual([0, 0, 0]);
-    expect(mx.affine3_scale([1, 2, 3]).map_v3([2, 3, 4], 1).array()).toEqual([2, 6, 12]);
+    expect(mx.m3_scale2([1, 2]).map_v2([0, 0], 1).array()).toEqual([0, 0]);
+    expect(mx.m3_scale2([1, 2]).map_v2([2, 3], 1).array()).toEqual([2, 6]);
+    expect(mx.m4_scale3([1, 2, 3]).map_v3([0, 0, 0], 1).array()).toEqual([0, 0, 0]);
+    expect(mx.m4_scale3([1, 2, 3]).map_v3([2, 3, 4], 1).array()).toEqual([2, 6, 12]);
 });
 
 test('rotate-2d', () => {
-    expect_toBeClosedToZero(mx.affine2_rotate(ut.deg90).map_v2([1, 0], 1).sub([0, 1]));
-    expect_toBeClosedToZero(mx.affine2_rotate(ut.deg90).map_v2([0, 1], 1).sub([-1, 0]));
-    expect_toBeClosedToZero(mx.affine2_rotate(-ut.deg90).map_v2([1, 0], 1).sub([0, -1]));
-    expect_toBeClosedToZero(mx.affine2_rotate(-ut.deg90).map_v2([0, 1], 1).sub([1, 0]));
+    expect_toBeClosedToZero(mx.m3_rotate2(ut.deg90).map_v2([1, 0], 1).sub([0, 1]));
+    expect_toBeClosedToZero(mx.m3_rotate2(ut.deg90).map_v2([0, 1], 1).sub([-1, 0]));
+    expect_toBeClosedToZero(mx.m3_rotate2(-ut.deg90).map_v2([1, 0], 1).sub([0, -1]));
+    expect_toBeClosedToZero(mx.m3_rotate2(-ut.deg90).map_v2([0, 1], 1).sub([1, 0]));
 });
 test('rotate-3d-z', () => {
-    expect_toBeClosedToZero(mx.affine3_rotate_z(ut.deg90).map_v3([1, 0, 0], 1).sub([0, 1, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_z(ut.deg90).map_v3([0, 1, 0], 1).sub([-1, 0, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_z(ut.deg90).map_v3([0, 0, 1], 1).sub([0, 0, 1]));
-    expect_toBeClosedToZero(mx.affine3_rotate_z(-ut.deg90).map_v3([1, 0, 0], 1).sub([0, -1, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_z(-ut.deg90).map_v3([0, 1, 0], 1).sub([1, 0, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_z(-ut.deg90).map_v3([0, 0, 1], 1).sub([0, 0, 1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(ut.deg90).map_v3([1, 0, 0], 1).sub([0, 1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(ut.deg90).map_v3([0, 1, 0], 1).sub([-1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(ut.deg90).map_v3([0, 0, 1], 1).sub([0, 0, 1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(-ut.deg90).map_v3([1, 0, 0], 1).sub([0, -1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(-ut.deg90).map_v3([0, 1, 0], 1).sub([1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(-ut.deg90).map_v3([0, 0, 1], 1).sub([0, 0, 1]));
 });
 test('rotate-3d-x', () => {
-    expect_toBeClosedToZero(mx.affine3_rotate_x(ut.deg90).map_v3([1, 0, 0], 1).sub([1, 0, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_x(ut.deg90).map_v3([0, 1, 0], 1).sub([0, 0, 1]));
-    expect_toBeClosedToZero(mx.affine3_rotate_x(ut.deg90).map_v3([0, 0, 1], 1).sub([0, -1, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_x(-ut.deg90).map_v3([1, 0, 0], 1).sub([1, 0, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_x(-ut.deg90).map_v3([0, 1, 0], 1).sub([0, 0, -1]));
-    expect_toBeClosedToZero(mx.affine3_rotate_x(-ut.deg90).map_v3([0, 0, 1], 1).sub([0, 1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(ut.deg90).map_v3([1, 0, 0], 1).sub([1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(ut.deg90).map_v3([0, 1, 0], 1).sub([0, 0, 1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(ut.deg90).map_v3([0, 0, 1], 1).sub([0, -1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(-ut.deg90).map_v3([1, 0, 0], 1).sub([1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(-ut.deg90).map_v3([0, 1, 0], 1).sub([0, 0, -1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(-ut.deg90).map_v3([0, 0, 1], 1).sub([0, 1, 0]));
 });
 test('rotate-3d-y', () => {
-    expect_toBeClosedToZero(mx.affine3_rotate_y(ut.deg90).map_v3([1, 0, 0], 1).sub([0, 0, -1]));
-    expect_toBeClosedToZero(mx.affine3_rotate_y(ut.deg90).map_v3([0, 1, 0], 1).sub([0, 1, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_y(ut.deg90).map_v3([0, 0, 1], 1).sub([1, 0, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_y(-ut.deg90).map_v3([1, 0, 0], 1).sub([0, 0, 1]));
-    expect_toBeClosedToZero(mx.affine3_rotate_y(-ut.deg90).map_v3([0, 1, 0], 1).sub([0, 1, 0]));
-    expect_toBeClosedToZero(mx.affine3_rotate_y(-ut.deg90).map_v3([0, 0, 1], 1).sub([-1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(ut.deg90).map_v3([1, 0, 0], 1).sub([0, 0, -1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(ut.deg90).map_v3([0, 1, 0], 1).sub([0, 1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(ut.deg90).map_v3([0, 0, 1], 1).sub([1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(-ut.deg90).map_v3([1, 0, 0], 1).sub([0, 0, 1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(-ut.deg90).map_v3([0, 1, 0], 1).sub([0, 1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(-ut.deg90).map_v3([0, 0, 1], 1).sub([-1, 0, 0]));
 });
 
 test('rot_yz_x_m3', () => {
     let v = vc.v3(1, 1, 1);
-    expect_toBeClosedToZero(mx.rotate_yz_100_to_xyz(v).map([1, 0, 0]).sub(v.unit()));
+    expect_toBeClosedToZero(mx.m3_rotate_from_100_to_v(v).map([1, 0, 0]).sub(v.unit()));
     v = vc.v3(1, 2, 3);
-    expect_toBeClosedToZero(mx.rotate_yz_100_to_xyz(v).map([1, 0, 0]).sub(v.unit()));
+    expect_toBeClosedToZero(mx.m3_rotate_from_100_to_v(v).map([1, 0, 0]).sub(v.unit()));
 });
 test('rot_yz_z_m3', () => {
     let v = vc.v3(1, 1, 1);
-    expect_toBeClosedToZero(mx.rotate_yz_010_to_xyz(v).map([0, 0, 1]).sub(v.unit()));
+    expect_toBeClosedToZero(mx.m3_rotate_from_001_to_v(v).map([0, 0, 1]).sub(v.unit()));
     v = vc.v3(1, 2, 3);
-    expect_toBeClosedToZero(mx.rotate_yz_010_to_xyz(v).map([0, 0, 1]).sub(v.unit()));
+    expect_toBeClosedToZero(mx.m3_rotate_from_001_to_v(v).map([0, 0, 1]).sub(v.unit()));
 });
 
 

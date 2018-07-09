@@ -9,6 +9,7 @@ import * as sq from '../../algorithm/sequence';
 import * as vc from '../../algorithm/vector';
 import * as mx from '../../algorithm/matrix';
 import * as trirect from './trirect';
+import * as gut from '../utility';
 
 /**
  * 原点中心の半径rの球に内接する正20面体の頂点12個
@@ -55,3 +56,10 @@ export function faces(): number[][] {
     ];
 }
 export const rad_rot_y_to_z = ut.deg90 - Math.atan2(ut.phi, 1);
+
+/**
+ * 正20面体の辺30個
+ */
+export function edges(): [number, number][] {
+    return gut.get_edges(faces());
+}

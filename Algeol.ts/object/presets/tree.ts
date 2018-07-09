@@ -81,10 +81,10 @@ interface CommonInfo {
 }
 
 function common_singleleaf(trunk: obj.VF, leaf: obj.VF, d: CommonInfo, transform: mx.M4|null = null): obj.Object {
-    const tr_trunk = mx.affine3_scale([d.trunk_radius, d.trunk_radius, d.leaf_bottom]);
+    const tr_trunk = mx.m4_scale3([d.trunk_radius, d.trunk_radius, d.leaf_bottom]);
     const tr_leaf = mx.compose([
-        mx.affine3_scale([d.leaf_radius, d.leaf_radius, d.leaf_top - d.leaf_bottom]),
-        mx.affine3_translate([0, 0, d.leaf_bottom]),
+        mx.m4_scale3([d.leaf_radius, d.leaf_radius, d.leaf_top - d.leaf_bottom]),
+        mx.m4_translate3([0, 0, d.leaf_bottom]),
     ]);
 
     const fg_trunk = [obj.facegroup(trunk.faces, d.facename_trunk, d.facename_trunk)];
