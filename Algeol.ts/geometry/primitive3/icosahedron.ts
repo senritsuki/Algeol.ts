@@ -55,6 +55,8 @@ export function faces(): number[][] {
         [zx[2], xy[1], yz[3]], // 中下 左奥
     ];
 }
+
+/** rad: 0.5535743588970452, deg: 31.717474411461005 */
 export const rad_rot_y_to_z = ut.deg90 - Math.atan2(ut.phi, 1);
 
 /**

@@ -210,13 +210,18 @@ export function obj_duplicate(src: Object, duplicate: mx.M4[], object_name?: str
     return new DuplicateObject(src, duplicate, object_name||null);
 }
 
+export function obj_duplicate_vf(vf: VF, duplicate: mx.M4[], facegroup_name: string|null, object_name?: string|null): Object {
+    const src = obj_single_vf(vf, facegroup_name, null);
+    return new DuplicateObject(src, duplicate, object_name||null);
+}
+
 /**
  * サーフェイスを生成する
  * @param faces サーフェイスリスト。サーフェイスは頂点インデックスリストであり、サーフェイスリストは頂点インデックスの二次元配列
  * @param group_name サーフェイスグループの名前（任意）
  * @param material_name サーフェイスグループに適用するマテリアル名（任意）
  */
-export function facegroup(faces: number[][], group_name: string|null, material_name: string|null): FaceGroup {
+export function facegroup(faces: number[][], group_name: string|null, material_name: string|null = group_name): FaceGroup {
     return new SimpleFaceGroup(faces, faceinfo(group_name, material_name));
 }
 
@@ -225,7 +230,7 @@ export function facegroup(faces: number[][], group_name: string|null, material_n
  * @param group_name サーフェイスグループの名前（任意）
  * @param material_name サーフェイスグループに適用するマテリアル名（任意）
  */
-export function faceinfo(group_name: string|null, material_name: string|null): FaceInfo|null {
+export function faceinfo(group_name: string|null, material_name: string|null = group_name): FaceInfo|null {
     return group_name != null || material_name != null ? {group_name, material_name} : null;
 }
 

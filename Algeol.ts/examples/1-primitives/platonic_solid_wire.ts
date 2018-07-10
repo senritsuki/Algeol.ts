@@ -13,11 +13,11 @@ import * as wf from '../../decoder/wavefront';
 import * as sf from '../../decoder/savefile';
 
 const input: [string, vc.V3[], [number, number][]][] = [
-    ['wire_icosahedron', prim20.verts(1), prim20.edges()],
     ['wire_tetrahedron', prim4.verts(1), prim4.edges()],
     ['wire_cube', prim6.verts(1), prim6.edges()],
     ['wire_octahedron', prim8.verts(1), prim8.edges()],
     ['wire_dodecahedron', prim12.verts(1), prim12.edges()],
+    ['wire_icosahedron', prim20.verts(1), prim20.edges()],
 ];
 
 function fn(d: [string, vc.V3[], [number, number][]]): obj.Object {

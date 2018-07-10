@@ -76,6 +76,10 @@ export function add<V extends Vector<V>>(a: V, b: V): V {
 export function sub<V extends Vector<V>>(a: V, b: V): V {
     return a.sub(b);
 }
+/** 中点 */
+export function mid<V extends Vector<V>>(a: V, b: V, t: number): V {
+    return add(a.scalar(1 - t), b.scalar(t));
+}
 
 
 
