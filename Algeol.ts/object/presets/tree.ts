@@ -80,7 +80,12 @@ interface CommonInfo {
     facename_trunk: string;
 }
 
-function common_singleleaf(trunk: obj.VF, leaf: obj.VF, d: CommonInfo, transform: mx.M4|null = null): obj.Object {
+function common_singleleaf(
+    trunk: obj.VF, 
+    leaf: obj.VF, 
+    d: CommonInfo, 
+    transform: mx.M4|null = null,
+): obj.Object {
     const tr_trunk = mx.m4_scale3([d.trunk_radius, d.trunk_radius, d.leaf_bottom]);
     const tr_leaf = mx.compose([
         mx.m4_scale3([d.leaf_radius, d.leaf_radius, d.leaf_top - d.leaf_bottom]),

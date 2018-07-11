@@ -91,7 +91,7 @@ export function base_wall180(
     return {verts, faces};
 }
 
-export function arch(
+export function common_vf(
     v1: vc.V3, 
     v2: vc.V3, 
     base: obj.VF, 
@@ -109,3 +109,12 @@ export function arch(
     };
 }
 
+export function wall180(
+    v1: vc.V3, 
+    v2: vc.V3, 
+    height: number, 
+    thickness: number, 
+    division: number,
+    width: number,
+): obj.Object {
+}

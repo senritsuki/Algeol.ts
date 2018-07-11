@@ -367,28 +367,36 @@ export function m2_rotate(rad: number): M2 {
 }
 /** x軸回転写像 */
 export function m3_rotate_x(rad: number): M3 {
-    const c = Math.cos(rad);
-    const s = Math.sin(rad);
+    return m3_rotate_x_cs(Math.cos(rad), Math.sin(rad));
+}
+/** y軸回転写像 */
+export function m3_rotate_y(rad: number): M3 {
+    return m3_rotate_y_cs(Math.cos(rad), Math.sin(rad));
+}
+/** z軸回転写像 */
+export function m3_rotate_z(rad: number): M3 {
+    return m3_rotate_z_cs(Math.cos(rad), Math.sin(rad));
+}
+
+export const m3_rotate_z90 = () => m3_rotate_z_cs(0, 1);
+export const m3_rotate_z180 = () => m3_rotate_z_cs(-1, 0);
+export const m3_rotate_z270 = () => m3_rotate_z_cs(0, -1);
+
+function m3_rotate_x_cs(c: number, s: number): M3 {
     return M3Impl.FromRows([
         [1, 0, 0],
         [0, c, -s],
         [0, s, c],
     ]);
 }
-/** y軸回転写像 */
-export function m3_rotate_y(rad: number): M3 {
-    const c = Math.cos(rad);
-    const s = Math.sin(rad);
+function m3_rotate_y_cs(c: number, s: number): M3 {
     return M3Impl.FromRows([
         [c, 0, s],
         [0, 1, 0],
         [-s, 0, c],
     ]);
 }
-/** z軸回転写像 */
-export function m3_rotate_z(rad: number): M3 {
-    const c = Math.cos(rad);
-    const s = Math.sin(rad);
+function m3_rotate_z_cs(c: number, s: number): M3 {
     return M3Impl.FromRows([
         [c, -s, 0],
         [s, c, 0],
@@ -397,12 +405,14 @@ export function m3_rotate_z(rad: number): M3 {
 }
 
 export const m3_rotate2 = ut.compose_2f(m2_rotate, m2_to_m3);
-/** x軸回転写像 */
+
 export const m4_rotate3_x = ut.compose_2f(m3_rotate_x, m3_to_m4);
-/** y軸回転写像 */
 export const m4_rotate3_y = ut.compose_2f(m3_rotate_y, m3_to_m4);
-/** z軸回転写像 */
 export const m4_rotate3_z = ut.compose_2f(m3_rotate_z, m3_to_m4);
+
+export const m4_rotate3_z90 = () => m3_to_m4(m3_rotate_z90());
+export const m4_rotate3_z180 = () => m3_to_m4(m3_rotate_z180());
+export const m4_rotate3_z270 = () => m3_to_m4(m3_rotate_z270());
 
 
 /** (1, 0) から 引数v への回転写像 */
