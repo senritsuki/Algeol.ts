@@ -18,8 +18,8 @@ export interface BasicSquareInfo {
     floor_depth: number;
     column_radius: number;
     column_bottom_z: number;
-    facename_floor: string;
-    facename_column: string;
+    facename_floor: string|null;
+    facename_column: string|null;
 }
 
 export function basic_square(
@@ -68,8 +68,8 @@ interface SquareFloorInfo {
     floor_radius: vc.V2|number[];
     floor_top_z: number;
     floor_depth: number;
-    facename_floor: string;
-    facename_column: string;
+    facename_floor: string|null;
+    facename_column: string|null;
 }
 
 function _square_floor(d: SquareFloorInfo): obj.Object {
@@ -121,7 +121,7 @@ interface SquareColumnInfo {
     floor_depth: number;
     column_radius: number;
     column_bottom_z: number;
-    facename_column: string;
+    facename_column: string|null;
 }
 
 function _square_column(d: SquareColumnInfo): obj.Object {
@@ -143,7 +143,7 @@ interface PrismColumnInfo {
     floor_outside_circle: boolean;
     column_radius: number;
     column_bottom_z: number;
-    facename_column: string;
+    facename_column: string|null;
 }
 
 function to_outer(vertex: number, n: number): number {

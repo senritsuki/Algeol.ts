@@ -11,10 +11,6 @@ import * as mx from './matrix';
 
 export let E = 0.001;
 
-type V2 = vc.V2;
-type V3 = vc.V3;
-type V4 = vc.V4;
-
 
 /** 位置ベクトルと方向ベクトルのペア */
 export class Ray<T extends vc.Vector<T>> {
@@ -39,9 +35,10 @@ export class Ray<T extends vc.Vector<T>> {
     }
 }
 
-export interface Ray2 extends Ray<V2> {}
-export interface Ray3 extends Ray<V3> {}
-export interface Ray4 extends Ray<V4> {}
+export interface Ray1 extends Ray<vc.V1> {}
+export interface Ray2 extends Ray<vc.V2> {}
+export interface Ray3 extends Ray<vc.V3> {}
+export interface Ray4 extends Ray<vc.V4> {}
 
 
 /** 位置ベクトルと方向ベクトルのペア */
@@ -60,7 +57,7 @@ export function rot_ray3d_z(ray3: Ray3, rad: number): Ray3 {
     return ray(ray3.c, d);
 }
 
-export function map_ray3(ray3: Ray3, f: (v: V4) => V4): Ray3 {
+export function map_ray3(ray3: Ray3, f: (v: vc.V4) => vc.V4): Ray3 {
     const c = vc.v4map_v3(ray3.c, 1, f);
     const d = vc.v4map_v3(ray3.d, 0, f);
     return ray(c, d);
@@ -93,9 +90,10 @@ interface CurveC<T extends vc.Vector<T>, U extends Curve<T>> extends Curve<T> {
     clone(): U;
 }
 
-export interface Curve2 extends Curve<V2> {}
-export interface Curve3 extends Curve<V3> {}
-export interface Curve4 extends Curve<V4> {}
+export interface Curve1 extends Curve<vc.V1> {}
+export interface Curve2 extends Curve<vc.V2> {}
+export interface Curve3 extends Curve<vc.V3> {}
+export interface Curve4 extends Curve<vc.V4> {}
 
 abstract class CurveBase<T extends vc.Vector<T>, U extends CurveC<T, U>> implements CurveC<T, U> {
     constructor(
@@ -345,9 +343,10 @@ export class CurveArray<T extends vc.Vector<T>> {
     }
 }
 
-export interface CurveArray2 extends CurveArray<V2> {}
-export interface CurveArray3 extends CurveArray<V3> {}
-export interface CurveArray4 extends CurveArray<V4> {}
+export interface CurveArray1 extends CurveArray<vc.V1> {}
+export interface CurveArray2 extends CurveArray<vc.V2> {}
+export interface CurveArray3 extends CurveArray<vc.V3> {}
+export interface CurveArray4 extends CurveArray<vc.V4> {}
 
 
 
@@ -434,7 +433,7 @@ export function bezier3_interpolate_s<T extends vc.Vector<T>>(p0: T, p1: T, d: T
     return bezier(controls);
 }
 /** 三次ベジェの楕円弧カーブ */
-export function bezier3_interpolate_arc(p0: V3, p1: V3, o: V3): Curve3 {
+export function bezier3_interpolate_arc(p0: vc.V3, p1: vc.V3, o: vc.V3): Curve3 {
     const d0 = p0.sub(o);
     const d1 = p1.sub(o);
     d0._v[2] = 0;
