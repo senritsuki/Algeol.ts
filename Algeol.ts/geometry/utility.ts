@@ -52,3 +52,48 @@ export function faces_side(bottom_face: number[], top_face: number[]): number[][
         .map(i => [i, (i + 1) % n_gonal])
         .map(i => [b[i[0]], b[i[1]], t[i[1]], t[i[0]]]);
 }
+
+export class Extrude<V extends vc.Vector<V>> {
+    verts2: V[];
+
+    constructor(
+        public verts1: V[],
+        public d: V,
+    ) {
+        this.verts2 = verts1.map(v => v.add(d));
+    }
+
+    verts(): V[] {
+        return this.verts1.concat(this.verts2);
+    }
+    faces_base1(): number[][] {
+        const c = this.verts1.length;
+        return [sq.arithmetic(c)];
+    }
+    faces_base2(): number[][] {
+        const c = this.verts1.length;
+        return [sq.arithmetic(c).map(n => n + c)];
+    }
+    faces_side(): number[][] {
+        const c = this.verts1.length;
+        return sq.arithmetic(c)
+            .map(n => [n, (n + 1) % c])
+            .map(nn => [nn[0], nn[1], nn[1] + c, nn[0] + c]);
+    }
+    faces_side_open(): number[][] {
+        const c = this.verts1.length;
+        return sq.arithmetic(c - 1)
+            .map(n => [n, n + 1])
+            .map(nn => [nn[0], nn[1], nn[1] + c, nn[0] + c]);
+    }
+}
+
+export function extrude<V extends vc.Vector<V>>(verts1: V[], d: V): Extrude<V> {
+    return new Extrude(verts1, d);
+}
+
+export function extrude2<V extends vc.Vector<V>>(verts: V[], d1: V, d2: V): Extrude<V> {
+    const verts1 = verts.map(v => v.add(d1));
+    const d = d2.sub(d1);
+    return new Extrude(verts1, d);
+}

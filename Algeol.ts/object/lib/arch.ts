@@ -10,6 +10,7 @@ import * as vc from '../../algorithm/vector';
 import * as mx from '../../algorithm/matrix';
 import * as cv from '../../algorithm/curve';
 import * as vsq from '../../algorithm/vector_sequence';
+import * as put from '../../geometry/utility';
 import * as prism from '../../geometry/primitive3/prism';
 import * as obj from '../object';
 
@@ -25,11 +26,11 @@ export interface ArchInfo {
     v2: vc.V2;
     arch: cv.Curve2;
     arch_thickness: number;
+    arch_div: number;
     arch_base_z: number;
     arch_width: number;
-    arch_height_scale: number;
-    arch_div: number;
-    arch_column_depth: number|null;
+    arch_top_z: number;
+    //arch_column_bottom_z: number|null;
     thick_type: ThickType;
     facename: string|null;
 }
@@ -40,72 +41,91 @@ export class DefaultArchInfo implements ArchInfo {
         public v2: vc.V2,
         public arch: cv.Curve2,
         public arch_thickness: number,
+        public arch_div: number = 12,
         public arch_base_z: number = 0,
         public arch_width: number = 1,
-        public arch_height_scale: number = 1,
-        public arch_div: number = 12,
-        public arch_column_depth: number|null = null,
+        public arch_top_z: number = 1,
+        //public arch_column_bottom_z: number|null = null,
         public thick_type: ThickType = ThickType.Inner,
         public facename: string|null = null,
     ) {}
 }
 
-export interface ArchInfo {
-    v1: vc.V2;
-    v2: vc.V2;
-    arch: cv.Curve2;
-    arch_thickness: number;
-    arch_height_scale: number;
-    arch_div: number;
-    arch_column_depth: number|null;
-    thick_type: ThickType;
-}
-export function simple_arch(
+export function deg180_plane(
     d: ArchInfo,
     transform: mx.M4|null = null,
-): obj.Object {
-    const verts_inner = _verts_arch(d, true);
-    const verts_outer = _verts_arch(d, false);
+): vc.V3[] {
+    const tfs = _transforms(d);
+    const verts_inner = _verts_archplane(d, tfs, true);
+    const verts_outer = _verts_archplane(d, tfs, false);
+    return verts_inner.concat(verts_outer);
 }
 
-interface _merge_verts_simple_arch(inner: vc.V3[], outer: vc.V3[], d: ArchInfo): vc.V3[] {
-
+function _merge_verts_simple_archplane(inner: vc.V3[], outer: vc.V3[], d: ArchInfo, z: number|null): vc.V3[] {
+    //const z = d.arch_column_bottom_z;
+    if (!z) {
+        return inner.concat(outer);
+    }
+    const o = vc.mid(d.v1, d.v2, 0.5);
+    const d1 = d.v1.sub(o);
+    const d2 = d.v2.sub(o);
+    const v11 = vc.v2_to_v3(d1.length_add(_v_len_add(d, true)), z);
+    const v12 = vc.v2_to_v3(d1.length_add(_v_len_add(d, false)), z);
+    const v21 = vc.v2_to_v3(d2.length_add(_v_len_add(d, true)), z);
+    const v22 = vc.v2_to_v3(d2.length_add(_v_len_add(d, false)), z);
+    return [v12, v11].concat(inner).concat([v21, v22]).concat(outer);
 }
 
-interface _VertsArchInfo {
+interface _verts_archplane_if {
     arch: cv.Curve2;
     arch_thickness: number;
     thick_type: ThickType;
     arch_div: number;
 }
-function _verts_arch(d: _VertsArchInfo, is_inner: boolean): vc.V3[] {
-    const len_add = _v_len_add(d.arch_thickness, d.thick_type, is_inner);
+function _verts_archplane(d: _verts_archplane_if, tfs: [mx.M4, mx.M4], is_inner: boolean): vc.V3[] {
+    const len_add = _v_len_add(d, is_inner);
     const tt = is_inner ? sq.range(0, 1, d.arch_div + 1) : sq.range(1, 0, d.arch_div + 1);
     return tt
         .map(t => d.arch.coord(t))
         .map(v => vc.v3(v.x, 0, v.y))
-        .map(v => v.length_add(len_add));
+        .map(v => tfs[0].map_v3(v, 1))
+        .map(v => v.length_add(len_add))
+        .map(v => tfs[1].map_v3(v, 1));
 }
-function _v_len_add(thickness: number, type: ThickType, is_inner: boolean): number {
+interface _v_len_add_if {
+    arch_thickness: number;
+    thick_type: ThickType;
+}
+function _v_len_add(d: _v_len_add_if, is_inner: boolean): number {
     const n1 = is_inner ? -1 : 0;
-    const n2 = type == ThickType.Inner ? 0 : type == ThickType.Both ? 0.5 : 1;
-    return (n1 + n2) * thickness;
+    const n2 = d.thick_type == ThickType.Inner ? 0 : d.thick_type == ThickType.Both ? 0.5 : 1;
+    return (n1 + n2) * d.arch_thickness;
 }
 
-interface _TransformInfo {
+interface _transforms_if {
     v1: vc.V2;
     v2: vc.V2;
-    arch_width: number;
-    arch_height_scale: number;
     arch_base_z: number;
+    arch_width: number;
+    arch_top_z: number;
 }
-function _transform(d: _TransformInfo): mx.M4 {
+function _transforms(d: _transforms_if): [mx.M4, mx.M4] {
+    const height = d.arch_top_z - d.arch_base_z;
     const dir = d.v2.sub(d.v1);
-    return mx.compose([
-        mx.m4_scale3([dir.length(), d.arch_width, d.arch_height_scale]),
+    const tf1 = mx.compose([
+        mx.m4_scale3([dir.length(), d.arch_width, height]),
         mx.m4_rotate_from_10_to_v(dir),
-        mx.m4_translate3([d.v1.x, d.v1.y, d.arch_base_z]),
     ]);
+    const tf2 = mx.m4_translate3([d.v1.x, d.v1.y, d.arch_base_z]);
+    return [tf1, tf2];
+}
+
+export function expand_plane(plane: vc.V3[], d: ArchInfo): put.Extrude<vc.V3> {
+    const dir = d.v2.sub(d.v1);
+    const dir_side = vc.v3(-dir.y, dir.x, 0);
+    const d1 = dir_side.unit().scalar(d.arch_width / 2);
+    const d2 = d1.scalar(-1);
+    return put.extrude2(plane, d1, d2);
 }
 
 
