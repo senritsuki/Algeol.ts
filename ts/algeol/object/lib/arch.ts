@@ -4,16 +4,14 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
 import * as sq from '../../algorithm/sequence';
 import * as vc from '../../algorithm/vector';
 import * as mx from '../../algorithm/matrix';
 import * as cv from '../../algorithm/curve';
-import * as vsq from '../../algorithm/vector_sequence';
-import * as put from '../../geometry/utility';
-import * as prism from '../../geometry/primitive3/prism';
+import * as gut from '../../geometry/utility';
+import * as gcv from '../../geometry/primitive2/curve';
+import * as gcp from '../../geometry/primitive2/curve_plane';
 import * as obj from '../object';
-
 
 export enum ThickType {
     Inner,
@@ -21,6 +19,87 @@ export enum ThickType {
     Both,
 }
 
+export enum ExpandDir {
+    Left,
+    Right,
+    Both,
+}
+
+function to_expand_dir(thick_type: ThickType): gcv.ExpandDir {
+    return thick_type == ThickType.Inner ? 
+        gcv.ExpandDir.Left :
+        thick_type == ThickType.Outer ?
+        gcv.ExpandDir.Right :
+        gcv.ExpandDir.Both;
+}
+
+export interface VF2 {
+    verts: vc.V2[];
+    faces: number[][];
+}
+
+export function expand_arch(
+    vf: VF2,
+    width_type: ExpandDir,
+    width: number,
+): gut.ExpandedPrism<vc.V3> {
+    const verts3 = vf.verts.map(v => vc.v3(v.x, 0, v.y));
+    const expand = width_type == ExpandDir.Left ?
+        gut.expand(verts3, vc.v3(0, width, 0), vf.faces) :
+        width_type == ExpandDir.Right ?
+        gut.expand(verts3, vc.v3(0, -width, 0), vf.faces) :
+        gut.expand2(verts3, vc.v3(0, -width / 2, 0), vc.v3(0, width / 2, 0), vf.faces);
+    return expand;
+}
+
+export function vf2_arch(
+    len: number,
+    height: number,
+    div: number,
+    thick_type: ThickType,
+    thick: number,
+): VF2 {
+    const len2 = len / 2;
+    const curve = cv.circle(vc.v2(len2, 0), vc.v2(len2, 0), vc.v2(0, height));
+    const t_dir = to_expand_dir(thick_type);
+    const verts = gcv.verts_expand(curve, div, t_dir, thick);
+    const faces = gcv.faces(div);
+    return {verts, faces};
+}
+
+export function vf2_archwall(
+    len: number,
+    height: number,
+    div: number,
+    thick_x: number,
+    thick_z: number,
+): VF2 {
+    const len2 = len / 2;
+    const curve = cv.circle(vc.v2(len2, 0), vc.v2(len2 - thick_x, 0), vc.v2(0, height - thick_z));
+    const verts_cv = sq.range(0, 1, div + 1).map(t => curve.coord(t));
+    const verts2 = [vc.v2(len, 0)].concat(verts_cv).concat([vc.v2(0, 0)]);
+    const cp = new gcp.CurvePlane2(vc.v2(len, height), vc.v2(0, height), verts2);
+    const verts = cp.verts();
+    const faces = cp.faces();
+    return {verts, faces};
+}
+
+export function arch(
+    vf: VF2,
+    width_type: ExpandDir,
+    width: number,
+    facename: string|null,
+    transform: mx.M4|null,
+): obj.Object {
+    const prism = expand_arch(vf, width_type, width);
+    return obj.obj_single_vf(
+        {verts: prism.verts(), faces: prism.faces()},
+        facename,
+        transform,
+    );
+}
+
+/*
 export interface ArchInfo {
     v1: vc.V2;
     v2: vc.V2;
@@ -121,12 +200,12 @@ function _transforms(d: _transforms_if): [mx.M4, mx.M4] {
     return [tf1, tf2];
 }
 
-export function expand_plane(plane: vc.V3[], d: ArchInfo): put.Extrude<vc.V3> {
+export function expand_plane(plane: vc.V3[], d: ArchInfo): gut.ExpandedPrism<vc.V3> {
     const dir = d.v2.sub(d.v1);
     const dir_side = vc.v3(-dir.y, dir.x, 0);
     const d1 = dir_side.unit().scalar(d.arch_width / 2);
     const d2 = d1.scalar(-1);
-    return put.expand2(plane, d1, d2);
+    return gut.expand2(plane, d1, d2);
 }
 
 
@@ -231,3 +310,4 @@ export function wall180(
     width: number,
 ): obj.Object {
 }
+*/

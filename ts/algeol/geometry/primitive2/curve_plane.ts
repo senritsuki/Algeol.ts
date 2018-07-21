@@ -27,17 +27,17 @@ export class CurvePlane2<V extends vc.Vector<V>> {
     ) {}
 
     verts(): V[] {
-        return this.curve.concat([this.v1, this.v2]);
+        return [this.v1].concat(this.curve).concat([this.v2]);
     }
 
     faces(): number[][] {
-        const iv1 = this.curve.length;
-        const iv2 = this.curve.length + 1;
-        const max = this.curve.length - 1;
+        const max = this.curve.length;
+        const iv1 = 0;
+        const iv2 = max + 1;
         const mid = Math.floor(max / 2);
-        const faces1 = sq.arithmetic(mid - 1, 0)
+        const faces1 = sq.arithmetic(mid, 1)
             .map(i => [i, i+1, iv1]);
-        const faces2 = sq.arithmetic(max - mid - 1, mid)
+        const faces2 = sq.arithmetic(max - mid - 1, mid + 1)
             .map(i => [i, i+1, iv2]);
         const faces3 = [[mid, iv1, iv2]];
         return faces1.concat(faces2).concat(faces3);

@@ -53,12 +53,13 @@ export function faces_side(bottom_face: number[], top_face: number[]): number[][
         .map(i => [b[i[0]], b[i[1]], t[i[1]], t[i[0]]]);
 }
 
-export class Extrude<V extends vc.Vector<V>> {
+export class ExpandedPrism<V extends vc.Vector<V>> {
     verts2: V[];
 
     constructor(
         public verts1: V[],
         public d: V,
+        public faces1: number[][],
     ) {
         this.verts2 = verts1.map(v => v.add(d));
     }
@@ -66,13 +67,15 @@ export class Extrude<V extends vc.Vector<V>> {
     verts(): V[] {
         return this.verts1.concat(this.verts2);
     }
+    faces(): number[][] {
+        return this.faces_base1().concat(this.faces_base2()).concat(this.faces_side());
+    }
     faces_base1(): number[][] {
-        const c = this.verts1.length;
-        return [sq.arithmetic(c)];
+        return this.faces1;
     }
     faces_base2(): number[][] {
-        const c = this.verts1.length;
-        return [sq.arithmetic(c).map(n => n + c)];
+        const n = this.verts1.length;
+        return this.faces1.map(face => face.map(i => i + n));
     }
     faces_side(): number[][] {
         const c = this.verts1.length;
@@ -88,12 +91,12 @@ export class Extrude<V extends vc.Vector<V>> {
     }
 }
 
-export function expand<V extends vc.Vector<V>>(verts1: V[], d: V): Extrude<V> {
-    return new Extrude(verts1, d);
+export function expand<V extends vc.Vector<V>>(verts1: V[], d: V, faces: number[][]): ExpandedPrism<V> {
+    return new ExpandedPrism(verts1, d, faces);
 }
 
-export function expand2<V extends vc.Vector<V>>(verts: V[], d1: V, d2: V): Extrude<V> {
+export function expand2<V extends vc.Vector<V>>(verts: V[], d1: V, d2: V, faces: number[][]): ExpandedPrism<V> {
     const verts1 = verts.map(v => v.add(d1));
     const d = d2.sub(d1);
-    return new Extrude(verts1, d);
+    return new ExpandedPrism(verts1, d, faces);
 }
