@@ -51,19 +51,23 @@ export function basic_prism(
 ): obj.Object {
     const floor = _prism_floor(d);
     const column = _prism_column(d);
-    const columns = _prism_columns(column, d);
+    const columns = _duplicates(column, d);
     return obj.obj_group([floor, columns], transform, null);
 }
 
+export interface ArchPrismInfo extends BasicPrismInfo {
+    arch_div: number;
+}
+
 export function arch_prism(
-    d: BasicPrismInfo,
+    d: ArchPrismInfo,
     transform: mx.M4|null = null,
 ): obj.Object {
     const floor = _prism_floor(d);
     const column = _prism_column(d);
-    const columns = _prism_columns(column, d);
+    const columns = _duplicates(column, d);
     const wall = _arch_wall(d);
-    const walls = _arch_walls(wall, d);
+    const walls = _duplicates(wall, d);
     return obj.obj_group([floor, columns, walls], transform, null);
 }
 
@@ -166,31 +170,6 @@ function _prism_column(d: PrismColumnInfo): obj.Object {
     return obj.obj_single(verts, fg, transform);
 }
 
-interface ArchColumnInfo {
-    floor_vertex: number;
-    floor_radius: number;
-    floor_top_z: number;
-    floor_depth: number;
-    floor_outside_circle: boolean;
-    column_radius: number;
-    column_bottom_z: number;
-    facename_column: string|null;
-}
-
-function _arch_wall(d: ArchColumnInfo): obj.Object {
-    const len;
-    const height;
-    const div;
-    const thick_type;
-    const thick;
-    const vf2 = arch.vf2_archwall(len, height, div, thick_type, thick);
-    const width_type;
-    const width;
-    const facename;
-    const transfrom;
-    const archwall = arch.arch(vf2, width_type, width, facename, transfrom);
-}
-
 function _rect_columns(column: obj.Object, r: vc.V2): obj.Object {
     const transforms = [
         mx.m4_translate3([r.x, r.y]),
@@ -207,7 +186,7 @@ interface PrismColumnsInfo {
     floor_outside_circle: boolean;
 }
 
-function _prism_columns(column: obj.Object, d: PrismColumnsInfo): obj.Object {
+function _duplicates(column: obj.Object, d: PrismColumnsInfo): obj.Object {
     const r = d.floor_outside_circle ? to_outer(d.floor_vertex, d.floor_radius) : d.floor_radius;
     const rad_offset = d.floor_outside_circle ? ut.deg180 / d.floor_vertex : 0;
     const translate = mx.m4_translate3([r, 0, 0]);
@@ -217,12 +196,33 @@ function _prism_columns(column: obj.Object, d: PrismColumnsInfo): obj.Object {
     return obj.obj_duplicate(column, transforms);
 }
 
-function _arch_walls(column: obj.Object, d: PrismColumnsInfo): obj.Object {
-    const r = d.floor_outside_circle ? to_outer(d.floor_vertex, d.floor_radius) : d.floor_radius;
-    const rad_offset = d.floor_outside_circle ? ut.deg180 / d.floor_vertex : 0;
-    const translate = mx.m4_translate3([r, 0, 0]);
-    const rotates = sq.range(0, ut.deg360, d.floor_vertex + 1, true)
-        .map(rad => mx.m4_rotate3_z(rad + rad_offset));
-    const transforms = rotates.map(rot => mx.compose([translate, rot]));
-    return obj.obj_duplicate(column, transforms);
+interface ArchColumnInfo {
+    floor_vertex: number;
+    floor_radius: number;
+    floor_top_z: number;
+    //floor_depth: number;
+    floor_outside_circle: boolean;
+    column_radius: number;
+    //column_bottom_z: number;
+    arch_div: number;
+    facename_column: string|null;
+}
+
+function _arch_wall(d: ArchColumnInfo): obj.Object {
+    let len = d.floor_radius - d.column_radius * 2;
+    if (d.floor_outside_circle) len = to_outer(d.floor_vertex, len);
+    const height = len / 2;
+    const div = d.arch_div;
+    const thick_x = d.column_radius * 2;
+    const thick_z = thick_x;
+    const vf2 = arch.vf2_archwall(len, height, div, thick_x, thick_z);
+    const width_type = arch.ExpandDir.Left;
+    const width = d.column_radius * 2;
+    const facename = d.facename_column;
+    const transfrom = mx.compose([
+        mx.m4_translate3([0, 0, d.floor_top_z - height]),
+        mx.m4_rotate3_z(ut.deg_to_rad(180 - ((d.floor_vertex - 2) * 180) / d.floor_vertex / 2)),
+    ]);
+    const archwall = arch.arch(vf2, width_type, width, facename, transfrom);
+    return archwall;
 }
