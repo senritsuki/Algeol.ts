@@ -11,6 +11,7 @@ import * as mx from '../../algorithm/matrix';
 import * as prim_cube from '../../geometry/primitive3/cube';
 import * as prim_prism from '../../geometry/primitive3/prism';
 import * as obj from '../object';
+import * as arch from './arch';
 
 export interface BasicSquareInfo {
     floor_radius: vc.V2|number[];
@@ -59,9 +60,11 @@ export function arch_prism(
     transform: mx.M4|null = null,
 ): obj.Object {
     const floor = _prism_floor(d);
+    const column = _prism_column(d);
+    const columns = _prism_columns(column, d);
     const wall = _arch_wall(d);
     const walls = _arch_walls(wall, d);
-    return obj.obj_group([floor, walls], transform, null);
+    return obj.obj_group([floor, columns, walls], transform, null);
 }
 
 interface SquareFloorInfo {
@@ -163,17 +166,29 @@ function _prism_column(d: PrismColumnInfo): obj.Object {
     return obj.obj_single(verts, fg, transform);
 }
 
-function _arch_wall(d: PrismColumnInfo): obj.Object {
-    const r = d.floor_outside_circle ? to_outer(d.floor_vertex, 1) : 1;
-    const verts = prim_prism.verts(d.floor_vertex, r, 1);
-    const faces = prim_prism.faces(d.floor_vertex);
-    const fg = [obj.facegroup(faces, d.facename_column)];
-    const transform = mx.compose([
-        mx.m4_translate3([-0.5, -0.5, 0.5]),
-        mx.m4_scale3([d.column_radius, d.column_radius, d.column_bottom_z - d.floor_depth - d.floor_top_z]),
-        mx.m4_translate3([0, 0, d.column_bottom_z]),
-    ]);
-    return obj.obj_single(verts, fg, transform);
+interface ArchColumnInfo {
+    floor_vertex: number;
+    floor_radius: number;
+    floor_top_z: number;
+    floor_depth: number;
+    floor_outside_circle: boolean;
+    column_radius: number;
+    column_bottom_z: number;
+    facename_column: string|null;
+}
+
+function _arch_wall(d: ArchColumnInfo): obj.Object {
+    const len;
+    const height;
+    const div;
+    const thick_type;
+    const thick;
+    const vf2 = arch.vf2_archwall(len, height, div, thick_type, thick);
+    const width_type;
+    const width;
+    const facename;
+    const transfrom;
+    const archwall = arch.arch(vf2, width_type, width, facename, transfrom);
 }
 
 function _rect_columns(column: obj.Object, r: vc.V2): obj.Object {
