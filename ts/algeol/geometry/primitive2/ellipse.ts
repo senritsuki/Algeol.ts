@@ -4,9 +4,9 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
+import * as ut from '../../common';
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 
 /**
  * 楕円に内接するn角形

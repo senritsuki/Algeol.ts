@@ -1,34 +1,35 @@
-import * as vc from "../../algeol/algorithm/vector";
-import * as cv from "../../algeol/algorithm/curve";
+import * as vc from "../../algeol/datatype/vector";
+import * as ry from '../../algeol/datatype/ray';
+import * as cv from "../../algeol/datatype/curve";
 
 function expect_toBeClosedToZero<T extends vc.Vector<T>>(v: vc.Vector<T>) {
     vc.to_array_if_not(v).forEach(n => expect(n).toBeCloseTo(0));
 }
 
 test('Ray2', () => {
-    const ray = cv.ray(vc.v2(1, 0), vc.v2(0, 1));
+    const ray = ry.ray(vc.v2(1, 0), vc.v2(0, 1));
     expect_toBeClosedToZero(ray.p(0).sub([1, 0]));
     expect_toBeClosedToZero(ray.p(1).sub([1, 1]));
     expect_toBeClosedToZero(ray.p(2).sub([1, 2]));
 });
 test('Ray3', () => {
-    const ray = cv.ray(vc.v3(1, 0, 1), vc.v3(0, 1, 2));
+    const ray = ry.ray(vc.v3(1, 0, 1), vc.v3(0, 1, 2));
     expect_toBeClosedToZero(ray.p(0).sub([1, 0, 1]));
     expect_toBeClosedToZero(ray.p(1).sub([1, 1, 3]));
     expect_toBeClosedToZero(ray.p(2).sub([1, 2, 5]));
 });
 
 test('ray3_to_ray2', () => {
-    const ray3 = cv.ray(vc.v3(1, 0, 1), vc.v3(0, 1, 2));
-    const ray = cv.ray3_to_ray2(ray3);
+    const ray3 = ry.ray(vc.v3(1, 0, 1), vc.v3(0, 1, 2));
+    const ray = ry.ray3_to_ray2(ray3);
     expect_toBeClosedToZero(ray.p(0).sub([1, 0]));
     expect_toBeClosedToZero(ray.p(1).sub([1, 1]));
     expect_toBeClosedToZero(ray.p(2).sub([1, 2]));
 });
 
 test('rot_ray3d_z', () => {
-    const ray3 = cv.ray(vc.v3(1, 0, 1), vc.v3(0, 1, 2));
-    const ray = cv.rot_ray3d_z(ray3, Math.PI / 2);
+    const ray3 = ry.ray(vc.v3(1, 0, 1), vc.v3(0, 1, 2));
+    const ray = ry.rot_ray3d_z(ray3, Math.PI / 2);
     expect_toBeClosedToZero(ray.p(0).sub([1, 0, 1]));
     expect_toBeClosedToZero(ray.p(1).sub([0, 0, 3]));
     expect_toBeClosedToZero(ray.p(2).sub([-1, 0, 5]));

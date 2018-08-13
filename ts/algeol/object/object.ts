@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../algorithm/vector';
-import * as mx from '../algorithm/matrix';
+import * as vc from '../datatype/vector';
+import * as mx from '../datatype/matrix';
 
 
 /** オブジェクト */

@@ -1,4 +1,4 @@
-import * as ut from '../../algeol/algorithm/utility';
+import * as ut from '../../algeol/common';
 
 test('normalize_rad', () => {
     [
@@ -6,7 +6,7 @@ test('normalize_rad', () => {
         [Math.PI, Math.PI],
         [Math.PI * 3, Math.PI],
         [Math.PI * -5, Math.PI],
-    ].forEach(d => expect(ut.normalize_rad(d[0])).toBeCloseTo(d[1]));
+    ].forEach(d => expect(ut.normalizeRad(d[0])).toBeCloseTo(d[1]));
 });
 
 test('normalize_deg', () => {
@@ -15,7 +15,7 @@ test('normalize_deg', () => {
         [180, 180],
         [540, 180],
         [-900, 180],
-    ].forEach(d => expect(ut.normalize_deg(d[0])).toBeCloseTo(d[1]));
+    ].forEach(d => expect(ut.normalizeDeg(d[0])).toBeCloseTo(d[1]));
 });
 
 test('deg_to_rad', () => {
@@ -24,7 +24,7 @@ test('deg_to_rad', () => {
         [180, Math.PI],
         [360, Math.PI * 2],
         [-540, Math.PI * -3],
-    ].forEach(d => expect(ut.deg_to_rad(d[0])).toBeCloseTo(d[1]));
+    ].forEach(d => expect(ut.degToRad(d[0])).toBeCloseTo(d[1]));
 });
 
 test('rad_to_deg', () => {
@@ -33,7 +33,7 @@ test('rad_to_deg', () => {
         [Math.PI, 180],
         [Math.PI * 2, 360],
         [Math.PI * -3, -540],
-    ].forEach(d => expect(ut.rad_to_deg(d[0])).toBeCloseTo(d[1]));
+    ].forEach(d => expect(ut.radToDeg(d[0])).toBeCloseTo(d[1]));
 });
 
 test('factorial', () => {
@@ -77,7 +77,7 @@ test('format_02x', () => {
         [1, '01'],
         [100, '64'],
         [255, 'ff'],
-    ]).forEach(d => expect(ut.format_02x(d[0])).toBe(d[1]));
+    ]).forEach(d => expect(ut.format02x(d[0])).toBe(d[1]));
 });
 
 test('format_02d', () => {
@@ -85,7 +85,7 @@ test('format_02d', () => {
         [0, '00'],
         [1, '01'],
         [64, '64'],
-    ]).forEach(d => expect(ut.format_02d(d[0])).toBe(d[1]));
+    ]).forEach(d => expect(ut.format02d(d[0])).toBe(d[1]));
 });
 
 test('format_03d', () => {
@@ -94,7 +94,7 @@ test('format_03d', () => {
         [1, '001'],
         [64, '064'],
         [256, '256'],
-    ]).forEach(d => expect(ut.format_03d(d[0])).toBe(d[1]));
+    ]).forEach(d => expect(ut.format03d(d[0])).toBe(d[1]));
 });
 
 test('clamp', () => {
@@ -110,19 +110,19 @@ test('clamp', () => {
 test('sin_deg', () => {
     [
         [60, Math.sin(Math.PI / 3)],
-    ].forEach(d => expect(ut.sin_deg(d[0])).toBeCloseTo(d[1]));
+    ].forEach(d => expect(ut.sinDeg(d[0])).toBeCloseTo(d[1]));
 });
 
 test('cos_deg', () => {
     [
         [60, Math.cos(Math.PI / 3)],
-    ].forEach(d => expect(ut.cos_deg(d[0])).toBeCloseTo(d[1]));
+    ].forEach(d => expect(ut.cosDeg(d[0])).toBeCloseTo(d[1]));
 });
 
 test('tan_deg', () => {
     [
         [60, Math.tan(Math.PI / 3)],
-    ].forEach(d => expect(ut.tan_deg(d[0])).toBeCloseTo(d[1]));
+    ].forEach(d => expect(ut.tanDeg(d[0])).toBeCloseTo(d[1]));
 });
 
 test('isin', () => {
@@ -132,7 +132,7 @@ test('isin', () => {
         [0, 255, 100, true],
         [0, 255, 255, true],
         [0, 255, 256, false],
-    ]).forEach(d => expect(ut.isin(d[0], d[1], d[2])).toBe(d[3]));
+    ]).forEach(d => expect(ut.isIn(d[0], d[1], d[2])).toBe(d[3]));
 });
 
 test('xpor', () => {

@@ -4,7 +4,50 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
+
+export interface ICuboid {
+    o: vc.V3;
+    r: vc.V3;
+}
+export class Cuboid {
+    constructor(
+        public d: ICuboid,
+    ) {}
+
+    verts(): vc.V3[] {
+        return verts_o_r(this.d.o, this.d.r);
+    }
+    faces(): number[][] {
+        return faces();
+    }
+    faces_top(): number[][] {
+        return faces_top();
+    }
+    faces_side(): number[][] {
+        return faces_side();
+    }
+    faces_bottom(): number[][] {
+        return faces_bottom();
+    }
+
+    edges(): [number, number][] {
+        return edges();
+    }
+
+    isin(v: vc.V3): boolean {
+        const d = v.sub(this.d.o).el_div(this.d.r);
+        return d.absmax() <= 1;
+    }
+}
+
+export function cuboid(
+    o: vc.V3,
+    r: vc.V3,
+): Cuboid {
+    return new Cuboid({o, r});
+}
+
 
 /**
  * 直方体の頂点8つ
@@ -21,6 +64,10 @@ export function verts(x: number, y: number, z: number): vc.V3[] {
         vc.v3(-x, -y, -z), // 下 左前
         vc.v3(x, -y, -z),  // 下 右前
     ];
+}
+
+export function verts_o_r(o: vc.V3, r: vc.V3): vc.V3[] {
+    return verts(r.x, r.y, r.z).map(v => v.add(o));
 }
 
 /** 直方体の面6つ */

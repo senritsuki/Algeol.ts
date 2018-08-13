@@ -4,9 +4,9 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from './utility';
-import * as vc from './vector';
-import * as cv from './curve';
+import * as ut from '../common';
+import * as vc from '../datatype/vector';
+import * as cv from '../datatype/curve';
 
 
 /** タートル（T: タートル実装の型, V: 座標ベクトルの型） */
@@ -60,7 +60,7 @@ namespace priv {
         }
         move(len: number): TupleTurtleLine<TurtleDImpl, vc.V2> {
             const src = this._coord;
-            const dir = vc.polar_to_v2(len, ut.deg_to_rad(this._degree));
+            const dir = vc.polar_to_v2(len, ut.degToRad(this._degree));
             const dst = this._coord.add(dir);
             const newTurtle = new TurtleDImpl(dst, this._degree);
             const line = cv.line(src, dst);

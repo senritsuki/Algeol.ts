@@ -4,11 +4,12 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
+import * as ut from '../../common';
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
-import * as mx from '../../algorithm/matrix';
-import * as cv from '../../algorithm/curve';
+import * as vc from '../../datatype/vector';
+import * as mx from '../../datatype/matrix';
+import * as cv from '../../datatype/curve';
+import * as ray from '../../datatype/ray';
 import * as prim_cube from '../../geometry/primitive3/cube';
 import * as obj from '../object';
 
@@ -34,7 +35,7 @@ export function stair(
 }
 
 export function rays_stair(
-    rays: cv.Ray3[],
+    rays: ray.Ray3[],
     step: obj.Object,
 ): obj.Object {
     const transforms = rays.map(ray => mx.compose([
@@ -77,7 +78,7 @@ function _spiral_stair_rays(
     rounds: number,
     steps_per_round: number,
     additional_steps: number,
-): cv.Ray3[] {
+): ray.Ray3[] {
     const ad_rounds = Math.floor(additional_steps / steps_per_round);
     let ad_steps = additional_steps % steps_per_round;
     if (ad_steps < 0) ad_steps += steps_per_round;

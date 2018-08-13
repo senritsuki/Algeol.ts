@@ -5,7 +5,7 @@
  */
 
 import * as sq from './sequence';
-import * as vc from './vector';
+import * as vc from '../datatype/vector';
 //import * as cv from './curve';
 
 /** 

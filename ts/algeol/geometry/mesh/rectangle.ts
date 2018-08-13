@@ -1,6 +1,6 @@
 
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 
 
 export type xy_filter = (x: number, y: number) => boolean;

@@ -4,7 +4,7 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 
 /**
  * 原点を含みxy平面・yz平面・zx平面に平行で合同な長方形3枚の頂点12個

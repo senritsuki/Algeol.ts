@@ -1,7 +1,7 @@
 // Platonic solid - プラトンの立体
 
-import * as ut from '../../algeol/algorithm/utility';
-import * as vc from '../../algeol/algorithm/vector';
+import * as ut from '../../algeol/common';
+import * as vc from '../../algeol/datatype/vector';
 import * as prim4 from '../../algeol/geometry/primitive3/tetrahedron';
 import * as prim6 from '../../algeol/geometry/primitive3/cube';
 import * as prim8 from '../../algeol/geometry/primitive3/octahedron';

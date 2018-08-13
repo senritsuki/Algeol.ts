@@ -4,9 +4,9 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
+import * as ut from '../../common';
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 import * as circle from './circle';
 
 export function verts(n_gonal: number, r: number, b1: number, b2: number, h1: number, h2: number): vc.V3[] {

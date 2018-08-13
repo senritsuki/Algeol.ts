@@ -1,5 +1,5 @@
-import * as ut from '../../algorithm/utility';
-import * as vc from '../../algorithm/vector';
+import * as ut from '../../common';
+import * as vc from '../../datatype/vector';
 import * as arc from './arc';
 
 /**
@@ -24,9 +24,9 @@ export function ellipse_pie_b2(r: vc.V2, rad1: number, rad2: number): (v: vc.V2)
         v = v.el_div(r);
         const r_r = vc.v2_to_polar(v);
         if (r_r[0] > 1) return false;
-        const rad = ut.normalize_rad(r_r[1]);
-        rad1 = ut.normalize_rad(rad1);
-        rad2 = ut.normalize_rad(rad2);
-        return ut.isin(rad1, rad2, rad);
+        const rad = ut.normalizeRad(r_r[1]);
+        rad1 = ut.normalizeRad(rad1);
+        rad2 = ut.normalizeRad(rad2);
+        return ut.isIn(rad1, rad2, rad);
     }
 }

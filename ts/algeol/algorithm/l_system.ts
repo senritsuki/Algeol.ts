@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from './vector';
-import * as cv from './curve';
+import * as vc from '../datatype/vector';
+import * as cv from '../datatype/curve';
 import * as tt from './turtle';
 
 

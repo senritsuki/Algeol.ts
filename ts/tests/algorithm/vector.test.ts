@@ -1,4 +1,4 @@
-import * as vc from '../../algeol/algorithm/vector';
+import * as vc from '../../algeol/datatype/vector';
 
 const closed = (nn: number[]) => nn.map(n => Math.round(n * 1000) / 1000);
 

@@ -4,8 +4,19 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 import * as cuboid from './cuboid';
+
+export class Cube {
+    constructor(
+        public o: vc.V3,
+        public r: number,
+    ) {}
+
+    verts(): vc.V3[] {
+        return verts_o_r(this.o, this.r);
+    }
+}
 
 /**
  * 原点中心の半径rの球に外接する立方体の頂点8つ
@@ -14,6 +25,11 @@ import * as cuboid from './cuboid';
 export function verts(r: number): vc.V3[] {
     return cuboid.verts(r, r, r);
 }
+
+export function verts_o_r(o: vc.V3, r: number): vc.V3[] {
+    return cuboid.verts_o_r(o, vc.v3(r, r, r));
+}
+
 /**
  * 立方体の面6つ
  * 面は全て合同の正方形である

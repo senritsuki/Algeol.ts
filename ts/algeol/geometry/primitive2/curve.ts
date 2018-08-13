@@ -1,8 +1,8 @@
-import * as ut from '../../algorithm/utility';
+import * as ut from '../../common';
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
-import * as mx from '../../algorithm/matrix';
-import * as cv from '../../algorithm/curve';
+import * as vc from '../../datatype/vector';
+import * as mx from '../../datatype/matrix';
+import * as cv from '../../datatype/curve';
 
 export enum ExpandDir {
     Left,
@@ -13,7 +13,7 @@ export enum ExpandDir {
 /**
  * 曲線
  * @param curve         曲線
- * @param n             曲線を近似する辺の数
+ * @param n             s曲線を近似する辺の数
  */
 export function verts_expand(curve: cv.Curve2, n: number, dir: ExpandDir, width: number): vc.V2[] {
     const tt = sq.range(0, 1, n);

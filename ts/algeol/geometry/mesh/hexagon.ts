@@ -1,5 +1,5 @@
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 import * as vsq from '../../algorithm/vector_sequence';
 
 export class XY<V extends vc.Vector<V>> {

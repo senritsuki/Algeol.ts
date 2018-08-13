@@ -2,7 +2,7 @@
  * Sequence - 数列の生成
  */
 
-import * as ut from './utility';
+import * as ut from '../common';
 
 /** 
  * Arithmetic Sequence - 等差数列
@@ -128,7 +128,7 @@ export function binomial_coefficients(n: number): number[] {
  * @code (3, 4/4) -> [0, 0, 0, 1]
  */
 export function bernstein_basis_coefficients(n: number, t: number): number[] {
-    return arithmetic(n + 1).map(i => ut.bernstein_basis(n, i, t));
+    return arithmetic(n + 1).map(i => ut.bernsteinBasis(n, i, t));
 }
 
 export function to_2d(seq1: number[], seq2: number[]): [number, number][] {

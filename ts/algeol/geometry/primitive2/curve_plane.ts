@@ -1,5 +1,5 @@
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 
 
 export class CurvePlane1<V extends vc.Vector<V>> {

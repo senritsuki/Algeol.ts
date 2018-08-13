@@ -1,5 +1,5 @@
-import * as ut from '../../algeol/algorithm/utility';
-import * as mx from '../../algeol/algorithm/matrix';
+import * as ut from '../../algeol/common';
+import * as mx from '../../algeol/datatype/matrix';
 import * as obj from '../../algeol/object/object';
 import * as Prim from '../../algeol/object/primitive'
 import * as wf from '../../algeol/decoder/wavefront';
@@ -27,4 +27,4 @@ export function base_border(len: number, wid: number, rad: number): obj.Object {
 
 wf.useBlenderCoordinateSystem();
 wf.setFloatFixed(3);
-sf.save_obj('world', build_obj());
+sf.save_obj('world', base_border(1, 1, 0));

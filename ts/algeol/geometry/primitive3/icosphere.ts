@@ -4,7 +4,7 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 import * as icosahedron from './icosahedron';
 
 export interface VF {

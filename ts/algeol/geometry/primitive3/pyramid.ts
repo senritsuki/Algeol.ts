@@ -3,7 +3,7 @@
  */
 
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 import * as circle from './circle';
 
 /** (底面の頂点数, 底面の外接円の半径, 高さ) -> 角錐の頂点の配列 */

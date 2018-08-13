@@ -1,6 +1,6 @@
 // Platonic solid - プラトンの立体
 
-import * as ut from '../../algeol/algorithm/utility';
+import * as ut from '../../algeol/common';
 import * as geo from '../../algeol/object/object';
 import * as prim from '../../algeol/object/primitive'
 import * as sf from '../savefile';

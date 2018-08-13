@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../../algorithm/vector';
-import * as mx from '../../algorithm/matrix';
+import * as vc from '../../datatype/vector';
+import * as mx from '../../datatype/matrix';
 import * as prim_cube from '../../geometry/primitive3/cube';
 import * as prim_octahedron from '../../geometry/primitive3/octahedron';
 import * as obj from '../object';

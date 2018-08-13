@@ -1,4 +1,4 @@
-import * as mx from '../../algorithm/matrix';
+import * as mx from '../../datatype/matrix';
 import * as obj from '../object';
 import * as prim from '../primitive';
 

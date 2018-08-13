@@ -4,10 +4,10 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
+import * as ut from '../../common';
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
-import * as mx from '../../algorithm/matrix';
+import * as vc from '../../datatype/vector';
+import * as mx from '../../datatype/matrix';
 import * as prim_cube from '../../geometry/primitive3/cube';
 import * as prim_prism from '../../geometry/primitive3/prism';
 import * as obj from '../object';
@@ -221,7 +221,7 @@ function _arch_wall(d: ArchColumnInfo): obj.Object {
     const facename = d.facename_column;
     const transfrom = mx.compose([
         mx.m4_translate3([0, 0, d.floor_top_z - height]),
-        mx.m4_rotate3_z(ut.deg_to_rad(180 - ((d.floor_vertex - 2) * 180) / d.floor_vertex / 2)),
+        mx.m4_rotate3_z(ut.degToRad(180 - ((d.floor_vertex - 2) * 180) / d.floor_vertex / 2)),
     ]);
     const archwall = arch.arch(vf2, width_type, width, facename, transfrom);
     return archwall;

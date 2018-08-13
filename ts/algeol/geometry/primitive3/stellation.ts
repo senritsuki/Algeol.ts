@@ -4,7 +4,7 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 
 export interface VF {
     verts: vc.V3[];

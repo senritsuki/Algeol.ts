@@ -1,6 +1,6 @@
 import * as sq from '../algorithm/sequence';
-import * as vc from '../algorithm/vector'
-import * as cv from '../algorithm/curve'
+import * as vc from '../datatype/vector'
+import * as cv from '../datatype/curve'
 
 export interface VF<V extends vc.Vector<V>> {
     verts: V[];

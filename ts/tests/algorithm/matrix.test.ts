@@ -1,6 +1,6 @@
-import * as ut from '../../algeol/algorithm/utility';
-import * as vc from '../../algeol/algorithm/vector';
-import * as mx from '../../algeol/algorithm/matrix';
+import * as ut from '../../algeol/common';
+import * as vc from '../../algeol/datatype/vector';
+import * as mx from '../../algeol/datatype/matrix';
 
 function expect_toBeClosedToZero<T extends vc.Vector<T>>(v: vc.Vector<T>) {
     vc.to_array_if_not(v).forEach(n => expect(n).toBeCloseTo(0));

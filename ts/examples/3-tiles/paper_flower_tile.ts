@@ -1,8 +1,9 @@
-import * as ut from '../../algeol/algorithm/utility';
+import * as ut from '../../algeol/common';
 import * as seq from '../../algeol/algorithm/sequence';
-import * as vc from '../../algeol/algorithm/vector';
-import * as mx from '../../algeol/algorithm/matrix';
-import * as cv from '../../algeol/algorithm/curve';
+import * as vc from '../../algeol/datatype/vector';
+import * as mx from '../../algeol/datatype/matrix';
+import * as cv from '../../algeol/datatype/curve';
+import * as ray from '../../algeol/datatype/ray';
 
 import * as mesh_rect from '../../algeol/geometry/mesh/rectangle';
 import * as mesh_util from '../../algeol/geometry/utility';
@@ -35,7 +36,7 @@ function build_paper_flower(num: number, width: number): geo.Object {
 function build_small_flowers(lines: cv.Curve3[]): geo.Object {
     const paper_flower = build_paper_flower(4, 0.5);
     const scaling = mx.m4_scale3([1/16, 1/16, 1]);
-    const tr = (ray: cv.Ray3) => mx.compose([
+    const tr = (ray: ray.Ray3) => mx.compose([
         scaling,
         mx.m4_rotate_from_10_to_v([ray.d.x, ray.d.y]),
         mx.m4_translate3(ray.c),

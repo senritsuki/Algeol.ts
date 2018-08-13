@@ -5,7 +5,7 @@
  */
 
 import * as seq from '../algorithm/sequence';
-import * as vc from '../algorithm/vector';
+import * as vc from '../datatype/vector';
 import * as prim2_circle from '../geometry/primitive2/circle';
 import * as prim3_tetrahedron from '../geometry/primitive3/tetrahedron';
 import * as prim3_octahedron from '../geometry/primitive3/octahedron';

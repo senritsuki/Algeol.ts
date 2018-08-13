@@ -4,7 +4,7 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 
 /**
  * 原点中心の半径rの球に内接する正8面体の頂点6つ

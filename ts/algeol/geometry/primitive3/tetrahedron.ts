@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
-import * as vc from '../../algorithm/vector';
+import * as ut from '../../common';
+import * as vc from '../../datatype/vector';
 
 /** プリミティブオブジェクト生成用関数群 */
 

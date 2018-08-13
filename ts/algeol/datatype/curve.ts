@@ -4,64 +4,13 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from './utility';
-import * as seq from './sequence';
+import * as ut from '../common';
+import * as sq from '../algorithm/sequence';
 import * as vc from './vector';
 import * as mx from './matrix';
+import * as ray from './ray';
 
 export let E = 0.001;
-
-
-/** 位置ベクトルと方向ベクトルのペア */
-export class Ray<T extends vc.Vector<T>> {
-    constructor(
-        /** 位置ベクトル */
-        public c: T,
-        /** 方向ベクトル */
-        public d: T,
-    ) { }
-
-    /** c + td */
-    p(t: number): T {
-        const d = this.d.scalar(t);
-        return this.c.add(d);
-    }
-    unit(): Ray<T> {
-        const d = this.d.unit();
-        return new Ray(this.c, d);
-    }
-    toString(): string {
-        return `{ c: ${this.c.toString03f()}, d: ${this.d.toString03f()} }`;
-    }
-}
-
-export interface Ray1 extends Ray<vc.V1> {}
-export interface Ray2 extends Ray<vc.V2> {}
-export interface Ray3 extends Ray<vc.V3> {}
-export interface Ray4 extends Ray<vc.V4> {}
-
-
-/** 位置ベクトルと方向ベクトルのペア */
-export function ray<T extends vc.Vector<T>>(c: T, d: T): Ray<T> {
-    return new Ray(c, d);
-}
-
-export function ray3_to_ray2(ray3: Ray3): Ray2 {
-    const c = vc.v3_to_v2(ray3.c);
-    const d = vc.v3_to_v2(ray3.d);
-    return ray(c, d);
-}
-
-export function rot_ray3d_z(ray3: Ray3, rad: number): Ray3 {
-    const d = mx.m3_rotate_z(rad).map(ray3.d);
-    return ray(ray3.c, d);
-}
-
-export function map_ray3(ray3: Ray3, f: (v: vc.V4) => vc.V4): Ray3 {
-    const c = vc.v4map_v3(ray3.c, 1, f);
-    const d = vc.v4map_v3(ray3.d, 0, f);
-    return ray(c, d);
-}
 
 
 /** Parametric Equation - パラメトリック方程式による曲線 */
@@ -72,7 +21,7 @@ export interface Curve<T extends vc.Vector<T>> {
     /** パラメータiに対応する座標 */
     coord(t: number): T;
     /** パラメータiに対応する位置と方向 */
-    ray(t: number, delta?: number): Ray<T>;
+    ray(t: number, delta?: number): ray.Ray<T>;
 
     /** coord(0.0) と同値 */
     start(): T;
@@ -110,11 +59,11 @@ abstract class CurveBase<T extends vc.Vector<T>, U extends CurveC<T, U>> impleme
         return this.v.slice(0);
     }
 
-    ray(t: number, delta: number = E): Ray<T> {
+    ray(t: number, delta: number = E): ray.Ray<T> {
         const c = this.coord(t);
         const d1 = this.coord(t - delta);
         const d2 = this.coord(t + delta);
-        return new Ray(c, d2.sub(d1));
+        return ray.ray(c, d2.sub(d1));
     }
     translate(fn: (v: T) => T): U {
         const new_curve = this.clone();
@@ -171,7 +120,7 @@ class BezierCurve<T extends vc.Vector<T>> extends CurveBase<T, BezierCurve<T>> {
     coord(t: number): T {
         const n = this.v.length - 1;   // 制御点4つなら3次
         return this.v 
-            .map((v, i) => v.scalar(ut.bernstein_basis(n, i, t)))
+            .map((v, i) => v.scalar(ut.bernsteinBasis(n, i, t)))
             .reduce((a, b) => a.add(b));
     }
 }
@@ -189,9 +138,9 @@ class BSplineCurve<T extends vc.Vector<T>> extends CurveBase<T, BSplineCurve<T>>
     }
     coord(t: number): T {
         const degree = this.degree;
-        const knots = seq.arithmetic(this.v.length + degree + 1);
+        const knots = sq.arithmetic(this.v.length + degree + 1);
         return this.v
-            .map((v, i) => v.scalar(ut.b_spline_basis(knots, i, degree, t)))
+            .map((v, i) => v.scalar(ut.bSplineBasis(knots, i, degree, t)))
             .reduce((a, b) => a.add(b));
     }
 }
@@ -214,8 +163,8 @@ class NURBS<T extends vc.Vector<T>> extends CurveBase<T, NURBS<T>> {
         const degree = this.degree;
         const knots = this.knots;
         const weights = this.weights;
-        const b_w = seq.arithmetic(controls.length)
-            .map(i => weights[i] * ut.b_spline_basis(knots, i, degree, t));
+        const b_w = sq.arithmetic(controls.length)
+            .map(i => weights[i] * ut.bSplineBasis(knots, i, degree, t));
         const n1 = b_w
             .map((n, i) => controls[i].scalar(n))
             .reduce((a, b) => a.add(b));
@@ -316,11 +265,11 @@ export class CurveArray<T extends vc.Vector<T>> {
         const k = t - j;
         return this._curves[j].coord(k);
     }
-    cd(t: number, delta: number = E): Ray<T> {
+    cd(t: number, delta: number = E): ray.Ray<T> {
         const c = this.coord(t);
         const d1 = this.coord(t - delta);
         const d2 = this.coord(t + delta);
-        return new Ray(c, d2.sub(d1));
+        return ray.ray(c, d2.sub(d1));
     }
 
     start(): T {
@@ -350,9 +299,9 @@ export interface CurveArray4 extends CurveArray<vc.V4> {}
 
 
 
-/** 直線 */
-export function line<T extends vc.Vector<T>>(start: T, end: T): Curve<T> {
-    return new Line<T>(start, end);
+/** p1 と p2 を通る直線 */
+export function line<T extends vc.Vector<T>>(p1: T, p2: T): Curve<T> {
+    return new Line<T>(p1, p2);
 }
 
 /** (ベクトル配列, 媒介変数) -> ベクトル を満たす任意の関数で定義される曲線 */
@@ -418,7 +367,7 @@ export function curves<T extends vc.Vector<T>>(curveArray: Curve<T>[]): CurveArr
 
 /** 折れ線 */
 export function lines<T extends vc.Vector<T>>(verts: T[]): CurveArray<T> {
-    return curves(seq.arithmetic(verts.length - 1, 1).map(i => line(verts[i - 1], verts[i])));
+    return curves(sq.arithmetic(verts.length - 1, 1).map(i => line(verts[i - 1], verts[i])));
 }
 
 
@@ -455,7 +404,7 @@ export function distance<V extends vc.Vector<V>>(p1: V, p2: V): number {
 }
 
 /** 点と直線の距離 */
-export function distance_lp<V extends vc.Vector<V>, R extends Ray<V>>(ray: R, p: V): number {
+export function distance_lp<V extends vc.Vector<V>, R extends ray.Ray<V>>(ray: R, p: V): number {
     const r1 = ray.d;
     const r2 = p.sub(ray.c);
     const cos = r1.ip(r2) / (r1.length() * r2.length());    // 余弦定理
@@ -472,5 +421,5 @@ export function distance_sp<V extends vc.Vector<V>>(s1: V, s2: V, p: V): number 
     const d2 = s1.sub(s2);
     const s2p = p.sub(s2);
     if (d2.ip(s2p) < 0) return s2p.length();
-    return distance_lp(ray(s1, d1), p);
+    return distance_lp(ray.ray(s1, d1), p);
 }

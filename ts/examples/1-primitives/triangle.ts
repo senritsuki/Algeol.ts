@@ -1,6 +1,6 @@
 // Triangle - 三角形
 
-import * as vc from '../../algeol/algorithm/vector';
+import * as vc from '../../algeol/datatype/vector';
 import * as geo from '../../algeol/object/object';
 import * as sf from '../savefile';
 

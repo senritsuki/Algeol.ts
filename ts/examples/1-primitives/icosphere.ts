@@ -1,6 +1,6 @@
 // Icosphere
 
-import * as mx from '../../algeol/algorithm/matrix';
+import * as mx from '../../algeol/datatype/matrix';
 import * as geo from '../../algeol/object/object';
 import * as prim from '../../algeol/object/primitive'
 import * as sf from '../savefile';

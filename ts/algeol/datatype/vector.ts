@@ -111,6 +111,8 @@ export interface Vector<T extends Vector<T>> extends VectorCommon {
     /** 単項演算: 単位ベクトル化. clone() / length() と同値 */
     unit(): T;
 
+    absmax(): number;
+
     /** 二項演算: 加算 */
     add(dist: T|number[]): T;
     /** 二項演算: 減算 */
@@ -160,6 +162,9 @@ class VectorBase<T extends Vector<T>> implements Vector<T> {
     }
     unit(): T {
         return this._f(scalar_array(this._v, 1 / this.length()));
+    }
+    absmax(): number {
+        return this._v.map(n => Math.abs(n)).reduce((a, b) => a >= b ? a : b);
     }
 
     add(dist: T|number[]): T {

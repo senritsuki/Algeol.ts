@@ -1,4 +1,4 @@
-import * as vc from '../../algeol/algorithm/vector';
+import * as vc from '../../algeol/datatype/vector';
 import * as vsq from '../../algeol/algorithm/vector_sequence';
 
 

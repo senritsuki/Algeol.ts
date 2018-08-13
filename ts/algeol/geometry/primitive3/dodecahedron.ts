@@ -4,10 +4,10 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
+import * as ut from '../../common';
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
-import * as mx from '../../algorithm/matrix';
+import * as vc from '../../datatype/vector';
+import * as mx from '../../datatype/matrix';
 import * as trirect from './trirect';
 import * as cube from './cube';
 import * as gut from '../utility';

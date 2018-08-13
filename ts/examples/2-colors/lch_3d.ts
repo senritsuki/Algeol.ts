@@ -1,6 +1,6 @@
-import * as ut from '../../algeol/algorithm/utility';
+import * as ut from '../../algeol/common';
 import * as seq from '../../algeol/algorithm/sequence';
-import * as mx from '../../algeol/algorithm/matrix';
+import * as mx from '../../algeol/datatype/matrix';
 import * as cc from '../../algeol/algorithm/color_converter';
 import * as geo from '../../algeol/object/object';
 import * as prim from '../../algeol/object/primitive'
@@ -44,7 +44,7 @@ function build_hue(hue: number): geo.Object {
     const tr = (lch: [number, number, number]) => mx.compose([
         tr_base,
         mx.m4_translate3([0, lch[1] / 10, lch[0] / 10]),
-        mx.m4_rotate3_z(ut.deg_to_rad(-lch[2])),
+        mx.m4_rotate3_z(ut.degToRad(-lch[2])),
     ]);
     const obj = geo.obj_group(
         seq.to_3d(seq_lightness, seq_chroma, [hue])

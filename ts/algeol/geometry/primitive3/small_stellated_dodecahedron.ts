@@ -4,8 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
-import * as vc from '../../algorithm/vector';
+import * as ut from '../../common';
+import * as vc from '../../datatype/vector';
 import * as dodecahedron from './dodecahedron';
 import * as stellation from './stellation';
 
@@ -19,8 +19,8 @@ import * as stellation from './stellation';
 // ・底辺の長さ = 正十二面体の一辺の長さ
 // ・高さ = 底辺の長さ/2 * tan(72)
 function calc_stella_height(verts: vc.V3[], faces: number[][]): number {
-    const tan54 = Math.tan(ut.deg_to_rad(54));
-    const tan72 = Math.tan(ut.deg_to_rad(72));
+    const tan54 = Math.tan(ut.degToRad(54));
+    const tan72 = Math.tan(ut.degToRad(72));
     const base_len = vc.sub(verts[faces[0][1]], verts[faces[0][0]]).length();
     const base_center_len = tan54 * base_len / 2;
     const side_height = tan72 * base_len / 2;

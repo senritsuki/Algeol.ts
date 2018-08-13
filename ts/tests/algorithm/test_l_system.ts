@@ -1,7 +1,7 @@
 ﻿declare const require: any;
 const fs = require('fs');
 
-import * as cv from "../../algeol/algorithm/curve";
+import * as cv from "../../algeol/datatype/curve";
 import * as ls from "../../algeol/algorithm/l_system";
 import * as svg from "../../algeol/decoder/svg";
 

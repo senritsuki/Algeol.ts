@@ -4,9 +4,9 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as ut from '../../algorithm/utility';
+import * as ut from '../../common';
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 import * as circle from './circle';
 
 function verts_common(n_gonal: number, r: number, rad: number, h: number, fn: (n: number, r: number, rad: number, h: number) => vc.V3[]): vc.V3[] {

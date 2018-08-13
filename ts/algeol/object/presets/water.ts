@@ -1,5 +1,5 @@
-import * as vc from '../../algorithm/vector';
-import * as mx from '../../algorithm/matrix';
+import * as vc from '../../datatype/vector';
+import * as mx from '../../datatype/matrix';
 import * as gut from '../../geometry/utility';
 import * as mesh from '../../geometry/mesh/rectangle';
 import * as obj from '../object';

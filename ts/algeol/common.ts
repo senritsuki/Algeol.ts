@@ -4,16 +4,16 @@
  * Copyright (c) 2016 senritsuki
  */
 
-export * from './utility_const';
+export * from './const';
 
-import * as c from './utility_const';
+import * as c from './const';
 
 /** 
  * 0以上2π未満にする
  * @code (3π) -> π
  * @code (-5π) -> π
  */
-export function normalize_rad(rad: number): number {
+export function normalizeRad(rad: number): number {
     rad %= c.pi2;
     if (rad < 0) rad += c.pi2;
     return rad;
@@ -24,7 +24,7 @@ export function normalize_rad(rad: number): number {
  * @code (540) -> 180
  * @code (-900) -> 180
  */
-export function normalize_deg(deg: number): number {
+export function normalizeDeg(deg: number): number {
     deg %= 360;
     if (deg < 0) deg += 360;
     return deg;
@@ -35,7 +35,7 @@ export function normalize_deg(deg: number): number {
  * @code (180) -> π
  * @code (360) -> 2π
  */
-export function deg_to_rad(deg: number): number {
+export function degToRad(deg: number): number {
     return c.pi2 * deg / 360;
 }
 
@@ -44,7 +44,7 @@ export function deg_to_rad(deg: number): number {
  * @code (π) -> 180
  * @code (2π) -> 360
  */
-export function rad_to_deg(rad: number): number {
+export function radToDeg(rad: number): number {
     return 360 * rad / c.pi2;
 }
 
@@ -98,7 +98,7 @@ type float = number;
  * @param i     0以上n以下の整数（3次ベジェ曲線では0, 1, 2, 3）
  * @param t
  */
-export function bernstein_basis(n: int, i: int, t: float): float {
+export function bernsteinBasis(n: int, i: int, t: float): float {
     return combination(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
 }
 
@@ -109,37 +109,37 @@ export function bernstein_basis(n: int, i: int, t: float): float {
  * @param degree    次数（基本は2）（n+1は階数）
  * @param t 
  */
-export function b_spline_basis(knot: float[], i: int, degree: int, t: float): float {
+export function bSplineBasis(knot: float[], i: int, degree: int, t: float): float {
     if (degree <= 0) {
         return knot[i] <= t && t < knot[i+1] ? 1.0 : 0.0;
     } else {
         const n1 = (t - knot[i]) / (knot[i+degree] - knot[i]);
         const n2 = (knot[i+degree+1] - t) / (knot[i+degree+1] - knot[i+1]);
-        return n1 * b_spline_basis(knot, i, degree-1, t) + n2 * b_spline_basis(knot, i+1, degree-1, t);
+        return n1 * bSplineBasis(knot, i, degree-1, t) + n2 * bSplineBasis(knot, i+1, degree-1, t);
     }
 }
 
 /** 2関数の合成 */
-export const compose_2f = <R, S, T>(a: (r: R) => S, b: (s: S) => T): (r: R) => T => (r: R) => b(a(r));
+export const compose2f = <R, S, T>(a: (r: R) => S, b: (s: S) => T): (r: R) => T => (r: R) => b(a(r));
 /** 3関数の合成 */
-export const compose_3f = <R, S, T, U>(a: (r: R) => S, b: (s: S) => T, c: (t: T) => U): (r: R) => U => (r: R) => c(b(a(r)));
+export const compose3f = <R, S, T, U>(a: (r: R) => S, b: (s: S) => T, c: (t: T) => U): (r: R) => U => (r: R) => c(b(a(r)));
 
 /**
  * @code (0) -> '00'
  * @code (255) -> 'ff'
  */
-export function format_02x(n: number): string {
+export function format02x(n: number): string {
     return ('00' + Math.round(clamp(0, 255, n)).toString(16)).slice(-2);
 }
 
 /**
  * @code (1) -> '01'
  */
-export const format_02d = (n: number): string => format_n(n, n => ('00' + n).slice(-2));
+export const format02d = (n: number): string => formatN(n, n => ('00' + n).slice(-2));
 /**
  * @code (1) -> '001'
  */
-export const format_03d = (n: number): string => format_n(n, n => ('000' + n).slice(-3));
+export const format03d = (n: number): string => formatN(n, n => ('000' + n).slice(-3));
 
 /**
  * @code (0, 255, -10) -> 0
@@ -150,7 +150,7 @@ export function clamp(min: number, max: number, n: number): number {
     return n < min ? min : n > max ? max : n;
 }
 
-export function format_n(n: number, f: (n: number) => string): string {
+export function formatN(n: number, f: (n: number) => string): string {
     let b = '';
     if (n < 0) { b = '-'; n = -n; }
     return b + f(n);
@@ -172,15 +172,15 @@ namespace priv {
 /** 
  * サイン関数（Math.sinの引数は弧度法だが、こちらは度数法）
  */
-export const sin_deg = compose_2f(deg_to_rad, Math.sin);
+export const sinDeg = compose2f(degToRad, Math.sin);
 /**
  * コサイン関数（Math.cosの引数は弧度法だが、こちらは度数法）
  */
-export const cos_deg = compose_2f(deg_to_rad, Math.cos);
+export const cosDeg = compose2f(degToRad, Math.cos);
 /**
  * タンジェント関数（Math.tanの引数は弧度法だが、こちらは度数法）
  */
-export const tan_deg = compose_2f(deg_to_rad, Math.tan);
+export const tanDeg = compose2f(degToRad, Math.tan);
 
 /**
  * @code (0, 255, -1) -> false
@@ -189,7 +189,7 @@ export const tan_deg = compose_2f(deg_to_rad, Math.tan);
  * @code (0, 255, 255) -> true
  * @code (0, 255, 256) -> false
  */
-export function isin(min: number, max: number, n: number): boolean {
+export function isIn(min: number, max: number, n: number): boolean {
     return min <= n && n <= max;
 }
 

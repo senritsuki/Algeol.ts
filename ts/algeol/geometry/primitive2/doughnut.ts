@@ -1,6 +1,6 @@
-import * as ut from '../../algorithm/utility';
+import * as ut from '../../common';
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
+import * as vc from '../../datatype/vector';
 import * as ellipse from './ellipse';
 import * as arc from './arc';
 

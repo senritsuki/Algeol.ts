@@ -5,9 +5,9 @@
  */
 
 import * as sq from '../../algorithm/sequence';
-import * as vc from '../../algorithm/vector';
-import * as mx from '../../algorithm/matrix';
-import * as cv from '../../algorithm/curve';
+import * as vc from '../../datatype/vector';
+import * as mx from '../../datatype/matrix';
+import * as cv from '../../datatype/curve';
 import * as gut from '../../geometry/utility';
 import * as gcv from '../../geometry/primitive2/curve';
 import * as gcp from '../../geometry/primitive2/curve_plane';

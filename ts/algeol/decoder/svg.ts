@@ -6,8 +6,8 @@
 
 //import * as al from "../algeo";
 import * as seq from "../algorithm/sequence";
-import * as vc from "../algorithm/vector";
-import * as cv from "../algorithm/curve";
+import * as vc from "../datatype/vector";
+import * as cv from "../datatype/curve";
 
 
 /** (内部要素, svg幅, svg高さ, viewbox幅, viewbox高さ) -> <svg> */
