@@ -7,23 +7,44 @@
 import * as vc from './vector';
 import * as mx from './matrix';
 
+export interface RayJson {
+    c: number[];
+    d: number[];
+}
+
 /** Ray - 光線・半直線 */
-export class Ray<T extends vc.Vector<T>> {
+export class Ray<V extends vc.Vector<V>> {
     constructor(
         /** 位置ベクトル */
-        public c: T,
+        public c: V,
         /** 方向ベクトル */
-        public d: T,
+        public d: V,
     ) { }
 
     /** c + td */
-    p(t: number): T {
+    p(t: number): V {
         const d = this.d.scalar(t);
         return this.c.add(d);
     }
-    unit(): Ray<T> {
+
+    /** 方向ベクトルの単位ベクトル化 */
+    unit(): Ray<V> {
         const d = this.d.unit();
         return new Ray(this.c, d);
+    }
+
+    /** 光線上で最もvに近い点 */
+    nearest(v: V): V {
+        const t = this.d.ip(v.sub(this.c));
+        const d = this.d.scalar(t);
+        return this.c.add(d);
+    }
+
+    toJson(): RayJson {
+        return {
+            c: this.c._v,
+            d: this.d._v,
+        };
     }
 
     toString(): string {
@@ -31,13 +52,13 @@ export class Ray<T extends vc.Vector<T>> {
     }
 }
 
-export interface Ray1 extends Ray<vc.V1> {}
-export interface Ray2 extends Ray<vc.V2> {}
-export interface Ray3 extends Ray<vc.V3> {}
-export interface Ray4 extends Ray<vc.V4> {}
+export class Ray1 extends Ray<vc.V1> {}
+export class Ray2 extends Ray<vc.V2> {}
+export class Ray3 extends Ray<vc.V3> {}
+export class Ray4 extends Ray<vc.V4> {}
 
 
-/** 位置ベクトルと方向ベクトルのペア */
+/** Ray - 光線・半直線 */
 export function ray<T extends vc.Vector<T>>(c: T, d: T): Ray<T> {
     return new Ray(c, d);
 }
