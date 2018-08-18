@@ -114,7 +114,7 @@ export namespace etc {
  *   ->
  * RGB string '#000000' .. '#ffffff'
  */
-export function rgb255_to_rgbhex(rgb: number[]): string {
+export function rgb255_to_rgbhexs(rgb: number[]): string {
     return `#${etc.format_02f(rgb[0])}${etc.format_02f(rgb[1])}${etc.format_02f(rgb[2])}`;
 }
 
@@ -123,7 +123,7 @@ export function rgb255_to_rgbhex(rgb: number[]): string {
  *   ->
  * RGB array (0, 0, 0) .. (255, 255, 255)
  */
-export function rgbhex_to_rgb255(rgbhex: string): number[] {
+export function rgbhexs_to_rgb255(rgbhex: string): number[] {
     if (rgbhex[0] === '#') {
         rgbhex = rgbhex.slice(1);
     }
@@ -150,6 +150,18 @@ export function rgbhex_to_rgb255(rgbhex: string): number[] {
     }
 }
 
+
+export function rgb255_to_rgbhex(rgb: number[]): number {
+    rgb = clampRound255(rgb);
+    return (rgb[0] << 16) + (rgb[1] << 8) + rgb[2];
+}
+
+export function rgbhex_to_rgb255(rgb: number): number[] {
+    const r = (rgb >> 16) & 255;
+    const g = (rgb >> 8) & 255;
+    const b = rgb & 255;
+    return [r, g, b];
+}
 
 /**
  * RGB array (0, 0, 0) .. (255, 255, 255)
@@ -301,20 +313,20 @@ export function hsl_to_rgb01(hsl: number[]): number[] {
 export const rgb255_to_hsl = etc.composite_2f(rgb255_to_rgb01, rgb01_to_hsl);
 export const hsl_to_rgb255 = etc.composite_2f(hsl_to_rgb01, rgb01_to_rgb255);
 
-export const rgbhex_to_hsl = etc.composite_2f(rgbhex_to_rgb255, rgb255_to_hsl);
-export const hsl_to_rgbhex = etc.composite_2f(hsl_to_rgb255, rgb255_to_rgbhex);
+export const rgbhexs_to_hsl = etc.composite_2f(rgbhexs_to_rgb255, rgb255_to_hsl);
+export const hsl_to_rgbhexs = etc.composite_2f(hsl_to_rgb255, rgb255_to_rgbhexs);
 
 export const rgb01_to_lab = etc.composite_3f(srgb_to_lrgb, lrgb_to_xyz, xyz_to_lab);
 export const lab_to_rgb01 = etc.composite_3f(lab_to_xyz, xyz_to_lrgb, lrgb_to_srgb);
 
-export const rgbhex_to_rgb01 = etc.composite_2f(rgbhex_to_rgb255, rgb255_to_rgb01);
-export const rgb01_to_rgbhex = etc.composite_2f(rgb01_to_rgb255, rgb255_to_rgbhex);
+export const rgbhexs_to_rgb01 = etc.composite_2f(rgbhexs_to_rgb255, rgb255_to_rgb01);
+export const rgb01_to_rgbhexs = etc.composite_2f(rgb01_to_rgb255, rgb255_to_rgbhexs);
 
-export const rgbhex_to_lab = etc.composite_2f(rgbhex_to_rgb01, rgb01_to_lab);
-export const lab_to_rgbhex = etc.composite_2f(lab_to_rgb01, rgb01_to_rgbhex);
+export const rgbhexs_to_lab = etc.composite_2f(rgbhexs_to_rgb01, rgb01_to_lab);
+export const lab_to_rgbhexs = etc.composite_2f(lab_to_rgb01, rgb01_to_rgbhexs);
 
-export const rgbhex_to_lch = etc.composite_2f(rgbhex_to_lab, lab_to_lch);
-export const lch_to_rgbhex = etc.composite_2f(lch_to_lab, lab_to_rgbhex);
+export const rgbhexs_to_lch = etc.composite_2f(rgbhexs_to_lab, lab_to_lch);
+export const lch_to_rgbhexs = etc.composite_2f(lch_to_lab, lab_to_rgbhexs);
 
 export const rgb255_to_lab = etc.composite_2f(rgb255_to_rgb01, rgb01_to_lab);
 export const lab_to_rgb255 = etc.composite_2f(lab_to_rgb01, rgb01_to_rgb255);
@@ -325,10 +337,14 @@ export const lch_to_rgb255 = etc.composite_2f(lch_to_lab, lab_to_rgb255);
 export const rgb01_to_lch = etc.composite_2f(rgb01_to_lab, lab_to_lch);
 export const lch_to_rgb01 = etc.composite_2f(lch_to_lab, lab_to_rgb01);
 
+export const rgb01_to_rgbhex = etc.composite_2f(rgb01_to_rgb255, rgb255_to_rgbhex);
+export const rgbhex_to_rgb01 = etc.composite_2f(rgbhex_to_rgb255, rgb255_to_rgb01);
+
 
 const clamp = (nn: number[], min: number, max: number): number[] => nn.map(n => n < min ? min : n > max ? max : n);
 export const clamp01 = (nn: number[]): number[] => clamp(nn, 0, 1);
 export const clamp255 = (nn: number[]): number[] => clamp(nn, 0, 255);
+export const clampRound255 = (nn: number[]): number[] => clamp(nn, 0, 255).map(n => Math.round(n));
 
 function overflow(nn: number[], min: number, max: number): boolean {
     for (let i = 0; i < nn.length; i++) {
