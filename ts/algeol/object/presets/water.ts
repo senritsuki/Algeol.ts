@@ -33,18 +33,10 @@ export function wavedcuboid(
     const face_bottom = bottom.face_corner().map(i => i + verts_wave.length);
     const faces_side = gut.faces_side(face_bottom, wave.face_corner());
     const fgs = [
-<<<<<<< HEAD
         obj.faceGroup(faces_wave, facename_water, facename_water),
         obj.faceGroup(faces_side, facename_water, facename_water),
         obj.faceGroup([face_bottom], facename_water, facename_water),
     ];
     return obj.objMultiFaceGroup(verts, fgs, transform);
-=======
-        obj.facegroup(faces_wave, facename_water, facename_water),
-        obj.facegroup(faces_side, facename_water, facename_water),
-        obj.facegroup([face_bottom], facename_water, facename_water),
-    ];
-    return obj.obj_single(verts, fgs, transform);
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 }
 

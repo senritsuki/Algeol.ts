@@ -87,29 +87,16 @@ function common_singleleaf(
     transform: mx.M4|null = null,
 ): obj.Object {
     const tr_trunk = mx.m4_scale3([d.trunk_radius, d.trunk_radius, d.leaf_bottom]);
-<<<<<<< HEAD
     const tr_leaf = mx.mulAllRev([
-=======
-    const tr_leaf = mx.compose([
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
         mx.m4_scale3([d.leaf_radius, d.leaf_radius, d.leaf_top - d.leaf_bottom]),
         mx.m4_translate3([0, 0, d.leaf_bottom]),
     ]);
 
-<<<<<<< HEAD
     const fg_trunk = [obj.faceGroup(trunk.faces, d.facename_trunk, d.facename_trunk)];
     const fg_leaf = [obj.faceGroup(leaf.faces, d.facename_leaf, d.facename_leaf)];
 
     return obj.objGrouped([
         obj.objMultiFaceGroup(trunk.verts, fg_trunk, tr_trunk),
         obj.objMultiFaceGroup(leaf.verts, fg_leaf, tr_leaf),
-=======
-    const fg_trunk = [obj.facegroup(trunk.faces, d.facename_trunk, d.facename_trunk)];
-    const fg_leaf = [obj.facegroup(leaf.faces, d.facename_leaf, d.facename_leaf)];
-
-    return obj.obj_group([
-        obj.obj_single(trunk.verts, fg_trunk, tr_trunk),
-        obj.obj_single(leaf.verts, fg_leaf, tr_leaf),
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
     ], transform, null);
 }

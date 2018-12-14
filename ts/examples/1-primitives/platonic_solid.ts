@@ -13,10 +13,6 @@ const input: [string, geo.VF][] = [
     ['icosahedron', prim.regular_icosahedron()],
 ];
 
-<<<<<<< HEAD
 const objs = input.map(d => geo.objSingle(d[1], d[0], null));
-=======
-const objs = input.map(d => geo.obj_single_vf(d[1], d[0], null));
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 
 ut.zip(input.map(d => d[0]), objs).forEach(d => sf.save_obj('obj/' + d[0], d[1]));

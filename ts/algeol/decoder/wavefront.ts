@@ -46,17 +46,10 @@ export function setFloatFixed(digit: number|null): void {
 export function dump_obj(obj: al.Object, mtlfile: string|null, callback: (line: string) => void): void {
     callback(mtlfile != null ? `mtllib ${mtlfile}` : '#mtllib');
     callback('');
-<<<<<<< HEAD
     callback(obj.objectName != null ? `#o ${obj.objectName}` : '#o');
     obj.scanVerts(v => callback(vert_to_str(v)), null);
     callback('');
     obj.scanFaceGroups((fg, offset) => {
-=======
-    callback(obj.object_name != null ? `#o ${obj.object_name}` : '#o');
-    obj.verts(v => callback(vert_to_str(v)), null);
-    callback('');
-    obj.face_groups((fg, offset) => {
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
         if (fg.info != null) {
             callback(fg.info.group_name != null ? `g ${fg.info.group_name}` : '#g');
             if (fg.info.material_name != null) callback(`usemtl ${fg.info.material_name}`);

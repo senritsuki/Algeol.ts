@@ -81,11 +81,7 @@ export function map_ray3(ray3: Ray3, f: (v: vc.V4) => vc.V4): Ray3 {
 }
 
 export function transform(src: Ray3, dst: Ray3): mx.M4 {
-<<<<<<< HEAD
     return mx.mulAllRev([
-=======
-    return mx.compose([
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
         mx.m4_translate3(src.c.scalar(-1)),
         mx.m4_rotate_from_v1_to_v2(src.d, dst.d),
         mx.m4_translate3(dst.c),
@@ -93,11 +89,7 @@ export function transform(src: Ray3, dst: Ray3): mx.M4 {
 }
 
 export function transfrom_to_100(src: Ray3): mx.M4 {
-<<<<<<< HEAD
     return mx.mulAllRev([
-=======
-    return mx.compose([
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
         mx.m4_translate3(src.c.scalar(-1)),
         mx.m4_rotate_from_v_to_001(src.d),
     ]);

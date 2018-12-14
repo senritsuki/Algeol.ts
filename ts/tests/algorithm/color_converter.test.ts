@@ -13,7 +13,6 @@ test('function', () => {
 });
 
 test('rgb255_to_rgbhex', () => {
-<<<<<<< HEAD
     expect(cc.rgb255_to_rgbhexs([0, 128, 255])).toBe('#0080ff');
     expect(cc.rgb255_to_rgbhexs([51, 102, 153])).toBe('#336699');
 });
@@ -21,15 +20,6 @@ test('rgbhex_to_rgb255', () => {
     expect(cc.rgbhexs_to_rgb255('#0080ff')).toEqual([0, 128, 255]);
     expect(cc.rgbhexs_to_rgb255('#336699')).toEqual([51, 102, 153]);
     expect(cc.rgbhexs_to_rgb255('#369')).toEqual([51, 102, 153]);
-=======
-    expect(cc.rgb255_to_rgbhex([0, 128, 255])).toBe('#0080ff');
-    expect(cc.rgb255_to_rgbhex([51, 102, 153])).toBe('#336699');
-});
-test('rgbhex_to_rgb255', () => {
-    expect(cc.rgbhex_to_rgb255('#0080ff')).toEqual([0, 128, 255]);
-    expect(cc.rgbhex_to_rgb255('#336699')).toEqual([51, 102, 153]);
-    expect(cc.rgbhex_to_rgb255('#369')).toEqual([51, 102, 153]);
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 });
 
 test('rgb255_to_rgb01', () => {
@@ -50,11 +40,7 @@ test('rgb01_to_rgb255', () => {
     ['#cde', [87, -3, -10]],
 ]).forEach(d => test(
     `photoshop:rgbhex_to_lab(${d[0]})`,
-<<<<<<< HEAD
     () => expect_toBeClosedTo(cc.rgbhexs_to_lab(d[0]), d[1], 0.5),
-=======
-    () => expect_toBeClosedTo(cc.rgbhex_to_lab(d[0]), d[1], 0.5),
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 ));
 
 (<[number[], string][]>[
@@ -67,10 +53,6 @@ test('rgb01_to_rgb255', () => {
     [[100, 0, 0], '#ffffff'],
 ]).forEach(d => test(
     `photoshop:lab_to_rgbhex(${d[0]})`,
-<<<<<<< HEAD
     () => expect(cc.lab_to_rgbhexs(d[0])).toBe(d[1]),
-=======
-    () => expect(cc.lab_to_rgbhex(d[0])).toBe(d[1]),
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 ));
 

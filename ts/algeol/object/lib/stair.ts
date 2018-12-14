@@ -27,38 +27,22 @@ export function stair(
     const d = vc.sub(v2, v1).scalar(1 / steps);
     const coords = _steps_t(steps).map(t => vc.mid(v1, v2, t));
     const rot = mx.m4_rotate_from_10_to_v([d.x, d.y]);
-<<<<<<< HEAD
     const transforms = coords.map(c => mx.mulAllRev([
         rot,
         mx.m4_translate3(c),
     ]));
     return obj.objDuplicated(step, transforms);
-=======
-    const transforms = coords.map(c => mx.compose([
-        rot,
-        mx.m4_translate3(c),
-    ]));
-    return obj.obj_duplicate(step, transforms);
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 }
 
 export function rays_stair(
     rays: ray.Ray3[],
     step: obj.Object,
 ): obj.Object {
-<<<<<<< HEAD
     const transforms = rays.map(ray => mx.mulAllRev([
         mx.m4_rotate_from_10_to_v([ray.d.x, ray.d.y]),
         mx.m4_translate3(ray.c),
     ]));
     return obj.objDuplicated(step, transforms);
-=======
-    const transforms = rays.map(ray => mx.compose([
-        mx.m4_rotate_from_10_to_v([ray.d.x, ray.d.y]),
-        mx.m4_translate3(ray.c),
-    ]));
-    return obj.obj_duplicate(step, transforms);
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 }
 
 export function curve_stair(
@@ -137,22 +121,13 @@ export function step_basic(
     const dir = v2.sub(v1);
     const d = dir.scalar(1 / steps);
     const step_verts = prim_cube.verts(0.5);
-<<<<<<< HEAD
     const step_verts_transform = mx.mulAllRev([
-=======
-    const step_verts_transform = mx.compose([
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
         mx.m4_translate3([0, 0, -0.5]),
         mx.m4_scale3([d.length(), width, depth]),
     ]);
     const step_faces = prim_cube.faces();
-<<<<<<< HEAD
     const step_fg = [obj.faceGroup(step_faces, facegroup_name, material_name)];
     return obj.objMultiFaceGroup(step_verts, step_fg, step_verts_transform);
-=======
-    const step_fg = [obj.facegroup(step_faces, facegroup_name, material_name)];
-    return obj.obj_single(step_verts, step_fg, step_verts_transform);
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 }
 
 export function stair_basic(

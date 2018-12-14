@@ -92,11 +92,7 @@ export function arch(
     transform: mx.M4|null,
 ): obj.Object {
     const prism = expand_arch(vf, width_type, width);
-<<<<<<< HEAD
     return obj.objSingle(
-=======
-    return obj.obj_single_vf(
->>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
         {verts: prism.verts(), faces: prism.faces()},
         facename,
         transform,
