@@ -14,7 +14,7 @@ import * as circle from '../primitive2/circle';
  * @param   rad         多角形の1つ目の頂点の偏角
  * @param   z           多角形のz座標
  */
-export function verts_i(n_gonal: number, r: number, rad: number = 0, z: number = 0): vc.V3[] {
+export function verts_i(n_gonal: number, r: number, rad: number, z: number): vc.V3[] {
     return circle.verts(n_gonal, r, rad).map(v => vc.v2_to_v3(v, z));
 }
 
@@ -25,6 +25,6 @@ export function verts_i(n_gonal: number, r: number, rad: number = 0, z: number =
  * @param   rad         多角形の1つ目の頂点の偏角
  * @param   z           多角形のz座標
  */
-export function verts_c(n_gonal: number, r: number, rad: number = 0, z: number = 0): vc.V3[] {
+export function verts_c(n_gonal: number, r: number, rad: number, z: number): vc.V3[] {
     return circle.verts_c(n_gonal, r, rad).map(v => vc.v2_to_v3(v, z));
 }

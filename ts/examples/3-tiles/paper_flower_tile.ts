@@ -17,16 +17,16 @@ import * as sf from '../savefile';
 
 
 function build_paper_flower(num: number, width: number): geo.Object {
-    const paper_flower = geo.obj_single_vf(prim.regular_polygon(4), null, null);
-    const tr_base = mx.compose([
+    const paper_flower = geo.objSingle(prim.regular_polygon(4), null, null);
+    const tr_base = mx.mulAllRev([
         mx.m4_scale3([0.5, 0.5 * width, 1]),
         mx.m4_translate3([0.5, 0, 0]),
     ]);
-    const tr = (i: number) => mx.compose([
+    const tr = (i: number) => mx.mulAllRev([
         tr_base,
         mx.m4_rotate3_z(ut.deg360 * i / num),
     ]);
-    return geo.obj_duplicate(
+    return geo.objDuplicated(
         paper_flower,
         seq.arithmetic(num).map(i => tr(i)),
         null,
@@ -36,13 +36,13 @@ function build_paper_flower(num: number, width: number): geo.Object {
 function build_small_flowers(lines: cv.Curve3[]): geo.Object {
     const paper_flower = build_paper_flower(4, 0.5);
     const scaling = mx.m4_scale3([1/16, 1/16, 1]);
-    const tr = (ray: ray.Ray3) => mx.compose([
+    const tr = (ray: ray.Ray3) => mx.mulAllRev([
         scaling,
         mx.m4_rotate_from_10_to_v([ray.d.x, ray.d.y]),
         mx.m4_translate3(ray.c),
     ]);
     const ts = [0.25, 0.50, 0.75];
-    return geo.obj_duplicate(
+    return geo.objDuplicated(
         paper_flower,
         lines.map(line => ts.map(i => tr(line.ray(i)))).reduce((a, b) => a.concat(b)),
         null,
@@ -51,11 +51,11 @@ function build_small_flowers(lines: cv.Curve3[]): geo.Object {
 function build_large_flowers(verts: vc.V3[]): geo.Object {
     const paper_flower = build_paper_flower(6, 0.5 / ut.r3);
     const scaling = mx.m4_scale3([1/8, 1/8, 1]);
-    const tr = (v: vc.V3) => mx.compose([
+    const tr = (v: vc.V3) => mx.mulAllRev([
         scaling,
         mx.m4_translate3(v),
     ]);
-    return geo.obj_duplicate(
+    return geo.objDuplicated(
         paper_flower,
         verts.map(v => tr(v)),
         null,
@@ -73,7 +73,7 @@ function build_flower_tile(): geo.Object {
     const small_flowers = build_small_flowers(lines);
     const large_flowers = build_large_flowers(verts);
 
-    return geo.obj_group([
+    return geo.objGrouped([
         small_flowers,
         large_flowers,
     ], null, null);

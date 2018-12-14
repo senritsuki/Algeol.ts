@@ -5,8 +5,9 @@
  */
 
 import * as ut from '../../common';
-import * as sq from '../../algorithm/sequence';
 import * as vc from '../../datatype/vector';
+import * as sq from '../../algorithm/sequence';
+import * as gut from '../utility';
 import * as circle from './circle';
 
 function verts_common(n_gonal: number, r: number, rad: number, h: number, fn: (n: number, r: number, rad: number, h: number) => vc.V3[]): vc.V3[] {
@@ -49,4 +50,11 @@ export function faces(n_gonal: number): number[][] {
     return faces_side(n_gonal)
         .concat(faces_top(n_gonal))
         .concat(faces_bottom(n_gonal));
+}
+
+export function vf(n_gonal: number, r: number, h: number, outside_circle: boolean = false): gut.VF<vc.V3> {
+    return {
+        verts: verts(n_gonal, r, h, outside_circle),
+        faces: faces(n_gonal),
+    }
 }

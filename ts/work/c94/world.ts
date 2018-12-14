@@ -9,7 +9,7 @@ const vf_cube = Prim.cube(0.5);
 
 export function base_border_square(len: number, dir: number): obj.Object {
     const depth = 2;
-    return obj.obj_single_vf(vf_cube, 'base', mx.compose([
+    return obj.objSingle(vf_cube, 'base', mx.mulAllRev([
         mx.m4_translate3([0.5, 0, -0.5]),
         mx.m4_scale3([len, 1, depth]),
         mx.m4_translate3([-0.5, 0, 0]),
@@ -18,7 +18,7 @@ export function base_border_square(len: number, dir: number): obj.Object {
 }
 export function base_border(len: number, wid: number, rad: number): obj.Object {
     const depth = 2;
-    return obj.obj_single_vf(vf_cube, 'base', mx.compose([
+    return obj.objSingle(vf_cube, 'base', mx.mulAllRev([
         mx.m4_translate3([0.5, 0.5, -0.5]),
         mx.m4_scale3([len, wid, depth]),
         mx.m4_rotate3_z(rad),

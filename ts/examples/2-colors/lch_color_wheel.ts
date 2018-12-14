@@ -6,25 +6,25 @@ import * as geo from '../../algeol/object/object';
 import * as prim from '../../algeol/object/primitive'
 import * as sf from '../savefile';
 
-const faceinfo = (name: string) => geo.faceinfo(name, name);
+const faceinfo = (name: string) => geo.faceInfo(name, name);
 const colorkey = (hue: number) => `lch_70_40_${hue}`;
 
 function build_obj(count: number): geo.Object {
     const rad = ut.deg180 / count;
     const r = 1 / Math.cos(rad);
     const t = r * Math.sin(rad);
-    const base = geo.obj_single_vf(prim.regular_bipyramid(4, 1, 1), null, null);
-    const tr_base = mx.compose([
+    const base = geo.objSingle(prim.regular_bipyramid(4, 1, 1), null, null);
+    const tr_base = mx.mulAllRev([
         mx.m4_scale3([t, t, t]),
         mx.m4_translate3([0, 1, 0]),
     ]);
-    const tr = (hue: number) => mx.compose([
+    const tr = (hue: number) => mx.mulAllRev([
         tr_base,
         mx.m4_rotate3_z(ut.degToRad(hue)),
     ]);
-    const obj = geo.obj_group(
+    const obj = geo.objGrouped(
         seq.arithmetic(count, 0, 360 / count)
-            .map(hue => geo.obj_group([base], tr(hue), faceinfo(colorkey(hue)))),
+            .map(hue => geo.objGrouped([base], tr(hue), faceinfo(colorkey(hue)))),
         null, null,
     );
     return obj;

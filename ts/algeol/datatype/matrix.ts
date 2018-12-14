@@ -91,6 +91,9 @@ export interface MatrixCommon {
     array_rows(): number[][];
     /** 複製された2次元配列. 添え字は[列番号][行番号] */
     array_cols(): number[][];
+
+    col(i: number): number[];
+    row(i: number): number[];
 }
 
 export interface Matrix<M extends Matrix<M, V>, V extends vc.Vector<V>> extends MatrixCommon {
@@ -119,6 +122,13 @@ abstract class MatrixBase<M extends Matrix<M, V>, V extends vc.Vector<V>> implem
     array_cols(): number[][] {
         return transpose(this._m);
     }
+    col(i: number): number[] {
+        return this.array_cols()[i];
+    }
+    row(i: number): number[] {
+        return this.array_rows()[i];
+    }
+
     add(dist: M): M {
         return this._fm(add_array(this._m, dist._m));
     }
@@ -452,7 +462,7 @@ export function m3_rotate_from_100_to_v(v: vc.V3|number[]): M3 {
     v = vc.to_v3_if_not(v);
     const radY = -Math.atan2(v.z, Math.sqrt(v.x * v.x + v.y * v.y));
     const radZ = Math.atan2(v.y, v.x);
-    return compose([
+    return mulAllRev([
         m3_rotate_y(radY),
         m3_rotate_z(radZ),
     ]);
@@ -465,7 +475,7 @@ export function m3_rotate_from_001_to_v(v: vc.V3|number[]): M3 {
     v = vc.to_v3_if_not(v);
     const radY = ut.deg90 - Math.atan2(v.z, Math.sqrt(v.x * v.x + v.y * v.y));
     const radZ = Math.atan2(v.y, v.x);
-    return compose([
+    return mulAllRev([
         m3_rotate_y(radY),
         m3_rotate_z(radZ),
     ]);
@@ -478,7 +488,7 @@ export function m3_rotate_from_v_to_100(v: vc.V3|number[]): M3 {
     v = vc.to_v3_if_not(v);
     const radY = -Math.atan2(v.z, Math.sqrt(v.x * v.x + v.y * v.y));
     const radZ = Math.atan2(v.y, v.x);
-    return compose([
+    return mulAllRev([
         m3_rotate_z(-radZ),
         m3_rotate_y(-radY),
     ]);
@@ -491,7 +501,7 @@ export function m3_rotate_from_v_to_001(v: vc.V3|number[]): M3 {
     v = vc.to_v3_if_not(v);
     const radY = ut.deg90 - Math.atan2(v.z, Math.sqrt(v.x * v.x + v.y * v.y));
     const radZ = Math.atan2(v.y, v.x);
-    return compose([
+    return mulAllRev([
         m3_rotate_y(radY),
         m3_rotate_z(radZ),
     ]);
@@ -501,7 +511,7 @@ export const m4_rotate_from_v_to_001 = ut.compose2f(m3_rotate_from_v_to_001, m3_
 
 /** 引数v1 から 引数v2 への回転写像 */
 export function m3_rotate_from_v1_to_v2(v1: vc.V3|number[], v2: vc.V3|number[]): M3 {
-    return compose([
+    return mulAllRev([
         m3_rotate_from_v_to_100(v1),
         m3_rotate_from_100_to_v(v2),
     ]);
@@ -530,11 +540,11 @@ export const m4_rot3_inv_xyz = ut.compose2f(m3_rot_inv_xyz, m3_to_m4);
 
 
 /** 行列合成 reduce((a, b) => mul(b, a)) */
-export function compose<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
+export function mulAllRev<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
     return mm.reduce((a, b) => b.mul(a));
 }
 /** 行列合成 reduce((a, b) => mul(a, b)) */
-export function compose_rev<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
+export function mulAll<T extends Matrix<T, V>, V extends vc.Vector<V>>(mm: T[]): T {
     return mm.reduce((a, b) => a.mul(b));
 }
 
@@ -562,7 +572,8 @@ export function rodrigues_K(axis: vc.V3): M3 {
  * Rodrigues' rotation formula
  * https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
  */
-export function m3_rodrigues(axis: vc.V3, rad: number): M3 {
+export function m3_rodrigues(axis: vc.V3|number[], rad: number): M3 {
+    axis = vc.to_v3_if_not(axis);
     const k = rodrigues_K(axis);
     const k2 = k.mul(k);
     const cos = Math.cos(rad);
@@ -570,6 +581,6 @@ export function m3_rodrigues(axis: vc.V3, rad: number): M3 {
     return unit_m3.add(k.scalar(sin)).add(k2.scalar(1 - cos));
 }
 
-export function m4_rodrigues3(axis: vc.V3, rad: number): M4 {
+export function m4_rodrigues3(axis: vc.V3|number[], rad: number): M4 {
     return m3_to_m4(m3_rodrigues(axis, rad));
 }

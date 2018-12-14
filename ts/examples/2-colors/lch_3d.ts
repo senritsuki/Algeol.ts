@@ -7,7 +7,7 @@ import * as prim from '../../algeol/object/primitive'
 import * as wf from '../../algeol/decoder/wavefront';
 import * as sf from '../savefile';
 
-const faceinfo = (name: string) => geo.faceinfo(name, name);
+const faceinfo = (name: string) => geo.faceInfo(name, name);
 const colorkey = (lch: [number, number, number]) => `lch_${lch[0]}_${lch[1]}_${lch[2]}`;
 
 const hue_num = 12;
@@ -17,17 +17,17 @@ const seq_hue = seq.arithmetic(hue_num, 0, 360 / hue_num);
 
 function build_chroma0(): geo.Object {
     const prism_vf = prim.regular_prism(12);
-    const prism = geo.obj_single_vf(prism_vf, null, null);
-    const tr_base = mx.compose([
+    const prism = geo.objSingle(prism_vf, null, null);
+    const tr_base = mx.mulAllRev([
         mx.m4_scale3([0.125, 0.125, 0.875]),
     ]);
-    const tr = (lightness: number) => mx.compose([
+    const tr = (lightness: number) => mx.mulAllRev([
         tr_base,
         mx.m4_translate3([0, 0, lightness / 10]),
     ]);
-    const obj = geo.obj_group(
+    const obj = geo.objGrouped(
         seq_lightness
-            .map(lightness => geo.obj_group([prism], tr(lightness), faceinfo(colorkey([lightness, 0, 0])))),
+            .map(lightness => geo.objGrouped([prism], tr(lightness), faceinfo(colorkey([lightness, 0, 0])))),
         null, null,
     );
     return obj;
@@ -35,28 +35,28 @@ function build_chroma0(): geo.Object {
 
 function build_hue(hue: number): geo.Object {
     const square_vf = prim.regular_polygon_c(4);
-    const square = geo.obj_single_vf(square_vf, null, null);
-    const tr_base = mx.compose([
+    const square = geo.objSingle(square_vf, null, null);
+    const tr_base = mx.mulAllRev([
         mx.m4_translate3([-1, 2, 0]),
         mx.m4_rotate3_y(ut.deg90),
         mx.m4_scale3([1, 0.4375, 0.4375]),
     ]);
-    const tr = (lch: [number, number, number]) => mx.compose([
+    const tr = (lch: [number, number, number]) => mx.mulAllRev([
         tr_base,
         mx.m4_translate3([0, lch[1] / 10, lch[0] / 10]),
         mx.m4_rotate3_z(ut.degToRad(-lch[2])),
     ]);
-    const obj = geo.obj_group(
+    const obj = geo.objGrouped(
         seq.to_3d(seq_lightness, seq_chroma, [hue])
             .filter(lch => !cc.overflow01(cc.lch_to_rgb01(lch)))
-            .map(lch => geo.obj_group([square], tr(lch), faceinfo(colorkey(lch)))),
+            .map(lch => geo.objGrouped([square], tr(lch), faceinfo(colorkey(lch)))),
         null, null,
     );
     return obj;
 }
 
 function build_obj(): geo.Object {
-    const obj = geo.obj_group(
+    const obj = geo.objGrouped(
         [build_chroma0()].concat(seq_hue.map(hue => build_hue(hue))),
         null, null,
     );

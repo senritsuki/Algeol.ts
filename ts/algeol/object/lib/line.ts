@@ -16,7 +16,7 @@ export function make_transform(
     rx: number,
     ry: number,
 ): mx.M4 {
-    return mx.compose([
+    return mx.mulAllRev([
         mx.m4_translate3([0, 0, 0.5]),
         mx.m4_scale3([rx, ry, d.length()]),
         mx.m4_rotate_from_001_to_v(d),

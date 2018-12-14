@@ -6,6 +6,7 @@ export interface VF<V extends vc.Vector<V>> {
     verts: V[];
     faces: number[][];
 }
+export type VF3 = VF<vc.V3>;
 
 export function scale_face<V extends vc.Vector<V>>(verts: V[], faces: number[][], scale: number): VF<V> {
     const vf: VF<V> = {verts: [], faces: []};

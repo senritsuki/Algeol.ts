@@ -26,12 +26,12 @@ export function connect(
     const dst_c = dst1.add(dst2).scalar(0.5);
     const src_len = src_d.length();
     const dst_len = dst_d.length();
-    const transform = mx.compose([
+    const transform = mx.mulAllRev([
         mx.m4_translate3(src_c.scalar(-1)),
         mx.m4_rotate_from_v_to_10(vc.v2(src_d.x, src_d.y)),
         mx.m4_scale3([dst_len / src_len, scale_width, scale_height]),
         mx.m4_rotate_from_10_to_v(vc.v2(dst_d.x, dst_d.y)),
         mx.m4_translate3(dst_c),
     ]);
-    return geo.obj_group([obj], transform, null, null);
+    return geo.objGrouped([obj], transform, null, null);
 }

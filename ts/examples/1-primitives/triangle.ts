@@ -4,7 +4,7 @@ import * as vc from '../../algeol/datatype/vector';
 import * as geo from '../../algeol/object/object';
 import * as sf from '../savefile';
 
-const obj = geo.obj_single(
+const obj = geo.objMultiFaceGroup(
     // vertices
     [
         vc.v3(0, 0, 0),
@@ -14,7 +14,7 @@ const obj = geo.obj_single(
     // face groups
     [
         // face group
-        geo.facegroup(
+        geo.faceGroup(
             // faces
             [
                 [0, 1, 2],

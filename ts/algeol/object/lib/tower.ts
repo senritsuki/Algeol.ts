@@ -30,7 +30,7 @@ export function basic_square(
     const floor = _square_floor(d);
     const column = _square_column(d);
     const columns = _rect_columns(column, vc.to_v2_if_not(d.floor_radius));
-    return obj.obj_group([floor, columns], transform, null);
+    return obj.objGrouped([floor, columns], transform, null);
 }
 
 export interface BasicPrismInfo {
@@ -52,7 +52,7 @@ export function basic_prism(
     const floor = _prism_floor(d);
     const column = _prism_column(d);
     const columns = _duplicates(column, d);
-    return obj.obj_group([floor, columns], transform, null);
+    return obj.objGrouped([floor, columns], transform, null);
 }
 
 export interface ArchPrismInfo extends BasicPrismInfo {
@@ -68,7 +68,7 @@ export function arch_prism(
     const columns = _duplicates(column, d);
     const wall = _arch_wall(d);
     const walls = _duplicates(wall, d);
-    return obj.obj_group([floor, columns, walls], transform, null);
+    return obj.objGrouped([floor, columns, walls], transform, null);
 }
 
 interface SquareFloorInfo {
@@ -85,15 +85,15 @@ function _square_floor(d: SquareFloorInfo): obj.Object {
     const faces_floor = prim_cube.faces_top();
     const faces_column = prim_cube.faces_side().concat(prim_cube.faces_bottom());
     const fg = [
-        obj.facegroup(faces_floor, d.facename_floor),
-        obj.facegroup(faces_column, d.facename_column),
+        obj.faceGroup(faces_floor, d.facename_floor),
+        obj.faceGroup(faces_column, d.facename_column),
     ];
-    const transform = mx.compose([
+    const transform = mx.mulAllRev([
         mx.m4_translate3([0, 0, -0.5]),
         mx.m4_scale3([r.x, r.y, d.floor_depth]),
         mx.m4_translate3([0, 0, d.floor_top_z]),
     ]);
-    return obj.obj_single(verts, fg, transform);
+    return obj.objMultiFaceGroup(verts, fg, transform);
 }
 
 interface PrismFloorInfo {
@@ -112,15 +112,15 @@ function _prism_floor(d: PrismFloorInfo): obj.Object {
     const faces_column = prim_prism.faces_side(d.floor_vertex)
         .concat(prim_prism.faces_bottom(d.floor_vertex));
     const fg = [
-        obj.facegroup(faces_floor, d.facename_floor),
-        obj.facegroup(faces_column, d.facename_column),
+        obj.faceGroup(faces_floor, d.facename_floor),
+        obj.faceGroup(faces_column, d.facename_column),
     ];
-    const transform = mx.compose([
+    const transform = mx.mulAllRev([
         mx.m4_translate3([0, 0, -0.5]),
         mx.m4_scale3([d.floor_radius, d.floor_radius, d.floor_depth]),
         mx.m4_translate3([0, 0, d.floor_top_z]),
     ]);
-    return obj.obj_single(verts, fg, transform);
+    return obj.objMultiFaceGroup(verts, fg, transform);
 }
 
 interface SquareColumnInfo {
@@ -134,13 +134,13 @@ interface SquareColumnInfo {
 function _square_column(d: SquareColumnInfo): obj.Object {
     const verts = prim_cube.verts(1);
     const faces = prim_cube.faces();
-    const fg = [obj.facegroup(faces, d.facename_column)];
-    const transform = mx.compose([
+    const fg = [obj.faceGroup(faces, d.facename_column)];
+    const transform = mx.mulAllRev([
         mx.m4_translate3([-0.5, -0.5, 0.5]),
         mx.m4_scale3([d.column_radius, d.column_radius, d.column_bottom_z - d.floor_depth - d.floor_top_z]),
         mx.m4_translate3([0, 0, d.column_bottom_z]),
     ]);
-    return obj.obj_single(verts, fg, transform);
+    return obj.objMultiFaceGroup(verts, fg, transform);
 }
 
 interface PrismColumnInfo {
@@ -161,23 +161,23 @@ function _prism_column(d: PrismColumnInfo): obj.Object {
     const r = d.floor_outside_circle ? to_outer(d.floor_vertex, 1) : 1;
     const verts = prim_prism.verts(d.floor_vertex, r, 1);
     const faces = prim_prism.faces(d.floor_vertex);
-    const fg = [obj.facegroup(faces, d.facename_column)];
-    const transform = mx.compose([
+    const fg = [obj.faceGroup(faces, d.facename_column)];
+    const transform = mx.mulAllRev([
         mx.m4_translate3([-0.5, -0.5, 0.5]),
         mx.m4_scale3([d.column_radius, d.column_radius, d.column_bottom_z - d.floor_depth - d.floor_top_z]),
         mx.m4_translate3([0, 0, d.column_bottom_z]),
     ]);
-    return obj.obj_single(verts, fg, transform);
+    return obj.objMultiFaceGroup(verts, fg, transform);
 }
 
 function _rect_columns(column: obj.Object, r: vc.V2): obj.Object {
     const transforms = [
         mx.m4_translate3([r.x, r.y]),
-        mx.compose([mx.m4_rotate3_z90(), mx.m4_translate3([-r.x, r.y])]),
-        mx.compose([mx.m4_rotate3_z180(), mx.m4_translate3([-r.x, -r.y])]),
-        mx.compose([mx.m4_rotate3_z270(), mx.m4_translate3([r.x, -r.y])]),
+        mx.mulAllRev([mx.m4_rotate3_z90(), mx.m4_translate3([-r.x, r.y])]),
+        mx.mulAllRev([mx.m4_rotate3_z180(), mx.m4_translate3([-r.x, -r.y])]),
+        mx.mulAllRev([mx.m4_rotate3_z270(), mx.m4_translate3([r.x, -r.y])]),
     ];
-    return obj.obj_duplicate(column, transforms);
+    return obj.objDuplicated(column, transforms);
 }
 
 interface PrismColumnsInfo {
@@ -192,8 +192,8 @@ function _duplicates(column: obj.Object, d: PrismColumnsInfo): obj.Object {
     const translate = mx.m4_translate3([r, 0, 0]);
     const rotates = sq.range(0, ut.deg360, d.floor_vertex + 1, true)
         .map(rad => mx.m4_rotate3_z(rad + rad_offset));
-    const transforms = rotates.map(rot => mx.compose([translate, rot]));
-    return obj.obj_duplicate(column, transforms);
+    const transforms = rotates.map(rot => mx.mulAllRev([translate, rot]));
+    return obj.objDuplicated(column, transforms);
 }
 
 interface ArchColumnInfo {
@@ -219,7 +219,7 @@ function _arch_wall(d: ArchColumnInfo): obj.Object {
     const width_type = arch.ExpandDir.Left;
     const width = d.column_radius * 2;
     const facename = d.facename_column;
-    const transfrom = mx.compose([
+    const transfrom = mx.mulAllRev([
         mx.m4_translate3([0, 0, d.floor_top_z - height]),
         mx.m4_rotate3_z(ut.degToRad(180 - ((d.floor_vertex - 2) * 180) / d.floor_vertex / 2)),
     ]);

@@ -23,8 +23,8 @@ const input: [string, vc.V3[], [number, number][]][] = [
 function fn(d: [string, vc.V3[], [number, number][]]): obj.Object {
     const verts = d[1];
     const edges = d[2];
-    const vf = edges.map(edge => line.cube(verts[edge[0]], verts[edge[1]], 0.05, 0.05));
-    return obj.obj_group_vf(vf, null, null);
+    const vflist = edges.map(edge => line.cube(verts[edge[0]], verts[edge[1]], 0.05, 0.05));
+    return obj.objGrouped(vflist.map(vf => obj.objSingle(vf, null, null)), null, null);
 }
 
 const objs = input.map(d => fn(d));
