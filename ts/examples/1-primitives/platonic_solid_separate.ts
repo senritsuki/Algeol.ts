@@ -24,7 +24,11 @@ function fn(d: [string, vc.V3[], number[][]]): obj.Object {
     const verts = d[1];
     const faces = d[2];
     const vf = gut.scale_face(verts, faces, 0.9);
+<<<<<<< HEAD
     return obj.objSingle(vf, null, null);
+=======
+    return obj.obj_single_vf(vf, null, null);
+>>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 }
 
 const objs = input.map(d => fn(d));

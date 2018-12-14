@@ -16,7 +16,11 @@ export function make_transform(
     rx: number,
     ry: number,
 ): mx.M4 {
+<<<<<<< HEAD
     return mx.mulAllRev([
+=======
+    return mx.compose([
+>>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
         mx.m4_translate3([0, 0, 0.5]),
         mx.m4_scale3([rx, ry, d.length()]),
         mx.m4_rotate_from_001_to_v(d),

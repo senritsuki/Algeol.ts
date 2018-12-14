@@ -2,6 +2,13 @@ import * as ut from '../../algeol/common';
 import * as vc from '../../algeol/datatype/vector';
 import * as mx from '../../algeol/datatype/matrix';
 
+<<<<<<< HEAD
+=======
+function expect_toBeClosedToZero<T extends vc.Vector<T>>(v: vc.Vector<T>) {
+    vc.to_array_if_not(v).forEach(n => expect(n).toBeCloseTo(0));
+}
+
+>>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 test('m2', () => {
     const a = [[1, 2], [3, 4]];
     const b = [[1, 3], [2, 4]];
@@ -42,6 +49,7 @@ test('scale', () => {
 });
 
 test('rotate-2d', () => {
+<<<<<<< HEAD
     mx.m3_rotate2(ut.deg90).map_v2([1, 0], 1).sub([0, 1]).array().forEach(n => expect(n).toBeCloseTo(0));
     mx.m3_rotate2(ut.deg90).map_v2([0, 1], 1).sub([-1, 0]).array().forEach(n => expect(n).toBeCloseTo(0));
     mx.m3_rotate2(-ut.deg90).map_v2([1, 0], 1).sub([0, -1]).array().forEach(n => expect(n).toBeCloseTo(0));
@@ -70,10 +78,41 @@ test('rotate-3d-y', () => {
     mx.m4_rotate3_y(-ut.deg90).map_v3([1, 0, 0], 1).sub([0, 0, 1]).array().forEach(n => expect(n).toBeCloseTo(0));
     mx.m4_rotate3_y(-ut.deg90).map_v3([0, 1, 0], 1).sub([0, 1, 0]).array().forEach(n => expect(n).toBeCloseTo(0));
     mx.m4_rotate3_y(-ut.deg90).map_v3([0, 0, 1], 1).sub([-1, 0, 0]).array().forEach(n => expect(n).toBeCloseTo(0));
+=======
+    expect_toBeClosedToZero(mx.m3_rotate2(ut.deg90).map_v2([1, 0], 1).sub([0, 1]));
+    expect_toBeClosedToZero(mx.m3_rotate2(ut.deg90).map_v2([0, 1], 1).sub([-1, 0]));
+    expect_toBeClosedToZero(mx.m3_rotate2(-ut.deg90).map_v2([1, 0], 1).sub([0, -1]));
+    expect_toBeClosedToZero(mx.m3_rotate2(-ut.deg90).map_v2([0, 1], 1).sub([1, 0]));
+});
+test('rotate-3d-z', () => {
+    expect_toBeClosedToZero(mx.m4_rotate3_z(ut.deg90).map_v3([1, 0, 0], 1).sub([0, 1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(ut.deg90).map_v3([0, 1, 0], 1).sub([-1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(ut.deg90).map_v3([0, 0, 1], 1).sub([0, 0, 1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(-ut.deg90).map_v3([1, 0, 0], 1).sub([0, -1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(-ut.deg90).map_v3([0, 1, 0], 1).sub([1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_z(-ut.deg90).map_v3([0, 0, 1], 1).sub([0, 0, 1]));
+});
+test('rotate-3d-x', () => {
+    expect_toBeClosedToZero(mx.m4_rotate3_x(ut.deg90).map_v3([1, 0, 0], 1).sub([1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(ut.deg90).map_v3([0, 1, 0], 1).sub([0, 0, 1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(ut.deg90).map_v3([0, 0, 1], 1).sub([0, -1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(-ut.deg90).map_v3([1, 0, 0], 1).sub([1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(-ut.deg90).map_v3([0, 1, 0], 1).sub([0, 0, -1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_x(-ut.deg90).map_v3([0, 0, 1], 1).sub([0, 1, 0]));
+});
+test('rotate-3d-y', () => {
+    expect_toBeClosedToZero(mx.m4_rotate3_y(ut.deg90).map_v3([1, 0, 0], 1).sub([0, 0, -1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(ut.deg90).map_v3([0, 1, 0], 1).sub([0, 1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(ut.deg90).map_v3([0, 0, 1], 1).sub([1, 0, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(-ut.deg90).map_v3([1, 0, 0], 1).sub([0, 0, 1]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(-ut.deg90).map_v3([0, 1, 0], 1).sub([0, 1, 0]));
+    expect_toBeClosedToZero(mx.m4_rotate3_y(-ut.deg90).map_v3([0, 0, 1], 1).sub([-1, 0, 0]));
+>>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 });
 
 test('rot_yz_x_m3', () => {
     let v = vc.v3(1, 1, 1);
+<<<<<<< HEAD
     mx.m3_rotate_from_100_to_v(v).map([1, 0, 0]).sub(v.unit()).array().forEach(n => expect(n).toBeCloseTo(0));
     v = vc.v3(1, 2, 3);
     mx.m3_rotate_from_100_to_v(v).map([1, 0, 0]).sub(v.unit()).array().forEach(n => expect(n).toBeCloseTo(0));
@@ -148,5 +187,19 @@ test('RodriguesMul', () => {
     a2.sub(b2).array().forEach(n => expect(n).toBeCloseTo(0));
     a3.sub(b3).array().forEach(n => expect(n).toBeCloseTo(0));
 });
+=======
+    expect_toBeClosedToZero(mx.m3_rotate_from_100_to_v(v).map([1, 0, 0]).sub(v.unit()));
+    v = vc.v3(1, 2, 3);
+    expect_toBeClosedToZero(mx.m3_rotate_from_100_to_v(v).map([1, 0, 0]).sub(v.unit()));
+});
+test('rot_yz_z_m3', () => {
+    let v = vc.v3(1, 1, 1);
+    expect_toBeClosedToZero(mx.m3_rotate_from_001_to_v(v).map([0, 0, 1]).sub(v.unit()));
+    v = vc.v3(1, 2, 3);
+    expect_toBeClosedToZero(mx.m3_rotate_from_001_to_v(v).map([0, 0, 1]).sub(v.unit()));
+});
+
+
+>>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 
 

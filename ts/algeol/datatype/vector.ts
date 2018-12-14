@@ -72,9 +72,12 @@ export function angle_array(a: number[], b: number[]): number {
 export function add<V extends Vector<V>>(a: V, b: V): V {
     return a.add(b);
 }
+<<<<<<< HEAD
 export function addAll<V extends Vector<V>>(array: V[]): V {
     return array.reduce((a, b) => a.add(b));
 }
+=======
+>>>>>>> 22927be6c8c25f9963f0d23a91084017345f9998
 /** Subtraction 減算 */
 export function sub<V extends Vector<V>>(a: V, b: V): V {
     return a.sub(b);
