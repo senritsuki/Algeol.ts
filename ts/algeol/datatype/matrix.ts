@@ -392,6 +392,10 @@ export const m2_rotate_90 = () => m2_rotate_cs(0, 1);
 export const m2_rotate_180 = () => m2_rotate_cs(-1, 0);
 export const m2_rotate_270 = () => m2_rotate_cs(0, -1);
 
+export const m3_rotate_x90 = () => m3_rotate_x_cs(0, 1);
+export const m3_rotate_x180 = () => m3_rotate_x_cs(-1, 0);
+export const m3_rotate_x270 = () => m3_rotate_x_cs(0, -1);
+
 export const m3_rotate_z90 = () => m3_rotate_z_cs(0, 1);
 export const m3_rotate_z180 = () => m3_rotate_z_cs(-1, 0);
 export const m3_rotate_z270 = () => m3_rotate_z_cs(0, -1);
@@ -429,6 +433,10 @@ export const m3_rotate2 = ut.compose2f(m2_rotate, m2_to_m3);
 export const m4_rotate3_x = ut.compose2f(m3_rotate_x, m3_to_m4);
 export const m4_rotate3_y = ut.compose2f(m3_rotate_y, m3_to_m4);
 export const m4_rotate3_z = ut.compose2f(m3_rotate_z, m3_to_m4);
+
+export const m4_rotate3_x90 = () => m3_to_m4(m3_rotate_x90());
+export const m4_rotate3_x180 = () => m3_to_m4(m3_rotate_x180());
+export const m4_rotate3_x270 = () => m3_to_m4(m3_rotate_x270());
 
 export const m4_rotate3_z90 = () => m3_to_m4(m3_rotate_z90());
 export const m4_rotate3_z180 = () => m3_to_m4(m3_rotate_z180());

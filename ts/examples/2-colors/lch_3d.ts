@@ -27,7 +27,7 @@ function build_chroma0(): geo.Object {
     ]);
     const obj = geo.objGrouped(
         seq_lightness
-            .map(lightness => geo.objGrouped([prism], tr(lightness), faceinfo(colorkey([lightness, 0, 0])))),
+            .map(lightness => geo.objGrouped([prism], colorkey([lightness, 0, 0]), tr(lightness))),
         null, null,
     );
     return obj;
@@ -49,7 +49,7 @@ function build_hue(hue: number): geo.Object {
     const obj = geo.objGrouped(
         seq.to_3d(seq_lightness, seq_chroma, [hue])
             .filter(lch => !cc.overflow01(cc.lch_to_rgb01(lch)))
-            .map(lch => geo.objGrouped([square], tr(lch), faceinfo(colorkey(lch)))),
+            .map(lch => geo.objGrouped([square], colorkey(lch), tr(lch))),
         null, null,
     );
     return obj;

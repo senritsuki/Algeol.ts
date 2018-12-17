@@ -30,7 +30,7 @@ export function basic_square(
     const floor = _square_floor(d);
     const column = _square_column(d);
     const columns = _rect_columns(column, vc.to_v2_if_not(d.floor_radius));
-    return obj.objGrouped([floor, columns], transform, null);
+    return obj.objGrouped([floor, columns], null, transform);
 }
 
 export interface BasicPrismInfo {
@@ -52,7 +52,7 @@ export function basic_prism(
     const floor = _prism_floor(d);
     const column = _prism_column(d);
     const columns = _duplicates(column, d);
-    return obj.objGrouped([floor, columns], transform, null);
+    return obj.objGrouped([floor, columns], null, transform);
 }
 
 export interface ArchPrismInfo extends BasicPrismInfo {
@@ -68,7 +68,7 @@ export function arch_prism(
     const columns = _duplicates(column, d);
     const wall = _arch_wall(d);
     const walls = _duplicates(wall, d);
-    return obj.objGrouped([floor, columns, walls], transform, null);
+    return obj.objGrouped([floor, columns, walls], null, transform);
 }
 
 interface SquareFloorInfo {

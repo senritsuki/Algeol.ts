@@ -33,5 +33,5 @@ export function connect(
         mx.m4_rotate_from_10_to_v(vc.v2(dst_d.x, dst_d.y)),
         mx.m4_translate3(dst_c),
     ]);
-    return geo.objGrouped([obj], transform, null, null);
+    return geo.objGrouped([obj], null, transform);
 }

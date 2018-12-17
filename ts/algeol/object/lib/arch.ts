@@ -45,10 +45,10 @@ export function expand_arch(
 ): gut.ExpandedPrism<vc.V3> {
     const verts3 = vf.verts.map(v => vc.v3(v.x, 0, v.y));
     const expand = width_type == ExpandDir.Left ?
-        gut.expand(verts3, vc.v3(0, width, 0), vf.faces) :
+        gut.toPrism(verts3, vc.v3(0, width, 0), vf.faces) :
         width_type == ExpandDir.Right ?
-        gut.expand(verts3, vc.v3(0, -width, 0), vf.faces) :
-        gut.expand2(verts3, vc.v3(0, -width / 2, 0), vc.v3(0, width / 2, 0), vf.faces);
+        gut.toPrism(verts3, vc.v3(0, -width, 0), vf.faces) :
+        gut.toPrism2(verts3, vc.v3(0, -width / 2, 0), vc.v3(0, width / 2, 0), vf.faces);
     return expand;
 }
 

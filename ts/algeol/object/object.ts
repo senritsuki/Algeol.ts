@@ -250,7 +250,10 @@ export function objMultiFaceGroup(verts: vc.V3[], faceGroups: FaceGroup[], trans
  * @param g_info サーフェイスグループの名前と適用マテリアル名（任意）
  * @param o_name オブジェクト名（任意）
  */
-export function objGrouped(children: Object[], transform: mx.M4|null, g_info: FaceInfo|null, o_name?: string|null): Object {
+export function objGrouped(children: Object[], g_info: string|FaceInfo|null, transform: mx.M4|null, o_name?: string|null): Object {
+    if (typeof g_info === 'string') {
+        g_info = faceInfo(g_info);
+    }
     return new GroupedObject(children, transform, g_info, o_name||null);
 }
 

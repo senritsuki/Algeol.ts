@@ -24,7 +24,7 @@ function build_obj(count: number): geo.Object {
     ]);
     const obj = geo.objGrouped(
         seq.arithmetic(count, 0, 360 / count)
-            .map(hue => geo.objGrouped([base], tr(hue), faceinfo(colorkey(hue)))),
+            .map(hue => geo.objGrouped([base], colorkey(hue), tr(hue))),
         null, null,
     );
     return obj;

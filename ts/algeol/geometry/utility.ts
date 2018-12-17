@@ -90,14 +90,126 @@ export class ExpandedPrism<V extends vc.Vector<V>> {
             .map(n => [n, n + 1])
             .map(nn => [nn[0], nn[1], nn[1] + c, nn[0] + c]);
     }
+    vf(): VF<V> {
+        return {
+            verts: this.verts(),
+            faces: this.faces(),
+        }
+    }
 }
 
-export function expand<V extends vc.Vector<V>>(verts1: V[], d: V, faces: number[][]): ExpandedPrism<V> {
-    return new ExpandedPrism(verts1, d, faces);
+export class ExpandedPyramid<V extends vc.Vector<V>> {
+    constructor(
+        public verts1: V[],
+        public v1: V,
+        public faces1: number[][],
+    ) {
+        //this.verts2 = verts1.map(v => v.add(d));
+    }
+
+    verts(): V[] {
+        return this.verts1.concat([this.v1]);
+    }
+    faces(): number[][] {
+        return this.faces_base().concat(this.faces_side());
+    }
+    faces_base(): number[][] {
+        return this.faces1;
+    }
+    faces_side(): number[][] {
+        const c = this.verts1.length;
+        return sq.arithmetic(c)
+            .map(n => [n, (n + 1) % c])
+            .map(nn => [nn[0], nn[1], c]);
+    }
+    faces_side_open(): number[][] {
+        const c = this.verts1.length;
+        return sq.arithmetic(c - 1)
+            .map(n => [n, n + 1])
+            .map(nn => [nn[0], nn[1], c]);
+    }
+    vf(): VF<V> {
+        return {
+            verts: this.verts(),
+            faces: this.faces(),
+        }
+    }
 }
 
-export function expand2<V extends vc.Vector<V>>(verts: V[], d1: V, d2: V, faces: number[][]): ExpandedPrism<V> {
+export class ExpandedBiPyramid<V extends vc.Vector<V>> {
+    constructor(
+        public verts1: V[],
+        public v1: V,
+        public v2: V,
+        public faces1: number[][],
+    ) {
+        //this.verts2 = verts1.map(v => v.add(d));
+    }
+
+    verts(): V[] {
+        return this.verts1.concat([this.v1, this.v2]);
+    }
+    faces(): number[][] {
+        return this.faces_base().concat(this.faces_side());
+    }
+    faces_base(): number[][] {
+        return this.faces1;
+    }
+    faces_side1(): number[][] {
+        const c = this.verts1.length;
+        return sq.arithmetic(c)
+            .map(n => [n, (n + 1) % c])
+            .map(nn => [nn[0], nn[1], c]);
+    }
+    faces_side2(): number[][] {
+        const c = this.verts1.length;
+        return sq.arithmetic(c)
+            .map(n => [n, (n + 1) % c])
+            .map(nn => [nn[0], nn[1], c+1]);
+    }
+    faces_side(): number[][] {
+        return this.faces_side1().concat(this.faces_side2());
+    }
+    faces_side_open(): number[][] {
+        const c = this.verts1.length;
+        return sq.arithmetic(c - 1)
+            .map(n => [n, n + 1])
+            .map(nn => [nn[0], nn[1], c]);
+    }
+    vf(): VF<V> {
+        return {
+            verts: this.verts(),
+            faces: this.faces(),
+        }
+    }
+}
+
+export function toPrism<V extends vc.Vector<V>>(verts: V[], d: V, faces: number[][]|null): ExpandedPrism<V> {
+    if (!faces) {
+        faces = [sq.arithmetic(verts.length)];
+    }
+    return new ExpandedPrism(verts, d, faces);
+}
+
+export function toPrism2<V extends vc.Vector<V>>(verts: V[], d1: V, d2: V, faces: number[][]|null): ExpandedPrism<V> {
+    if (!faces) {
+        faces = [sq.arithmetic(verts.length)];
+    }
     const verts1 = verts.map(v => v.add(d1));
     const d = d2.sub(d1);
     return new ExpandedPrism(verts1, d, faces);
+}
+
+export function toPyramid<V extends vc.Vector<V>>(verts: V[], v1: V, faces: number[][]|null): ExpandedPyramid<V> {
+    if (!faces) {
+        faces = [sq.arithmetic(verts.length)];
+    }
+    return new ExpandedPyramid(verts, v1, faces);
+}
+
+export function toBiPyramid<V extends vc.Vector<V>>(verts: V[], v1: V, v2: V, faces: number[][]|null): ExpandedBiPyramid<V> {
+    if (!faces) {
+        faces = [sq.arithmetic(verts.length)];
+    }
+    return new ExpandedBiPyramid(verts, v1, v2, faces);
 }

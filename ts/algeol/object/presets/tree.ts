@@ -98,5 +98,5 @@ function common_singleleaf(
     return obj.objGrouped([
         obj.objMultiFaceGroup(trunk.verts, fg_trunk, tr_trunk),
         obj.objMultiFaceGroup(leaf.verts, fg_leaf, tr_leaf),
-    ], transform, null);
+    ], null, transform);
 }

@@ -52,9 +52,15 @@ export function faces(n_gonal: number): number[][] {
         .concat(faces_bottom(n_gonal));
 }
 
-export function vf(n_gonal: number, r: number, h: number, outside_circle: boolean = false): gut.VF<vc.V3> {
+export function vf_i(n_gonal: number, r: number, h: number): gut.VF3 {
     return {
-        verts: verts(n_gonal, r, h, outside_circle),
+        verts: verts_i(n_gonal, r, h),
+        faces: faces(n_gonal),
+    }
+}
+export function vf_c(n_gonal: number, r: number, h: number): gut.VF3 {
+    return {
+        verts: verts_c(n_gonal, r, h),
         faces: faces(n_gonal),
     }
 }

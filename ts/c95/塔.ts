@@ -1,11 +1,10 @@
 import * as ut from '../algeol/common'
-import * as vc from '../algeol/datatype/vector'
 import * as mx from '../algeol/datatype/matrix'
 import * as sq from '../algeol/algorithm/sequence'
 
 import * as pArray from '../algeol/geometry/obj/polygon_array';
 
-import * as geo from '../algeol/object/object';
+import * as obj from '../algeol/object/object';
 
 import * as lib from './lib';
 import * as lib柱 from './柱';
@@ -22,7 +21,7 @@ export interface 塔のサイドinfo {
     装飾の高さ: number,
     transform: mx.M4|null,
 }
-export function 塔のサイド(info: 塔のサイドinfo): geo.Object {
+export function 塔のサイド(info: 塔のサイドinfo): obj.Object {
     const 角数 = 4;
     const column = lib柱.柱({
         角数: 角数,
@@ -64,7 +63,7 @@ export interface 多角形の塔の柱info {
     装飾の高さ: number,
     transform: mx.M4|null,
 }
-export function 多角形の塔の柱(info: 多角形の塔の柱info): geo.Object {
+export function 多角形の塔の柱(info: 多角形の塔の柱info): obj.Object {
     const 外接円の半径 = lib.内接円の半径_to_外接円の半径(info.塔の角数, info.塔の内接円の半径);
     const rad = ut.degToRad(180 / info.塔の角数);
     const sideLenHalf = 外接円の半径 * Math.sin(rad)
@@ -81,16 +80,16 @@ export function 多角形の塔の柱(info: 多角形の塔の柱info): geo.Obje
             mx.m4_translate3([0, info.柱の半径, 0]),
         ]),
     });
-    const sides = geo.objDuplicated(side, sq.arithmetic(info.塔の角数)
+    const sides = obj.objDuplicated(side, sq.arithmetic(info.塔の角数)
         .map(i => mx.m4_rotate3_z(ut.deg360 * i / info.塔の角数)));
     return sides;
 }
 
-export function 多角形の多段の塔(): geo.Object {
-    return geo.objMultiFaceGroup([], [], null);
+export function 多角形の多段の塔(): obj.Object {
+    return obj.objMultiFaceGroup([], [], null);
 }
 
-export function 四角形の塔(): geo.Object {
+export function test(): obj.Object {
     const columns = 多角形の塔の柱({
         塔の角数: 6,
         塔の内接円の半径: 1,
@@ -100,16 +99,16 @@ export function 四角形の塔(): geo.Object {
         装飾の高さ: 0.8,
         transform: null,
     });
-    const roof = geo.objSingle(pArray.vf({
+    const roof = obj.objSingle(pArray.vf({
         polygons: [
             pArray.circle_c(6, 1, 2),
         ],
         vFirst: [0, 0, 2],
         vLast: [0, 0, 3],
     }), null, null);
-    const tower = geo.objGrouped([
-        geo.objWrapped(columns, 'white', null),
-        geo.objWrapped(roof, 'blue', null),
+    const tower = obj.objGrouped([
+        obj.objWrapped(columns, 'white', null),
+        obj.objWrapped(roof, 'blue', null),
     ], null, null);
     return tower;
 }

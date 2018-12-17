@@ -4,6 +4,7 @@
 
 import * as sq from '../../algorithm/sequence';
 import * as vc from '../../datatype/vector';
+import * as gut from '../utility';
 import * as circle from './circle';
 
 /** (底面の頂点数, 底面の外接円の半径, 高さ) -> 角錐の頂点の配列 */
@@ -36,4 +37,17 @@ export function faces(n_gonal: number): number[][] {
     // 底面
     faces.push(sq.arithmetic(n_gonal));
     return faces;
+}
+
+export function vf_i(n_gonal: number, r: number, h: number): gut.VF3 {
+    return {
+        verts: verts_i(n_gonal, r, h),
+        faces: faces(n_gonal),
+    }
+}
+export function vf_c(n_gonal: number, r: number, h: number): gut.VF3 {
+    return {
+        verts: verts_c(n_gonal, r, h),
+        faces: faces(n_gonal),
+    }
 }

@@ -45,8 +45,8 @@ export function 二本の柱(info: 二本の柱info): geo.Object {
             break;
     }
     const columnObjs = [
-        geo.objGrouped([info.柱], mx.m4_translate3([x1, 0, 0]), null),
-        geo.objGrouped([info.柱], mx.m4_translate3([x2, 0, 0]), null),
+        geo.objGrouped([info.柱], null, mx.m4_translate3([x1, 0, 0])),
+        geo.objGrouped([info.柱], null, mx.m4_translate3([x2, 0, 0])),
     ];
     if (info.装飾) {
         columnObjs.push(info.装飾);
@@ -55,7 +55,7 @@ export function 二本の柱(info: 二本の柱info): geo.Object {
         info.transform || mx.unit_m4,
         mx.m4_rotate3_z(ut.degToRad(info.水平回転deg)),
     ]);
-    const columns = geo.objGrouped(columnObjs, transform, null);
+    const columns = geo.objGrouped(columnObjs, null, transform);
     return columns;
 }
 

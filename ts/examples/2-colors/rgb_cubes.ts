@@ -5,9 +5,9 @@ import * as sf from '../savefile';
 
 const cube = geo.objSingle(prim.regular_hexahedron(), null, null);
 const rgb_cubes = geo.objGrouped([
-    geo.objGrouped([cube], mx.m4_translate3([-3, 0, 0]), geo.faceInfo('red', 'red'),  null),
-    geo.objGrouped([cube], mx.m4_translate3([0, 0, 0]), geo.faceInfo('green', 'green'),  null),
-    geo.objGrouped([cube], mx.m4_translate3([3, 0, 0]), geo.faceInfo('blue', 'blue'),  null),
+    geo.objGrouped([cube], 'red', mx.m4_translate3([-3, 0, 0]), null),
+    geo.objGrouped([cube], 'green', mx.m4_translate3([0, 0, 0]),  null),
+    geo.objGrouped([cube], 'blue', mx.m4_translate3([3, 0, 0]), null),
 ], null, null, null);
 
 const materials = [
