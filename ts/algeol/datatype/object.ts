@@ -4,9 +4,8 @@
  * Copyright (c) 2016 senritsuki
  */
 
-import * as vc from '../datatype/vector';
-import * as mx from '../datatype/matrix';
-
+import * as vc from './vector';
+import * as mx from './matrix';
 
 /** オブジェクト */
 export interface Object {

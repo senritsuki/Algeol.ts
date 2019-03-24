@@ -4,6 +4,8 @@
 
 import * as ut from '../common';
 
+export {ut}
+
 /** 
  * Arithmetic Sequence - 等差数列
  * @code (4) -> [0, 1, 2, 3]

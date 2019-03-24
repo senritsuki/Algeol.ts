@@ -6,6 +6,7 @@
 
 import * as vc from '../../datatype/vector';
 import * as cuboid from './cuboid';
+import * as gut from '../utility';
 
 export class Cube {
     constructor(
@@ -44,3 +45,10 @@ export const faces_side = cuboid.faces_side;
  * 立方体の辺12個
  */
 export const edges = cuboid.edges;
+
+export function vf(r: number): gut.VF<vc.V3> {
+    return {
+        verts: verts(r),
+        faces: faces(),
+    }
+}

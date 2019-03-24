@@ -18,7 +18,7 @@ import * as prim3_antiprism from '../geometry/primitive3/antiprism';
 import * as prim3_pyramid from '../geometry/primitive3/pyramid';
 import * as prim3_bipyramid from '../geometry/primitive3/bipyramid';
 import * as prim3_trapezohedron from '../geometry/primitive3/trapezohedron';
-import * as obj from './object';
+import * as obj from '../datatype/object';
 
 
 const vf = (verts: vc.V3[], faces: number[][]): obj.VF => ({ verts, faces });

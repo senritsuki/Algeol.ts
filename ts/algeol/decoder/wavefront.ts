@@ -5,7 +5,7 @@
  */
 
 import * as vc from '../datatype/vector';
-import * as al from '../object/object';
+import * as al from '../datatype/object';
 
 
 export let vert_to_array = (v: vc.V3): number[] => [v.x, v.y, v.z];

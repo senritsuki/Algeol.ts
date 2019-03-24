@@ -6,6 +6,7 @@
 
 import * as ut from '../../common';
 import * as vc from '../../datatype/vector';
+import * as gut from '../utility';
 
 /** プリミティブオブジェクト生成用関数群 */
 
@@ -57,4 +58,11 @@ export function edges(): [number, number][] {
         [2, 1],
         [1, 3],
     ];
+}
+
+export function vf(r: number): gut.VF<vc.V3> {
+    return {
+        verts: verts(r),
+        faces: faces(),
+    }
 }

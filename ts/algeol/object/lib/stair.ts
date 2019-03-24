@@ -11,7 +11,7 @@ import * as mx from '../../datatype/matrix';
 import * as cv from '../../datatype/curve';
 import * as ray from '../../datatype/ray';
 import * as prim_cube from '../../geometry/primitive3/cube';
-import * as obj from '../object';
+import * as obj from '../../datatype/object';
 
 
 function _steps_t(steps: number, count: number = steps, offset: number = 0): number[] {

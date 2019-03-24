@@ -5,6 +5,7 @@
  */
 
 import * as vc from '../../datatype/vector';
+import * as gut from '../utility';
 
 export interface ICuboid {
     o: vc.V3;
@@ -121,4 +122,11 @@ export function edges(): [number, number][] {
         [2, 6],
         [3, 7],
     ];
+}
+
+export function vf(x: number, y: number, z: number): gut.VF<vc.V3> {
+    return {
+        verts: verts(x, y, z),
+        faces: faces(),
+    }
 }

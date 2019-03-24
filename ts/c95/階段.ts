@@ -10,7 +10,7 @@ import * as mx from '../algeol/datatype/matrix'
 import * as ray from '../algeol/datatype/ray'
 import * as cv from '../algeol/datatype/curve'
 import * as sq from '../algeol/algorithm/sequence'
-import * as obj from '../algeol/object/object';
+import * as obj from '../algeol/datatype/object';
 
 function _steps_t(steps: number, count: number = steps, offset: number = 0): number[] {
     return sq.arithmetic(count).map(i => ((i + 0.5) / steps) + offset);
@@ -91,19 +91,20 @@ function _spiral_stair_rays(
     return rays;
 }
 
-export function spiral_stair(
-    v1: vc.V3,
-    v2: vc.V3,
+export interface SpiralStairInfo {
+    始点: vc.V3,
+    終点: vc.V3,
     dx: vc.V3,  // right
     dy: vc.V3,  // front
-    rounds: number,
-    steps_per_round: number,
+    螺旋数: number,
+    螺旋段数: number,
     additional_steps: number,
     step: obj.Object,
-): obj.Object {
-    const o = v1.sub(dx);
-    const dz = _spiral_stair_dz(v1, v2, dx, dy, rounds, steps_per_round, additional_steps);
-    const spiral = cv.spiral(o, o.add(dx), o.add(dy), o.add(dz));
-    const rays = _spiral_stair_rays(spiral, rounds, steps_per_round, additional_steps);
-    return rays_stair(rays, step);
+}
+export function spiralStair(info: SpiralStairInfo): obj.Object {
+    const o = info.始点.sub(info.dx);
+    const dz = _spiral_stair_dz(info.始点, info.終点, info.dx, info.dy, info.螺旋数, info.螺旋段数, info.additional_steps);
+    const spiral = cv.spiral(o, o.add(info.dx), o.add(info.dy), o.add(dz));
+    const rays = _spiral_stair_rays(spiral, info.螺旋数, info.螺旋段数, info.additional_steps);
+    return rays_stair(rays, info.step);
 }

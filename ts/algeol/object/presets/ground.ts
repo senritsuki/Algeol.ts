@@ -1,5 +1,5 @@
 import * as mx from '../../datatype/matrix';
-import * as obj from '../object';
+import * as obj from '../../datatype/object';
 import * as cube from '../../geometry/primitive3/cube';
 
 export function cube_grass_dirt(

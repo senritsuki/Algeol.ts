@@ -5,6 +5,7 @@
  */
 
 import * as vc from '../../datatype/vector';
+import * as gut from '../utility';
 
 /**
  * 原点中心の半径rの球に内接する正8面体の頂点6つ
@@ -56,4 +57,11 @@ export function edges(): [number, number][] {
         [3, 4],
         [4, 1],
     ];
+}
+
+export function vf(r: number): gut.VF<vc.V3> {
+    return {
+        verts: verts(r),
+        faces: faces(),
+    }
 }

@@ -65,3 +65,10 @@ export const rad_rot_y_to_z = ut.deg90 - Math.atan2(ut.phi, 1);
 export function edges(): [number, number][] {
     return gut.get_edges(faces());
 }
+
+export function vf(r: number, do_rot: boolean = false): gut.VF<vc.V3> {
+    return {
+        verts: verts(r, do_rot),
+        faces: faces(),
+    }
+}

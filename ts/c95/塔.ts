@@ -4,7 +4,7 @@ import * as sq from '../algeol/algorithm/sequence'
 
 import * as pArray from '../algeol/geometry/obj/polygon_array';
 
-import * as obj from '../algeol/object/object';
+import * as obj from '../algeol/datatype/object';
 
 import * as lib from './lib';
 import * as lib柱 from './柱';

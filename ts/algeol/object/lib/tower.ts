@@ -10,7 +10,7 @@ import * as vc from '../../datatype/vector';
 import * as mx from '../../datatype/matrix';
 import * as prim_cube from '../../geometry/primitive3/cube';
 import * as prim_prism from '../../geometry/primitive3/prism';
-import * as obj from '../object';
+import * as obj from '../../datatype/object';
 import * as arch from './arch';
 
 export interface BasicSquareInfo {

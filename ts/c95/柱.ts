@@ -3,7 +3,7 @@ import * as mx from '../algeol/datatype/matrix';
 
 import * as g_triprism from '../algeol/geometry/primitive3/tri_prism'
 
-import * as geo from '../algeol/object/object';
+import * as geo from '../algeol/datatype/object';
 import * as prim from '../algeol/object/primitive';
 
 export interface 柱info {

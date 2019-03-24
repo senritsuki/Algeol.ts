@@ -8,7 +8,7 @@ import * as vc from '../../datatype/vector';
 import * as mx from '../../datatype/matrix';
 import * as prim_cube from '../../geometry/primitive3/cube';
 import * as prim_octahedron from '../../geometry/primitive3/octahedron';
-import * as obj from '../object';
+import * as obj from '../../datatype/object';
 
 export function make_transform(
     v1: vc.V3,

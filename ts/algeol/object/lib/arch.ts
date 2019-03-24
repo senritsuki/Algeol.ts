@@ -11,7 +11,7 @@ import * as cv from '../../datatype/curve';
 import * as gut from '../../geometry/utility';
 import * as gcv from '../../geometry/primitive2/curve';
 import * as gcp from '../../geometry/primitive2/curve_plane';
-import * as obj from '../object';
+import * as obj from '../../datatype/object';
 
 export enum ThickType {
     Inner,

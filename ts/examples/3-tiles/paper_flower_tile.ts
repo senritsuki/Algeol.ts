@@ -8,7 +8,7 @@ import * as ray from '../../algeol/datatype/ray';
 import * as mesh_rect from '../../algeol/geometry/mesh/rectangle';
 import * as mesh_util from '../../algeol/geometry/utility';
 
-import * as geo from '../../algeol/object/object';
+import * as geo from '../../algeol/datatype/object';
 import * as prim from '../../algeol/object/primitive'
 
 import * as wf from '../../algeol/decoder/wavefront';

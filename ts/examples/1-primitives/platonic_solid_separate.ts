@@ -8,7 +8,7 @@ import * as prim8 from '../../algeol/geometry/primitive3/octahedron';
 import * as prim12 from '../../algeol/geometry/primitive3/dodecahedron';
 import * as prim20 from '../../algeol/geometry/primitive3/icosahedron';
 import * as gut from '../../algeol/geometry/utility';
-import * as obj from '../../algeol/object/object';
+import * as obj from '../../algeol/datatype/object';
 import * as wf from '../../algeol/decoder/wavefront';
 import * as sf from '../savefile';
 

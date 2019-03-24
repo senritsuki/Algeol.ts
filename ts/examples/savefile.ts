@@ -5,7 +5,7 @@
  */
 
 import * as fs from 'fs'
-import * as geo from '../algeol/object/object';
+import * as geo from '../algeol/datatype/object';
 import * as wf from '../algeol/decoder/wavefront';
 
 export function save(file: string, callback: (wst: fs.WriteStream) => void): void {

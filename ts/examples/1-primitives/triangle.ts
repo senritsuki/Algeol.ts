@@ -1,7 +1,7 @@
 // Triangle - 三角形
 
 import * as vc from '../../algeol/datatype/vector';
-import * as geo from '../../algeol/object/object';
+import * as geo from '../../algeol/datatype/object';
 import * as sf from '../savefile';
 
 const obj = geo.objMultiFaceGroup(

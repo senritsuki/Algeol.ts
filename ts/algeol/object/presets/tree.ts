@@ -1,5 +1,5 @@
 import * as mx from '../../datatype/matrix';
-import * as obj from '../object';
+import * as obj from '../../datatype/object';
 import * as prim from '../primitive';
 
 export interface ConicalInfo {

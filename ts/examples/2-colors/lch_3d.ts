@@ -2,7 +2,7 @@ import * as ut from '../../algeol/common';
 import * as seq from '../../algeol/algorithm/sequence';
 import * as mx from '../../algeol/datatype/matrix';
 import * as cc from '../../algeol/algorithm/color_converter';
-import * as geo from '../../algeol/object/object';
+import * as geo from '../../algeol/datatype/object';
 import * as prim from '../../algeol/object/primitive'
 import * as wf from '../../algeol/decoder/wavefront';
 import * as sf from '../savefile';

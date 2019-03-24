@@ -206,3 +206,7 @@ export function xor(b1: boolean, b2: boolean): boolean {
 export function zip<A, B>(a: A[], b: B[]): [A, B][] {
     return priv.sequence(Math.max(a.length, b.length)).map(i => <[A, B]>[a[i], b[i]]);
 }
+
+export function mid(n1: number, n2: number, mid: number): number {
+    return n1 * (1 - mid) + n2 * mid;
+}

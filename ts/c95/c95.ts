@@ -27,30 +27,51 @@
 
 */
 
+import * as mx from '../algeol/datatype/matrix';
 import * as cc from '../algeol/algorithm/color_converter';
-import * as geo from '../algeol/object/object';
+import * as obj from '../algeol/datatype/object';
 import * as 塔 from './塔';
 import * as 木 from './木';
+import * as 地 from './地';
+import * as 風 from './風';
+import * as grad from './gradient';
 
-function build_obj(): geo.Object {
-    const obj = geo.objGrouped(
+const grad_70_40_24 = grad.circle(70, 40, 24);
+
+function build_obj(): obj.Object {
+    //obj.dump();
+    return obj.objGrouped(
         [
-            塔.test(),
-            木.test(),
+            //塔.test(),
+            //木.test(),
+            obj.objWrapped(
+                塔.test(), null, mx.m4_translate3([5, 0, 0])),
+            obj.objWrapped(
+                地.床と木({
+                    g_name_床: 'white',
+                    g_name_葉: 'green',
+                    g_name_幹: 'brown',
+                }), 
+                null, mx.m4_translate3([0, 0, 0])),
+            風.circleTree({
+                g_name_床: 'white',
+                g_name_幹: 'brown',
+                g_name_葉: grad_70_40_24.map(v => v.key),
+            }),
         ],
         null, null,
     );
-    //obj.dump();
-    return obj;
 }
 
-function build_mats(): geo.Material[] {
+function build_mats(): obj.Material[] {
     return [
-        geo.material('white', cc.lch_to_rgb01([95, 0, 0])),
-        geo.material('blue', cc.lch_to_rgb01([70, 40, 180])),
-        geo.material('brown', cc.lch_to_rgb01([70, 40, 60])),
-        geo.material('green', cc.lch_to_rgb01([70, 40, 120])),
-    ];
+        obj.material('white', cc.lch_to_rgb01([95, 0, 0])),
+        obj.material('blue', cc.lch_to_rgb01([70, 40, 180])),
+        obj.material('brown', cc.lch_to_rgb01([70, 40, 60])),
+        obj.material('green', cc.lch_to_rgb01([70, 40, 120])),
+        obj.material('trunk', cc.lch_to_rgb01([70, 40, 60])),
+    ]
+    .concat(grad_70_40_24.map(v => obj.material(v.key, v.rgb01)));
 }
 
 import * as wf from '../algeol/decoder/wavefront';

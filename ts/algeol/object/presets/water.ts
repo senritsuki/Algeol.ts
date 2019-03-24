@@ -2,7 +2,7 @@ import * as vc from '../../datatype/vector';
 import * as mx from '../../datatype/matrix';
 import * as gut from '../../geometry/utility';
 import * as mesh from '../../geometry/mesh/rectangle';
-import * as obj from '../object';
+import * as obj from '../../datatype/object';
 
 function wave_heigth(v: vc.V3): vc.V3 {
     const t = (v.x / 3 + v.y / 12) * Math.PI;

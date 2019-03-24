@@ -6,7 +6,7 @@
 
 import * as vc from '../../datatype/vector';
 import * as mx from '../../datatype/matrix';
-import * as geo from '../object';
+import * as geo from '../../datatype/object';
 
 
 export function connect(
